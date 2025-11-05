@@ -1,4 +1,4 @@
-package com.mycompany.sistema_gerencial_para_biblioteca.resources;
+package com.biblioteca.sistema_gerencial_para_biblioteca.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

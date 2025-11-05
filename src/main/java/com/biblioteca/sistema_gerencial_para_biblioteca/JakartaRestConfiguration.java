@@ -1,4 +1,4 @@
-package com.mycompany.sistema_gerencial_para_biblioteca;
+package com.biblioteca.sistema_gerencial_para_biblioteca;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

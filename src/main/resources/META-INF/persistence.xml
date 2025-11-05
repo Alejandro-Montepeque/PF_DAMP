@@ -1,7 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
-    <!-- Define Persistence Unit -->
-    <persistence-unit name="my_persistence_unit">
+<persistence version="3.0" 
+             xmlns="https://jakarta.ee/xml/ns/persistence" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    
+    <persistence-unit name="BibliotecaPU" transaction-type="RESOURCE_LOCAL">
         
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Rol</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Autor</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Proveedor</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Bibliotecario</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Prestamo</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.DetallePrestamo</class>
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+            
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=DB_Biblioteca;trustServerCertificate=true" />
+            
+            <property name="jakarta.persistence.jdbc.user" value="tu_usuario_sql" />
+            <property name="jakarta.persistence.jdbc.password" value="tu_contraseña_sql" />
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect" />
+            
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+            
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
+        </properties>
+
     </persistence-unit>
 </persistence>
