@@ -1,0 +1,34 @@
+# ## Archivos compilados de Java/Maven ##
+# Esta es la carpeta más importante a ignorar
+/target/
+pom.xml.tag
+pom.xml.next
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# ## Archivos de Apache NetBeans ##
+# Estos son archivos específicos de tu configuración local
+/nbproject/
+/nbactions.xml
+/nb-configuration.xml
+/build/
+/dist/
+.nb-gradle/
+
+# ## Archivos de otros IDEs (buena práctica) ##
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# ## Registros (Logs) ##
+*.log
+logs/
+
+# ## Archivos del Sistema Operativo ##
+.DS_Store
+Thumbs.db
