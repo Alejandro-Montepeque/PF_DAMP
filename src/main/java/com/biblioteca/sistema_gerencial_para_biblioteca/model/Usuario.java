@@ -8,9 +8,6 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class Usuario {
-    public boolean checkConnection()
-    {
-    EntityManager em = JPAUtil.getEntityManager();
-    return em.isOpen();
-    }
+    
+    
 }
