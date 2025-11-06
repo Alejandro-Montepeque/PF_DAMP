@@ -4,10 +4,7 @@
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.utils;
 
-/**
- *
- * @author Daniel
- */
+
 public class PasswordUtil {
     
 }

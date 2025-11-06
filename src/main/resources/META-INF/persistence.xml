@@ -16,13 +16,16 @@
         <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro</class>
         <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Prestamo</class>
         <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.DetallePrestamo</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.LibroAutor</class>
+        <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.NivelEducativo</class>
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
             
             <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=DB_Biblioteca;trustServerCertificate=true" />
             
-            <property name="jakarta.persistence.jdbc.user" value="tu_usuario_sql" />
-            <property name="jakarta.persistence.jdbc.password" value="tu_contraseña_sql" />
+            <property name="jakarta.persistence.jdbc.user" value="sa" />
+            <property name="jakarta.persistence.jdbc.password" value="S3n71n3la" />
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect" />
             
