@@ -53,8 +53,9 @@ public class Usuario implements Serializable {
     @Size(max = 500)
     @Column(name = "direccion")
     private String direccion;
+    @Size(max = 25)
     @Column(name = "sexo")
-    private Character sexo;
+    private String sexo;
     @Size(max = 20)
     @Column(name = "telefono")
     private String telefono;
@@ -141,11 +142,11 @@ public class Usuario implements Serializable {
         this.direccion = direccion;
     }
 
-    public Character getSexo() {
+    public String getSexo() {
         return sexo;
     }
 
-    public void setSexo(Character sexo) {
+    public void setSexo(String sexo) {
         this.sexo = sexo;
     }
 

@@ -51,9 +51,6 @@ public class Libro implements Serializable {
     @Size(max = 50)
     @Column(name = "idioma")
     private String idioma;
-    @Size(max = 255)
-    @Column(name = "editorial")
-    private String editorial;
     @Size(max = 13)
     @Column(name = "isbn")
     private String isbn;
@@ -63,13 +60,6 @@ public class Libro implements Serializable {
     @NotNull
     @Column(name = "cant_disponibles")
     private int cantDisponibles;
-    @Size(max = 100)
-    @Column(name = "ubicacion_fisica")
-    private String ubicacionFisica;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "solo_consulta")
-    private boolean soloConsulta;
     @Column(name = "fecha_adquisicion")
     @Temporal(TemporalType.DATE)
     private Date fechaAdquisicion;
@@ -107,7 +97,6 @@ public class Libro implements Serializable {
         this.idLibro = idLibro;
         this.titulo = titulo;
         this.cantDisponibles = cantDisponibles;
-        this.soloConsulta = soloConsulta;
     }
 
     public Integer getIdLibro() {
@@ -142,14 +131,6 @@ public class Libro implements Serializable {
         this.idioma = idioma;
     }
 
-    public String getEditorial() {
-        return editorial;
-    }
-
-    public void setEditorial(String editorial) {
-        this.editorial = editorial;
-    }
-
     public String getIsbn() {
         return isbn;
     }
@@ -172,22 +153,6 @@ public class Libro implements Serializable {
 
     public void setCantDisponibles(int cantDisponibles) {
         this.cantDisponibles = cantDisponibles;
-    }
-
-    public String getUbicacionFisica() {
-        return ubicacionFisica;
-    }
-
-    public void setUbicacionFisica(String ubicacionFisica) {
-        this.ubicacionFisica = ubicacionFisica;
-    }
-
-    public boolean getSoloConsulta() {
-        return soloConsulta;
-    }
-
-    public void setSoloConsulta(boolean soloConsulta) {
-        this.soloConsulta = soloConsulta;
     }
 
     public Date getFechaAdquisicion() {

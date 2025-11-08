@@ -15,7 +15,7 @@
     <class>com.biblioteca.sistema_gerencial_para_biblioteca.model.AdminBiblioteca</class>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=DB_Biblioteca;trustServerCertificate=true"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://168.90.109.123:1433;databaseName=DB_Biblioteca;trustServerCertificate=true"/>
       <property name="jakarta.persistence.jdbc.user" value="sa"/>
       <property name="jakarta.persistence.jdbc.password" value="S3n71n3la"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
