@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/Sistema_Gerencial_Para_Biblioteca"/>
+<Context path="/Sistema_Gerencial_Para_Biblioteca">
+  <Resource auth="Container" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" maxActive="20" maxIdle="10" maxWait="-1" name="db_biblioteca" password="S3n71n3la" type="javax.sql.DataSource" url="jdbc:sqlserver://localhost:1433;databaseName=DB_Biblioteca;trustServerCertificate=true" username="sa"/>
+</Context>

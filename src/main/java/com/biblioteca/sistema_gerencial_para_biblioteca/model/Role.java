@@ -5,6 +5,7 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.model;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,43 +25,46 @@ import java.util.List;
  * @author Daniel
  */
 @Entity
-@Table(name = "generos")
+@Table(name = "roles")
 @NamedQueries({
-    @NamedQuery(name = "Genero.findAll", query = "SELECT g FROM Genero g")})
-public class Genero implements Serializable {
+    @NamedQuery(name = "Role.findAll", query = "SELECT r FROM Role r")})
+public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_genero")
-    private Integer idGenero;
+    @Column(name = "id_rol")
+    private Integer idRol;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "idGenero")
-    private List<Libro> libroList;
+    @Size(max = 255)
+    @Column(name = "descripcion")
+    private String descripcion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idRol")
+    private List<Usuario> usuarioList;
 
-    public Genero() {
+    public Role() {
     }
 
-    public Genero(Integer idGenero) {
-        this.idGenero = idGenero;
+    public Role(Integer idRol) {
+        this.idRol = idRol;
     }
 
-    public Genero(Integer idGenero, String nombre) {
-        this.idGenero = idGenero;
+    public Role(Integer idRol, String nombre) {
+        this.idRol = idRol;
         this.nombre = nombre;
     }
 
-    public Integer getIdGenero() {
-        return idGenero;
+    public Integer getIdRol() {
+        return idRol;
     }
 
-    public void setIdGenero(Integer idGenero) {
-        this.idGenero = idGenero;
+    public void setIdRol(Integer idRol) {
+        this.idRol = idRol;
     }
 
     public String getNombre() {
@@ -71,29 +75,37 @@ public class Genero implements Serializable {
         this.nombre = nombre;
     }
 
-    public List<Libro> getLibroList() {
-        return libroList;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setLibroList(List<Libro> libroList) {
-        this.libroList = libroList;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public List<Usuario> getUsuarioList() {
+        return usuarioList;
+    }
+
+    public void setUsuarioList(List<Usuario> usuarioList) {
+        this.usuarioList = usuarioList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idGenero != null ? idGenero.hashCode() : 0);
+        hash += (idRol != null ? idRol.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Genero)) {
+        if (!(object instanceof Role)) {
             return false;
         }
-        Genero other = (Genero) object;
-        if ((this.idGenero == null && other.idGenero != null) || (this.idGenero != null && !this.idGenero.equals(other.idGenero))) {
+        Role other = (Role) object;
+        if ((this.idRol == null && other.idRol != null) || (this.idRol != null && !this.idRol.equals(other.idRol))) {
             return false;
         }
         return true;
@@ -101,7 +113,7 @@ public class Genero implements Serializable {
 
     @Override
     public String toString() {
-        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero[ idGenero=" + idGenero + " ]";
+        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Role[ idRol=" + idRol + " ]";
     }
     
 }

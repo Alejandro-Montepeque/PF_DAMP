@@ -5,7 +5,6 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.model;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -22,17 +20,16 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
  * @author Daniel
  */
 @Entity
-@Table(name = "bibliotecarios")
+@Table(name = "admin_biblioteca")
 @NamedQueries({
-    @NamedQuery(name = "Bibliotecario.findAll", query = "SELECT b FROM Bibliotecario b")})
-public class Bibliotecario implements Serializable {
+    @NamedQuery(name = "AdminBiblioteca.findAll", query = "SELECT a FROM AdminBiblioteca a")})
+public class AdminBiblioteca implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -48,17 +45,15 @@ public class Bibliotecario implements Serializable {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @OneToOne(optional = false)
     private Usuario idUsuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idBibliotecario")
-    private List<Prestamo> prestamoList;
 
-    public Bibliotecario() {
+    public AdminBiblioteca() {
     }
 
-    public Bibliotecario(Integer idBibliotecario) {
+    public AdminBiblioteca(Integer idBibliotecario) {
         this.idBibliotecario = idBibliotecario;
     }
 
-    public Bibliotecario(Integer idBibliotecario, Date fechaIngreso) {
+    public AdminBiblioteca(Integer idBibliotecario, Date fechaIngreso) {
         this.idBibliotecario = idBibliotecario;
         this.fechaIngreso = fechaIngreso;
     }
@@ -87,14 +82,6 @@ public class Bibliotecario implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public List<Prestamo> getPrestamoList() {
-        return prestamoList;
-    }
-
-    public void setPrestamoList(List<Prestamo> prestamoList) {
-        this.prestamoList = prestamoList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -105,10 +92,10 @@ public class Bibliotecario implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Bibliotecario)) {
+        if (!(object instanceof AdminBiblioteca)) {
             return false;
         }
-        Bibliotecario other = (Bibliotecario) object;
+        AdminBiblioteca other = (AdminBiblioteca) object;
         if ((this.idBibliotecario == null && other.idBibliotecario != null) || (this.idBibliotecario != null && !this.idBibliotecario.equals(other.idBibliotecario))) {
             return false;
         }
@@ -117,7 +104,7 @@ public class Bibliotecario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Bibliotecario[ idBibliotecario=" + idBibliotecario + " ]";
+        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.AdminBiblioteca[ idBibliotecario=" + idBibliotecario + " ]";
     }
     
 }
