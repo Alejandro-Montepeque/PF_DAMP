@@ -24,43 +24,43 @@ import java.util.List;
  * @author Daniel
  */
 @Entity
-@Table(name = "generos")
+@Table(name = "niveles_educativos")
 @NamedQueries({
-    @NamedQuery(name = "Genero.findAll", query = "SELECT g FROM Genero g")})
-public class Genero implements Serializable {
+    @NamedQuery(name = "NivelesEducativo.findAll", query = "SELECT n FROM NivelesEducativo n")})
+public class NivelesEducativo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_genero")
-    private Integer idGenero;
+    @Column(name = "id_nivel")
+    private Integer idNivel;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "idGenero")
+    @OneToMany(mappedBy = "idNivelEducativo")
     private List<Libro> libroList;
 
-    public Genero() {
+    public NivelesEducativo() {
     }
 
-    public Genero(Integer idGenero) {
-        this.idGenero = idGenero;
+    public NivelesEducativo(Integer idNivel) {
+        this.idNivel = idNivel;
     }
 
-    public Genero(Integer idGenero, String nombre) {
-        this.idGenero = idGenero;
+    public NivelesEducativo(Integer idNivel, String nombre) {
+        this.idNivel = idNivel;
         this.nombre = nombre;
     }
 
-    public Integer getIdGenero() {
-        return idGenero;
+    public Integer getIdNivel() {
+        return idNivel;
     }
 
-    public void setIdGenero(Integer idGenero) {
-        this.idGenero = idGenero;
+    public void setIdNivel(Integer idNivel) {
+        this.idNivel = idNivel;
     }
 
     public String getNombre() {
@@ -82,18 +82,18 @@ public class Genero implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idGenero != null ? idGenero.hashCode() : 0);
+        hash += (idNivel != null ? idNivel.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Genero)) {
+        if (!(object instanceof NivelesEducativo)) {
             return false;
         }
-        Genero other = (Genero) object;
-        if ((this.idGenero == null && other.idGenero != null) || (this.idGenero != null && !this.idGenero.equals(other.idGenero))) {
+        NivelesEducativo other = (NivelesEducativo) object;
+        if ((this.idNivel == null && other.idNivel != null) || (this.idNivel != null && !this.idNivel.equals(other.idNivel))) {
             return false;
         }
         return true;
@@ -101,7 +101,7 @@ public class Genero implements Serializable {
 
     @Override
     public String toString() {
-        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero[ idGenero=" + idGenero + " ]";
+        return "com.biblioteca.sistema_gerencial_para_biblioteca.model.NivelesEducativo[ idNivel=" + idNivel + " ]";
     }
     
 }

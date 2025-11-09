@@ -5,12 +5,15 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
 
 import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet; 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.ServletException; // <-- Probablemente también lo necesites
+import java.io.IOException; // <-- Y este
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.RequestDispatcher;
+
 
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/DashboardServlet"})
 public class DashboardServlet extends HttpServlet {
