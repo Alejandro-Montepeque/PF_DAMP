@@ -11,6 +11,8 @@ import java.util.List;
 
 public class UsuarioDAOImpl implements IUsuarioDAO {
 
+    public UsuarioDAOImpl(){}
+    
     @Override
     public void crear(Usuario usuario) {
          EntityManager em = JPAUtil.getEntityManager();

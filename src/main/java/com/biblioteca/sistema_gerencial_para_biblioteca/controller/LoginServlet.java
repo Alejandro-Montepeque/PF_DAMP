@@ -5,13 +5,16 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
 
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
+import jakarta.servlet.http.HttpServlet; 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.ServletException; // <-- Probablemente también lo necesites
+import java.io.IOException; // <-- Y este
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.RequestDispatcher;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -19,16 +22,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String usuario = request.getParameter("usuario");
+        UsuarioDAOImpl dao = new UsuarioDAOImpl();
+        String email = request.getParameter("usuario");
         String clave = request.getParameter("clave");
-
-        if (validarUsuario(usuario, clave)) {
+        
+        if (dao.validateUser(email, clave)) {
             HttpSession sesion = request.getSession();
-            sesion.setAttribute("usuario", usuario);
-
-            String rol = obtenerRolMock(usuario);
-            sesion.setAttribute("rol", rol);
+            sesion.setAttribute("usuario", email);
+            sesion.setAttribute("rol", "admin");
 
             // 🔁 Redirigir al servlet del dashboard (protege mejor la sesión)
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");
