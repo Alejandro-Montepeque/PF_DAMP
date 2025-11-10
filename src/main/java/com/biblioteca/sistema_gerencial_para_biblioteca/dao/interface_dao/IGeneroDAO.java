@@ -4,7 +4,9 @@
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao;
 
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero;
+import java.util.List;
 
 public interface IGeneroDAO {
-    
+     List<Genero> obtenerTodos();
 }

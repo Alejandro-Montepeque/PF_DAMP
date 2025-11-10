@@ -46,12 +46,6 @@
                 <div class="col-md-3">
                     <label class="form-label">Filtrar por género</label>
                     <select id="filtroGenero" class="form-select">
-                        <option value="Todos" selected>Todos</option>
-                        <option value="Novela">Novela</option>
-                        <option value="Infantil">Infantil</option>
-                        <option value="Educativo">Educativo</option>
-                        <option value="Ciencia">Ciencia</option>
-                        <option value="Tecnología">Tecnología</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -93,6 +87,31 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        
+        //aqui llamao a generoServlet
+        fetch("<%= request.getContextPath()%>/api/generos")
+                .then(response => response.json())
+                .then(generos => {
+                    const select = document.getElementById("filtroGenero");
+
+                    // Agregar la opción "Todos"
+                    const optionTodos = document.createElement("option");
+                    optionTodos.value = "Todos";
+                    optionTodos.textContent = "Todos";
+                    select.appendChild(optionTodos);
+
+                    // Agregar las demás opciones
+                    generos.forEach(g => {
+                        const option = document.createElement("option"); // <-- declarada correctamente aquí
+                        option.value = g.id_genero;
+                        option.textContent = g.nombre;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Error al cargar géneros:", err));
+
+
+
         const tipoReporteSelect = document.getElementById("tipoReporte");
         const tituloReporte = document.getElementById("tituloReporte");
         const tablaBody = document.querySelector("#tablaReportes tbody");
