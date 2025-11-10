@@ -10,12 +10,12 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.RolDAOImpl;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Role;
-import jakarta.servlet.http.HttpServlet; 
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.ServletException; 
-import java.io.IOException; 
+import jakarta.servlet.ServletException;
+import java.io.IOException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.RequestDispatcher;
 
@@ -25,8 +25,8 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+                    System.out.print("Hasta aqui se ejecuto el servlet del login");
         UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
- 
         String email = request.getParameter("email");
         String clave = request.getParameter("clave");
         Usuario usuarioLoged = daoUsuario.obtenerPorEmail(email);
@@ -62,16 +62,4 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    // ----------------------------------------------------------
-    // Métodos auxiliares “mock” (temporalmente sin base de datos)
-    // ----------------------------------------------------------
-    private boolean validarUsuario(String usuario, String clave) {
-        // Usuarios simulados
-        return ("admin".equals(usuario) && "admin123".equals(clave))
-                || ("user".equals(usuario) && "user123".equals(clave));
-    }
-
-    private String obtenerRolMock(String usuario) {
-        return "admin".equals(usuario) ? "ADMIN" : "USER";
-    }
 }

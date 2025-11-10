@@ -29,8 +29,7 @@
         <h2 class="fw-bold text-primary mb-0"><i class="bi bi-people me-2"></i> Gestión de Usuarios</h2>
         <div>
             <!-- Botón visible solo para admins -->
-            <%
-                if ("ADMIN".equals(rol)) {
+            <%                if ("ADMIN".equals(rol)) {
             %>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
                 <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
@@ -239,89 +238,88 @@
 <!-- Modal: Agregar / Editar Usuario -->
 <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="usuarioModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="usuarioForm" class="modal-content needs-validation" novalidate onsubmit="return guardarUsuario(event);">
+        <form id="usuarioForm" 
+              method="post" 
+              action="${pageContext.request.contextPath}/UsuariosServlet" 
+              class="modal-content needs-validation" novalidate>
+
             <div class="modal-header">
                 <h5 class="modal-title" id="usuarioModalLabel">Nuevo Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
+
             <div class="modal-body">
                 <div class="row g-3">
+
                     <div class="col-md-6">
                         <label class="form-label">Nombre completo</label>
-                        <input type="text" id="nombre" class="form-control" required>
-                        <div class="invalid-feedback">Ingrese el nombre completo.</div>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required>
                     </div>
-
                     <div class="col-md-3">
                         <label class="form-label">Fecha de nacimiento</label>
-                        <input type="date" id="fechaNacimiento" class="form-control" required>
-                        <div class="invalid-feedback">Seleccione la fecha de nacimiento.</div>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required>
                     </div>
-
                     <div class="col-md-3">
                         <label class="form-label">Sexo</label>
-                        <select id="sexo" class="form-select" required>
+                        <select id="sexo" name="sexo" class="form-select" required>
                             <option value="">Elegir...</option>
                             <option>Masculino</option>
                             <option>Femenino</option>
                             <option>Otro</option>
                         </select>
-                        <div class="invalid-feedback">Seleccione el sexo.</div>
                     </div>
 
                     <div class="col-12">
                         <label class="form-label">Dirección completa</label>
-                        <input type="text" id="direccion" class="form-control" required>
-                        <div class="invalid-feedback">Ingrese la dirección.</div>
+                        <input type="text" id="direccion" name="direccion" class="form-control" required>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">DUI</label>
-                        <input type="text" id="dui" class="form-control" placeholder="00000000-0" required>
-                        <div class="invalid-feedback">Ingrese el DUI.</div>
+                        <input type="text" id="dui" name="dui" class="form-control" placeholder="00000000-0" required>
                     </div>
-
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" id="telefono" class="form-control" required>
-                        <div class="invalid-feedback">Ingrese el teléfono.</div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Teléfono alterno</label>
-                        <input type="text" id="telefono2" class="form-control">
+                        <input type="text" id="telefono" name="telefono" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" required>
-                        <div class="invalid-feedback">Ingrese un email válido.</div>
+                        <input type="email" id="email" name="email" class="form-control" required>
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">Tipo de usuario</label>
-                        <select id="tipoUsuario" class="form-select" required>
+                        <select id="tipoUsuario" name="tipoUsuario" class="form-select" required>
                             <option value="">Elegir...</option>
                             <option>Estudiante</option>
                             <option>Docente</option>
                             <option>Externo</option>
                         </select>
-                        <div class="invalid-feedback">Seleccione el tipo de usuario.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Rol</label>
-                        <select id="rolUsuario" class="form-select" required>
+                        <select id="rolUsuario" name="rolUsuario" class="form-select" required>
                             <option value="">Elegir...</option>
-                            <option>USER</option>
-                            <option>ADMIN</option>
+                            <option value="1">ADMIN</option>
+                            <option value="2">BIBLIOTECARIO</option>
+                            <option value="3">LECTOR</option>
                         </select>
-                        <div class="invalid-feedback">Seleccione rol.</div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Observaciones</label>
-                        <input type="text" id="observaciones" class="form-control">
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
+                            <label class="form-check-label" for="activo">Usuario Activo</label>
+                        </div>
                     </div>
 
                 </div>
@@ -332,197 +330,7 @@
                 <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar</button>
             </div>
         </form>
-    </div>
+    </div> 
 </div>
 
 <%@ include file="components/footer.jsp" %>
-
-<!-- Scripts específicos de usuarios (visual) -->
-<script>
-    // Validación básica Bootstrap
-    (function () {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })();
-
-    // ---- Filtrado simple en el DOM (visual)
-    const filtroTipo = document.getElementById('filtroTipo');
-    const filtroSexo = document.getElementById('filtroSexo');
-    const filtroTexto = document.getElementById('filtroTexto');
-    const tabla = document.getElementById('tablaUsuarios').getElementsByTagName('tbody')[0];
-
-    function resetFiltros() {
-        filtroTipo.value = '';
-        filtroSexo.value = '';
-        filtroTexto.value = '';
-        aplicarFiltros();
-    }
-
-    function aplicarFiltros() {
-        const tipo = filtroTipo.value.toLowerCase();
-        const sexo = filtroSexo.value.toLowerCase();
-        const texto = filtroTexto.value.toLowerCase();
-
-        Array.from(tabla.rows).forEach(row => {
-            const nombre = row.dataset.nombre.toLowerCase();
-            const tipoRow = row.dataset.tipo ? row.dataset.tipo.toLowerCase() : '';
-            const sexoRow = row.dataset.sexo ? row.dataset.sexo.toLowerCase() : '';
-            const dui = row.dataset.dui ? row.dataset.dui.toLowerCase() : '';
-            const email = row.dataset.email ? row.dataset.email.toLowerCase() : '';
-
-            const matches = (tipo === '' || tipoRow === tipo)
-                && (sexo === '' || sexoRow === sexo)
-                && (texto === '' || nombre.includes(texto) || dui.includes(texto) || email.includes(texto));
-
-            row.style.display = matches ? '' : 'none';
-        });
-    }
-
-    filtroTipo.addEventListener('change', aplicarFiltros);
-    filtroSexo.addEventListener('change', aplicarFiltros);
-    filtroTexto.addEventListener('input', aplicarFiltros);
-
-    // ---- Exportar CSV (visual)
-    function exportarCSV() {
-        let csv = 'Nombre,Tipo,Sexo,DUI,Teléfono,Email,Estado\\n';
-        Array.from(tabla.rows).forEach(row => {
-            if (row.style.display === 'none') return;
-            const cols = row.cells;
-            const nombre = cols[1].innerText.trim();
-            const tipo = cols[2].innerText.trim();
-            const sexo = cols[4].innerText.trim();
-            const dui = cols[5].innerText.trim();
-            const tel = cols[6].innerText.trim();
-            const email = cols[7].innerText.trim();
-            const estado = cols[8].innerText.trim();
-            csv += `"${nombre}","${tipo}","${sexo}","${dui}","${tel}","${email}","${estado}"\\n`;
-        });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'usuarios.csv';
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    // ---- Manejo modal: rellenar datos para editar
-    document.querySelectorAll('.btn-editar').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            const row = this.closest('tr');
-            // Rellenar formulario con datos del data-*
-            document.getElementById('usuarioModalLabel').innerText = 'Editar Usuario';
-            document.getElementById('nombre').value = row.dataset.nombre || '';
-            document.getElementById('fechaNacimiento').value = row.dataset.fecha || '';
-            document.getElementById('sexo').value = row.dataset.sexo || '';
-            document.getElementById('direccion').value = row.dataset.direccion || '';
-            document.getElementById('dui').value = row.dataset.dui || '';
-            document.getElementById('telefono').value = row.dataset.telefono || '';
-            document.getElementById('telefono2').value = '';
-            document.getElementById('email').value = row.dataset.email || '';
-            document.getElementById('tipoUsuario').value = row.dataset.tipo || '';
-            document.getElementById('rolUsuario').value = row.dataset.rol || '';
-            document.getElementById('observaciones').value = row.dataset.observaciones || '';
-            // abrir modal (ya lo hace el data-bs-toggle cuando se cliquea el botón)
-        });
-    });
-
-    // ---- Manejo modal: nuevo usuario (limpiar)
-    document.getElementById('btnNuevo')?.addEventListener('click', function () {
-        document.getElementById('usuarioModalLabel').innerText = 'Nuevo Usuario';
-        document.getElementById('usuarioForm').reset();
-        document.getElementById('usuarioForm').classList.remove('was-validated');
-    });
-
-    // ---- Guardar (visual): agregamos la fila en la tabla (solo frontend)
-    function guardarUsuario(event) {
-        event.preventDefault();
-        const form = document.getElementById('usuarioForm');
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            return false;
-        }
-
-        // Crear fila nueva (solo visual)
-        const nombre = document.getElementById('nombre').value;
-        const tipo = document.getElementById('tipoUsuario').value;
-        const sexo = document.getElementById('sexo').value;
-        const fecha = document.getElementById('fechaNacimiento').value;
-        const direccion = document.getElementById('direccion').value;
-        const dui = document.getElementById('dui').value;
-        const telefono = document.getElementById('telefono').value;
-        const email = document.getElementById('email').value;
-        const rolUsuario = document.getElementById('rolUsuario').value;
-        const observaciones = document.getElementById('observaciones').value;
-
-        const tbody = document.getElementById('tablaUsuarios').getElementsByTagName('tbody')[0];
-        const nextIndex = tbody.rows.length + 1;
-        const tr = document.createElement('tr');
-
-        tr.setAttribute('data-nombre', nombre);
-        tr.setAttribute('data-tipo', tipo);
-        tr.setAttribute('data-sexo', sexo);
-        tr.setAttribute('data-dui', dui);
-        tr.setAttribute('data-telefono', telefono);
-        tr.setAttribute('data-email', email);
-        tr.setAttribute('data-fecha', fecha);
-        tr.setAttribute('data-direccion', direccion);
-        tr.setAttribute('data-rol', rolUsuario);
-        tr.setAttribute('data-observaciones', observaciones);
-
-        tr.innerHTML = `
-            <td>${nextIndex}</td>
-            <td>${nombre}</td>
-            <td>${tipo}</td>
-            <td>-</td>
-            <td>${sexo}</td>
-            <td>${dui}</td>
-            <td>${telefono}</td>
-            <td>${email}</td>
-            <td><span class="badge bg-success">Activo</span></td>
-            <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                ${ "ADMIN".equals(rol) ? '<button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>' : '' }
-            </td>
-        `;
-        tbody.appendChild(tr);
-
-        // Cerrar modal
-        const modalEl = document.getElementById('usuarioModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
-
-        return false;
-    }
-
-    // ---- Botones eliminar (visual)
-    document.querySelectorAll('.btn-eliminar').forEach(btn => {
-        btn.addEventListener('click', function () {
-            if (!confirm('¿Eliminar este usuario? (solo visual)')) return;
-            const row = this.closest('tr');
-            row.remove();
-        });
-    });
-
-    // ---- Botones ver (muestra modal simple)
-    document.querySelectorAll('.btn-ver').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const row = this.closest('tr');
-            alert(
-                'Usuario: ' + row.dataset.nombre + '\\n' +
-                'Tipo: ' + row.dataset.tipo + '\\n' +
-                'DUI: ' + row.dataset.dui + '\\n' +
-                'Email: ' + row.dataset.email
-            );
-        });
-    });
-</script>

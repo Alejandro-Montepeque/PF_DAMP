@@ -19,10 +19,6 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         try {
             // iniciar la transaccion
             em.getTransaction().begin();
-            // hash de la contraseña
-            String noHashPasswd = usuario.getPasswordHash();
-            String hashPasswd = PasswordUtil.hashPassword(noHashPasswd);
-            usuario.setPasswordHash(hashPasswd);
             // empujar el objeto
             em.persist(usuario);
             // guardar cambios
