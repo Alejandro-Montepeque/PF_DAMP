@@ -11,6 +11,8 @@ public interface IUsuarioDAO {
     
     Usuario obtenerPorId(int idUsuario);
     
+    Usuario obtenerPorEmail(String email);
+    
     List<Usuario> obtenerTodos();
     
     void actualizar(Usuario libro);
@@ -22,4 +24,5 @@ public interface IUsuarioDAO {
     boolean isValidDUI(String dui);
     
     boolean validateUser(String email, String password);
+    
 }

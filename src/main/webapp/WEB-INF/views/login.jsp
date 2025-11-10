@@ -58,7 +58,7 @@
             <form action="${pageContext.request.contextPath}/LoginServlet" method="post">
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Ingrese su email" required>
                 </div>
                 <div class="mb-3">
                     <label for="clave" class="form-label">Contraseña</label>
@@ -68,10 +68,6 @@
                     <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
                 </div>
             </form>
-
-            <div class="text-center mt-3">
-                <small>¿No tienes cuenta? <a href="register.jsp" class="text-decoration-none">Regístrate aquí</a></small>
-            </div>
         </div>
 
         <!-- Bootstrap JS -->

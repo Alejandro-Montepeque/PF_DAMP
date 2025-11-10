@@ -8,14 +8,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery; // Usado para consultas con tipo
 import java.util.List;
 
-
 public class UsuarioDAOImpl implements IUsuarioDAO {
 
-    public UsuarioDAOImpl(){}
-    
+    public UsuarioDAOImpl() {
+    }
+
     @Override
     public void crear(Usuario usuario) {
-         EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = JPAUtil.getEntityManager();
         try {
             // iniciar la transaccion
             em.getTransaction().begin();
@@ -70,36 +70,65 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
     public boolean isValidDUI(String dui) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    @Override
-    public boolean validateUser(String email, String password)
-    {
-         EntityManager em = JPAUtil.getEntityManager();
-         try {
-        // 1. Escribes la consulta en JPQL
-        // NOTA: "Usuario" es el nombre de la *clase* Java
-        // "email" es el nombre del *atributo* en la clase
-        String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
 
-        // 2. Creas la consulta
-        TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
-        
-        // 3. Asignas el parámetro (evita inyección SQL)
-        query.setParameter("correo", email);
-        
-        // 4. Ejecutas la consulta y pides un *único resultado*
-        // Esto es lo que cambia:
-        Usuario usuarioEmail = query.getSingleResult();
-        return PasswordUtil.verifyPassword(password, usuarioEmail.getPasswordHash());
-        
-        } 
-         catch (jakarta.persistence.NoResultException e) {
-        // 5. ¡Importante! Si no se encuentra el email, getSingleResult()
-        //    lanza una excepción. Debemos capturarla y devolver null.
-        return false;
-        } 
-         finally {
-        em.close();
-         }
- 
+    @Override
+    public boolean validateUser(String email, String password) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // 1. Escribes la consulta en JPQL
+            // NOTA: "Usuario" es el nombre de la *clase* Java
+            // "email" es el nombre del *atributo* en la clase
+            String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
+
+            // 2. Creas la consulta
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            // 3. Asignas el parámetro (evita inyección SQL)
+            query.setParameter("correo", email);
+
+            // 4. Ejecutas la consulta y pides un *único resultado*
+            // Esto es lo que cambia:
+            Usuario usuarioEmail = query.getSingleResult();
+            return PasswordUtil.verifyPassword(password, usuarioEmail.getPasswordHash());
+
+        } catch (jakarta.persistence.NoResultException e) {
+            // 5. ¡Importante! Si no se encuentra el email, getSingleResult()
+            //    lanza una excepción. Debemos capturarla y devolver null.
+            return false;
+        } finally {
+            em.close();
+        }
+
+    }
+
+    @Override
+    public Usuario obtenerPorEmail(String email) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // 1. Escribes la consulta en JPQL
+            // NOTA: "Usuario" es el nombre de la *clase* Java
+            // "email" es el nombre del *atributo* en la clase
+            String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
+
+            // 2. Creas la consulta
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            // 3. Asignas el parámetro (evita inyección SQL)
+            query.setParameter("correo", email);
+
+            // 4. Ejecutas la consulta y pides un *único resultado*
+            // Esto es lo que cambia:
+            return query.getSingleResult();
+
+        } catch (jakarta.persistence.NoResultException e) {
+            // 5. ¡Importante! Si no se encuentra el email, getSingleResult()
+            //    lanza una excepción. Debemos capturarla y devolver null.
+            return null;
+
+        } finally {
+            em.close();
+        }
+
     }
 }
