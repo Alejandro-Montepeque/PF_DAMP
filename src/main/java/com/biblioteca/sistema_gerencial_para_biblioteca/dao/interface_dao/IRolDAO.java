@@ -7,6 +7,6 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.model.Role;
 
 public interface IRolDAO {
     
-    Role obtenerPorId(int idRol);
+    Role obtenerPorId(Integer idRol);
     
 }

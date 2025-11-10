@@ -6,8 +6,10 @@ package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
 
 import java.io.IOException;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.RolDAOImpl;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario;
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.Role;
 import jakarta.servlet.http.HttpServlet; 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,15 +25,16 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UsuarioDAOImpl dao = new UsuarioDAOImpl();
+        UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
+ 
         String email = request.getParameter("email");
         String clave = request.getParameter("clave");
-        Usuario usuarioLoged = dao.obtenerPorEmail(email);
-        if (dao.validateUser(email, clave)) {
+        Usuario usuarioLoged = daoUsuario.obtenerPorEmail(email);
+        Role rol = usuarioLoged.getIdRol();
+        if (daoUsuario.validateUser(email, clave)) {
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuarioLoged.getNombre());
-            sesion.setAttribute("rol", "admin");
-
+            sesion.setAttribute("rol", rol.getNombre());
             // Redirigir al servlet del dashboard 
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");
 
