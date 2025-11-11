@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
+
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
 import com.biblioteca.sistema_gerencial_para_biblioteca.utils.PasswordUtil;
@@ -22,12 +23,11 @@ import jakarta.servlet.RequestDispatcher;
 @WebServlet(name = "UsuariosServlet", urlPatterns = {"/UsuariosServlet"})
 public class UsuariosServlet extends HttpServlet {
 
-@Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        HttpSession session = request.getSession();
         try {
-            System.out.print("Hasta aqui se ejecuto el servlet");
             //Leer los parámetros del formulario (usando los 'name')
             String nombre = request.getParameter("nombre");
             String fechaStr = request.getParameter("fechaNacimiento");
@@ -40,19 +40,19 @@ public class UsuariosServlet extends HttpServlet {
             String password = request.getParameter("password");
             String passwordConfirm = request.getParameter("passwordConfirm");
             int idRol = Integer.parseInt(request.getParameter("rolUsuario"));
-            
+
             //Un checkbox marcado envía "on". Si no, envía null.
-            boolean activo = request.getParameter("activo") != null; 
+            boolean activo = request.getParameter("activo") != null;
 
             //Validación (simple)
             if (!password.equals(passwordConfirm)) {
                 // (Aquí manejaríamos el error, pero por ahora nos saltamos esto)
                 throw new ServletException("Las contraseñas no coinciden");
             }
-            
+
             //Hashear la contraseña
             String hash = PasswordUtil.hashPassword(password);
-            
+
             //Traer el objeto Rol
             EntityManager em = JPAUtil.getEntityManager();
             Role rol = em.find(Role.class, idRol);
@@ -71,22 +71,22 @@ public class UsuariosServlet extends HttpServlet {
             nuevoUsuario.setPasswordHash(hash);
             nuevoUsuario.setIdRol(rol);
             nuevoUsuario.setActivo(activo);
-            System.out.print("Hasta aqui se ejecuto el servlet" + nuevoUsuario.getNombre());
             // Guardar en la BD
             IUsuarioDAO dao = new UsuarioDAOImpl();
             dao.crear(nuevoUsuario);
-
+            session.setAttribute("mensajeExito", "¡Usuario guardado exitosamente!");
             // Redirigir a la página principal de usuarios
             response.sendRedirect(request.getContextPath() + "/UsuariosServlet"); // O la URL de tu servlet principal
 
         } catch (Exception e) {
-  
+            session.setAttribute("mensajeError", "Error al guardar el usuario: " + e.getMessage());
             e.printStackTrace();
-            System.out.print("aqui trono el servlet");
+
             response.sendRedirect(request.getContextPath() + "/UsuariosServlet");
         }
     }
-    @Override
+
+    /*@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -98,6 +98,34 @@ public class UsuariosServlet extends HttpServlet {
         }
 
         // Mostrar la vista protegida
+        request.getRequestDispatcher("WEB-INF/views/usuarios.jsp").forward(request, response);
+    }
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+
+        // 1. Tu código de seguridad (está perfecto)
+        if (session == null || session.getAttribute("usuario") == null) {
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
+            return;
+        }
+
+        // 2. ¡ESTA ES LA LÓGICA "FLASH"!
+        // Mueve el mensaje de la Sesión al Request
+        if (session.getAttribute("mensajeExito") != null) {
+            request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
+            session.removeAttribute("mensajeExito"); // Se borra para que no se repita
+        }
+
+        if (session.getAttribute("mensajeError") != null) {
+            request.setAttribute("mensajeError", session.getAttribute("mensajeError"));
+            session.removeAttribute("mensajeError"); // Se borra
+        }
+
+        // 3. Envía al JSP (ahora el 'request' lleva el mensaje)
         request.getRequestDispatcher("WEB-INF/views/usuarios.jsp").forward(request, response);
     }
 }

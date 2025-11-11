@@ -334,3 +334,12 @@
 </div>
 
 <%@ include file="components/footer.jsp" %>
+<script>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <c:if test="${not empty mensajeExito}">
+        mostrarAlertaExito("${mensajeExito}");
+    </c:if>
+    <c:if test="${not empty mensajeError}">
+        mostrarAlertaError("${mensajeError}");
+    </c:if>
+</script>

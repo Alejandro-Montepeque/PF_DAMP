@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                    System.out.print("Hasta aqui se ejecuto el servlet del login");
+            
         UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
         String email = request.getParameter("email");
         String clave = request.getParameter("clave");

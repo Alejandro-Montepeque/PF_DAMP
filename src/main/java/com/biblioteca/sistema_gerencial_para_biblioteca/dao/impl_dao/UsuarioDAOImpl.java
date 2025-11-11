@@ -29,6 +29,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
                 em.getTransaction().rollback();
             }
             e.printStackTrace();
+            throw new RuntimeException("Error al crear el usuario: " + e.getMessage(), e);
         } finally {
             // Cerrar siempre el EntityManager
             em.close();
