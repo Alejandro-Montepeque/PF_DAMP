@@ -5,30 +5,28 @@
 --%>
 
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
-    // ---> Protege la vista: si no hay sesión, redirige al login
+    // si no hay sesión, redirige al login
     if (session.getAttribute("usuario") == null) {
         response.sendRedirect(request.getContextPath() + "/LoginServlet");
         return;
     }
 
-    // Indicamos la página activa para el sidebar
     request.setAttribute("activePage", "usuarios");
 
-    // Rol de la sesión (puede ser "ADMIN" o "USER")
     String rol = (String) session.getAttribute("rol");
 %>
 
 <%@ include file="components/header.jsp" %>
-<!-- ✅ Sidebar -->
+
 <%@ include file="components/sidebar.jsp" %>
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary mb-0"><i class="bi bi-people me-2"></i> Gestión de Usuarios</h2>
+        <h2 class="fw-bold text-primary mb-0"><i class="bi bi-people me-2"></i> Gestión de Usuarios Lectores</h2>
         <div>
-            <!-- Botón visible solo para admins -->
             <%                if ("ADMIN".equals(rol)) {
             %>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
@@ -40,7 +38,7 @@
         </div>
     </div>
 
-    <!-- FILTROS -->
+
     <div class="card mb-4">
         <div class="card-body">
             <form class="row g-2 align-items-end" id="filtrosForm" onsubmit="return false;">
@@ -76,7 +74,7 @@
         </div>
     </div>
 
-    <!-- TABLA -->
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -86,7 +84,6 @@
                             <th>#</th>
                             <th>Nombre</th>
                             <th>Tipo</th>
-                            <th>Edad</th>
                             <th>Sexo</th>
                             <th>DUI</th>
                             <th>Teléfono</th>
@@ -95,143 +92,63 @@
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        <!-- Datos estáticos -->
-                        <tr data-nombre="María Pérez" data-tipo="Estudiante" data-sexo="Femenino" data-dui="01234567-8" data-telefono="7777-7777" data-email="maria.perez@ejemplo.com" data-fecha="2003-04-15" data-direccion="Av. Central #123" data-estado="Activo">
-                            <td>1</td>
-                            <td>María Pérez</td>
-                            <td>Estudiante</td>
-                            <td>22</td>
-                            <td>Femenino</td>
-                            <td>01234567-8</td>
-                            <td>7777-7777</td>
-                            <td>maria.perez@ejemplo.com</td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver" title="Ver">Ver</button>
-                                <%
-                                    if ("ADMIN".equals(rol)) {
-                                %>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-eliminar" title="Eliminar">Eliminar</button>
-                                <%
-                                    }
-                                %>
-                            </td>
-                        </tr>
+                        <c:forEach var="usuario" items="${listaUsuarios}" varStatus="loop">
 
-                        <tr data-nombre="Carlos López" data-tipo="Docente" data-sexo="Masculino" data-dui="02345678-9" data-telefono="7888-8888" data-email="carlos.lopez@ejemplo.edu" data-fecha="1980-11-02" data-direccion="Calle 5 #45" data-estado="Activo">
-                            <td>2</td>
-                            <td>Carlos López</td>
-                            <td>Docente</td>
-                            <td>43</td>
-                            <td>Masculino</td>
-                            <td>02345678-9</td>
-                            <td>7888-8888</td>
-                            <td>carlos.lopez@ejemplo.edu</td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                                <%
-                                    if ("ADMIN".equals(rol)) {
-                                %>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                                <%
-                                    }
-                                %>
-                            </td>
-                        </tr>
+                            <tr data-nombre="${usuario.nombre}"
+                                data-tipo="${usuario.tipoUsuario}"
+                                data-sexo="${usuario.sexo}"
+                                data-dui="${usuario.dui}"
+                                data-telefono="${usuario.telefono}"
+                                data-email="${usuario.email}"
+                                data-fecha="${usuario.fechaNacimiento}"
+                                data-direccion="${usuario.direccion}"
+                                data-estado="${usuario.activo ? 'Activo' : 'Inactivo'}">
+                                data-id="${usuario.idUsuario}"
+                                data-rol-id="${usuario.idRol.idRol}">
+                                
+                                <td>${loop.count}</td>
+                                <td>${usuario.nombre}</td>
+                                <td>${usuario.tipoUsuario}</td>
+                                <td>${usuario.sexo}</td>
+                                <td>${usuario.dui}</td>
+                                <td>${usuario.telefono}</td>
+                                <td>${usuario.email}</td>
+                                <td>
+                                    <c:if test="${usuario.activo}">
+                                        <span class="badge bg-success">Activo</span>
+                                    </c:if>
+                                    <c:if test="${!usuario.activo}">
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    </c:if>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-secondary me-1 btn-ver" title="Ver">Ver</button>
+                                    <%
+                                        if ("ADMIN".equals(rol)) {
+                                    %>
+                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                                    <button class="btn btn-sm btn-outline-danger btn-eliminar" title="Eliminar">Eliminar</button>
+                                    <%
+                                        }
+                                    %>
+                                </td>
+                            </tr>
+                        </c:forEach>
 
-                        <tr data-nombre="Laura Martínez" data-tipo="Externo" data-sexo="Femenino" data-dui="03456789-0" data-telefono="7999-9999" data-email="laura.m@ejemplo.com" data-fecha="1995-06-10" data-direccion="Col. Los Pinos" data-estado="Moroso">
-                            <td>3</td>
-                            <td>Laura Martínez</td>
-                            <td>Externo</td>
-                            <td>28</td>
-                            <td>Femenino</td>
-                            <td>03456789-0</td>
-                            <td>7999-9999</td>
-                            <td>laura.m@ejemplo.com</td>
-                            <td><span class="badge bg-danger">Moroso</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                                <%
-                                    if ("ADMIN".equals(rol)) {
-                                %>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                                <%
-                                    }
-                                %>
-                            </td>
-                        </tr>
-
-                        <tr data-nombre="Jorge Ramírez" data-tipo="Estudiante" data-sexo="Masculino" data-dui="04567890-1" data-telefono="7222-2222" data-email="jorge.r@ejemplo.com" data-fecha="2002-09-20" data-direccion="Barrio El Centro" data-estado="Activo">
-                            <td>4</td>
-                            <td>Jorge Ramírez</td>
-                            <td>Estudiante</td>
-                            <td>21</td>
-                            <td>Masculino</td>
-                            <td>04567890-1</td>
-                            <td>7222-2222</td>
-                            <td>jorge.r@ejemplo.com</td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                                <%
-                                    if ("ADMIN".equals(rol)) {
-                                %>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                                <%
-                                    }
-                                %>
-                            </td>
-                        </tr>
-
-                        <tr data-nombre="Ana Gómez" data-tipo="Docente" data-sexo="Femenino" data-dui="05678901-2" data-telefono="7111-1111" data-email="ana.gomez@ejemplo.edu" data-fecha="1978-02-28" data-direccion="Res. Las Flores" data-estado="Activo">
-                            <td>5</td>
-                            <td>Ana Gómez</td>
-                            <td>Docente</td>
-                            <td>47</td>
-                            <td>Femenino</td>
-                            <td>05678901-2</td>
-                            <td>7111-1111</td>
-                            <td>ana.gomez@ejemplo.edu</td>
-                            <td><span class="badge bg-success">Activo</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                                <%
-                                    if ("ADMIN".equals(rol)) {
-                                %>
-                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                                <%
-                                    }
-                                %>
-                            </td>
-                        </tr>
-
+                        <c:if test="${empty listaUsuarios}">
+                            <tr>
+                                <td colspan="10" class="text-center text-muted">No se encontraron usuarios registrados.</td>
+                            </tr>
+                        </c:if>
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pie: paginación / export (visual) -->
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Mostrando 1-5 de 5 usuarios</small>
-                <div>
-                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="exportarCSV()">Exportar CSV</button>
-                    <nav aria-label="Paginación">
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item disabled"><a class="page-link">Anterior</a></li>
-                            <li class="page-item active"><a class="page-link">1</a></li>
-                            <li class="page-item disabled"><a class="page-link">Siguiente</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
         </div>
     </div>
+</div>
+</div>
 
 </main>
 
@@ -335,11 +252,77 @@
 
 <%@ include file="components/footer.jsp" %>
 <script>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <c:if test="${not empty mensajeExito}">
-        mostrarAlertaExito("${mensajeExito}");
+    mostrarAlertaExito("${mensajeExito}");
     </c:if>
     <c:if test="${not empty mensajeError}">
-        mostrarAlertaError("${mensajeError}");
+    mostrarAlertaError("${mensajeError}");
     </c:if>
+</script>
+<script>
+    // Espera a que la página esté completamente cargada
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modalEl = document.getElementById('usuarioModal');
+        const modalForm = document.getElementById('usuarioForm');
+        const modalTitle = document.getElementById('usuarioModalLabel');
+
+        // 1. Escucha los clics en CUALQUIER botón de "Editar"
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                // Encuentra la fila (<tr>) más cercana al botón
+                const row = this.closest('tr');
+                // Lee todos los "data-*" attributes de esa fila
+                const data = row.dataset;
+
+                // --- Rellena el formulario ---
+                modalTitle.innerText = 'Editar Usuario'; // Cambia el título
+
+                // Rellena el ID oculto
+                modalForm.querySelector('#usuarioId').value = data.id;
+
+                // Rellena los campos de texto
+                modalForm.querySelector('#nombre').value = data.nombre;
+                modalForm.querySelector('#fechaNacimiento').value = data.fecha;
+                modalForm.querySelector('#direccion').value = data.direccion;
+                modalForm.querySelector('#dui').value = data.dui;
+                modalForm.querySelector('#telefono').value = data.telefono;
+                modalForm.querySelector('#email').value = data.email;
+
+                // Rellena los <select>
+                modalForm.querySelector('#sexo').value = data.sexo;
+                modalForm.querySelector('#tipoUsuario').value = data.tipo;
+                modalForm.querySelector('#rolUsuario').value = data.rolId; // Usamos el data-rol-id
+
+                // Rellena el switch "Activo"
+                modalForm.querySelector('#activo').checked = (data.estado === 'Activo');
+
+                // --- Lógica de Contraseña para Editar ---
+                // Hacemos que la contraseña sea opcional al editar
+                modalForm.querySelector('#password').required = false;
+                modalForm.querySelector('#passwordConfirm').required = false;
+                modalForm.querySelector('#password').placeholder = "Dejar en blanco para no cambiar";
+                modalForm.querySelector('#passwordConfirm').placeholder = "Dejar en blanco para no cambiar";
+            });
+        });
+
+        // 2. Escucha el clic en el botón "Nuevo Usuario"
+        document.getElementById('btnNuevo').addEventListener('click', function () {
+
+            // --- Limpia el formulario ---
+            modalTitle.innerText = 'Nuevo Usuario'; // Restaura el título
+            modalForm.reset(); // Limpia todos los inputs
+            modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
+            modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
+
+            // --- Lógica de Contraseña para Nuevo ---
+            // Hacemos que la contraseña sea obligatoria
+            modalForm.querySelector('#password').required = true;
+            modalForm.querySelector('#passwordConfirm').required = true;
+            modalForm.querySelector('#password').placeholder = "";
+            modalForm.querySelector('#passwordConfirm').placeholder = "";
+        });
+
+    });
 </script>

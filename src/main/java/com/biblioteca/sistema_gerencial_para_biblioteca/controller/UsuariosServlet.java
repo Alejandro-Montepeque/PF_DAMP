@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.RequestDispatcher;
+import java.util.List;
 
 @WebServlet(name = "UsuariosServlet", urlPatterns = {"/UsuariosServlet"})
 public class UsuariosServlet extends HttpServlet {
@@ -28,7 +29,8 @@ public class UsuariosServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         try {
-            //Leer los parámetros del formulario (usando los 'name')
+            String idUsuarioStr = request.getParameter("usuarioId");
+            IUsuarioDAO dao = new UsuarioDAOImpl();
             String nombre = request.getParameter("nombre");
             String fechaStr = request.getParameter("fechaNacimiento");
             String sexo = request.getParameter("sexo");
@@ -37,46 +39,95 @@ public class UsuariosServlet extends HttpServlet {
             String telefono = request.getParameter("telefono");
             String email = request.getParameter("email");
             String tipoUsuario = request.getParameter("tipoUsuario");
-            String password = request.getParameter("password");
-            String passwordConfirm = request.getParameter("passwordConfirm");
             int idRol = Integer.parseInt(request.getParameter("rolUsuario"));
 
-            //Un checkbox marcado envía "on". Si no, envía null.
             boolean activo = request.getParameter("activo") != null;
 
             //Validación (simple)
-            if (!password.equals(passwordConfirm)) {
-                // (Aquí manejaríamos el error, pero por ahora nos saltamos esto)
-                throw new ServletException("Las contraseñas no coinciden");
-            }
-
             //Hashear la contraseña
-            String hash = PasswordUtil.hashPassword(password);
-
             //Traer el objeto Rol
             EntityManager em = JPAUtil.getEntityManager();
             Role rol = em.find(Role.class, idRol);
             em.close();
 
-            //Crear el objeto Usuario y setear todo
-            Usuario nuevoUsuario = new Usuario();
-            nuevoUsuario.setNombre(nombre);
-            nuevoUsuario.setFechaNacimiento(java.sql.Date.valueOf(fechaStr)); // Convertir String a Date
-            nuevoUsuario.setSexo(sexo);
-            nuevoUsuario.setDireccion(direccion);
-            nuevoUsuario.setDui(dui);
-            nuevoUsuario.setTelefono(telefono);
-            nuevoUsuario.setEmail(email);
-            nuevoUsuario.setTipoUsuario(tipoUsuario);
-            nuevoUsuario.setPasswordHash(hash);
-            nuevoUsuario.setIdRol(rol);
-            nuevoUsuario.setActivo(activo);
-            // Guardar en la BD
-            IUsuarioDAO dao = new UsuarioDAOImpl();
-            dao.crear(nuevoUsuario);
-            session.setAttribute("mensajeExito", "¡Usuario guardado exitosamente!");
-            // Redirigir a la página principal de usuarios
-            response.sendRedirect(request.getContextPath() + "/UsuariosServlet"); // O la URL de tu servlet principal
+            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
+                String password = request.getParameter("password");
+                String passwordConfirm = request.getParameter("passwordConfirm");
+
+                // --- Validaciones para CREAR ---
+                if (password == null || password.isEmpty() || !password.equals(passwordConfirm)) {
+                    throw new ServletException("Las contraseñas no coinciden o están vacías");
+                }
+                if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
+                    throw new ServletException("El correo ya fue registrado");
+                }
+                // (Aquí deberías validar también el DUI si es único)
+
+                String hash = PasswordUtil.hashPassword(password);
+
+                // Creamos el objeto NUEVO
+                Usuario nuevoUsuario = new Usuario();
+                nuevoUsuario.setNombre(nombre);
+                nuevoUsuario.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
+                nuevoUsuario.setSexo(sexo);
+                nuevoUsuario.setDireccion(direccion);
+                nuevoUsuario.setDui(dui);
+                nuevoUsuario.setTelefono(telefono);
+                nuevoUsuario.setEmail(email);
+                nuevoUsuario.setTipoUsuario(tipoUsuario);
+                nuevoUsuario.setIdRol(rol); // Tu método
+                nuevoUsuario.setActivo(activo);
+                nuevoUsuario.setPasswordHash(hash); // Contraseña nueva
+
+                dao.crear(nuevoUsuario);
+                session.setAttribute("mensajeExito", "¡Usuario creado exitosamente!");
+
+            } else {
+  
+                int idUsuario = Integer.parseInt(idUsuarioStr);
+                Usuario usuarioAEditar = dao.obtenerPorId(idUsuario);
+
+                if (usuarioAEditar == null) {
+                    throw new ServletException("El usuario a editar no existe.");
+                }
+
+
+                Usuario emailExistente = dao.obtenerPorEmail(email);
+                if (emailExistente != null && emailExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
+                    throw new ServletException("Ese email ya está en uso por otro usuario.");
+                }
+
+                usuarioAEditar.setNombre(nombre);
+                usuarioAEditar.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
+                usuarioAEditar.setSexo(sexo);
+                usuarioAEditar.setDireccion(direccion);
+                usuarioAEditar.setDui(dui);
+                usuarioAEditar.setTelefono(telefono);
+                usuarioAEditar.setEmail(email);
+                usuarioAEditar.setTipoUsuario(tipoUsuario);
+                usuarioAEditar.setIdRol(rol);
+                usuarioAEditar.setActivo(activo);
+
+  
+                String password = request.getParameter("password");
+                String passwordConfirm = request.getParameter("passwordConfirm");
+
+
+                if (password != null && !password.isEmpty()) {
+                    if (!password.equals(passwordConfirm)) {
+                        throw new ServletException("Las contraseñas no coinciden");
+                    }
+                    
+                    String hash = PasswordUtil.hashPassword(password);
+                    usuarioAEditar.setPasswordHash(hash);
+                }
+
+
+                dao.actualizar(usuarioAEditar);
+                session.setAttribute("mensajeExito", "¡Usuario actualizado exitosamente!");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/UsuariosServlet"); // URL 
 
         } catch (Exception e) {
             session.setAttribute("mensajeError", "Error al guardar el usuario: " + e.getMessage());
@@ -86,21 +137,6 @@ public class UsuariosServlet extends HttpServlet {
         }
     }
 
-    /*@Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        // Verificar si hay usuario logeado
-        if (session == null || session.getAttribute("usuario") == null) {
-            response.sendRedirect(request.getContextPath() + "/LoginServlet");
-            return;
-        }
-
-        // Mostrar la vista protegida
-        request.getRequestDispatcher("WEB-INF/views/usuarios.jsp").forward(request, response);
-    }
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -125,6 +161,18 @@ public class UsuariosServlet extends HttpServlet {
             session.removeAttribute("mensajeError"); // Se borra
         }
 
+        try {
+            IUsuarioDAO dao = new UsuarioDAOImpl();
+            List<Usuario> listaUsuarios = dao.obtenerTodos();
+
+            // Ponemos la lista en el request para que el JSP la pueda usar
+            request.setAttribute("listaUsuarios", listaUsuarios);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Si hay un error al cargar, envía un mensaje de error
+            request.setAttribute("mensajeError", "Error al cargar la lista de usuarios: " + e.getMessage());
+        }
         // 3. Envía al JSP (ahora el 'request' lleva el mensaje)
         request.getRequestDispatcher("WEB-INF/views/usuarios.jsp").forward(request, response);
     }

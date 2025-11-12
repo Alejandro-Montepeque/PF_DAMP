@@ -38,29 +38,77 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
     @Override
     public Usuario obtenerPorId(int idUsuario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Usuario usuario = em.find(Usuario.class, idUsuario);
+            return usuario;
 
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<Usuario> obtenerTodos() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // JPQL para seleccionar todos los objetos de la clase "Usuario"
+            String jpql = "SELECT u FROM Usuario u JOIN FETCH u.idRol";
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
 
     }
 
     @Override
-    public void actualizar(Usuario libro) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void actualizar(Usuario usuario) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(usuario);
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar el Usuario", e);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
-    public void eliminar(int idLibro) {
+    public void eliminar(int idUsuario) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public boolean isValidEmail(String email) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
+
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            query.setParameter("correo", email);
+
+            Usuario usuarioEmail = query.getSingleResult();
+            if (usuarioEmail == null) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (jakarta.persistence.NoResultException e) {
+            //  lanza una excepcion bebemos capturarla y devolver null
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
@@ -103,9 +151,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // 1. Escribes la consulta en JPQL
-            // NOTA: "Usuario" es el nombre de la *clase* Java
-            // "email" es el nombre del *atributo* en la clase
+
             String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
 
             // 2. Creas la consulta
@@ -114,13 +160,10 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
             // 3. Asignas el parámetro (evita inyección SQL)
             query.setParameter("correo", email);
 
-            // 4. Ejecutas la consulta y pides un *único resultado*
-            // Esto es lo que cambia:
             return query.getSingleResult();
 
         } catch (jakarta.persistence.NoResultException e) {
-            // 5. ¡Importante! Si no se encuentra el email, getSingleResult()
-            //    lanza una excepción. Debemos capturarla y devolver null.
+
             return null;
 
         } finally {
