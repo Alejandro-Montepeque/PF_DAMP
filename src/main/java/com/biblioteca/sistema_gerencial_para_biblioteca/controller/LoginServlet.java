@@ -29,7 +29,7 @@ public class LoginServlet extends HttpServlet {
         if (dao.validateUser(email, clave)) {
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", email);
-            sesion.setAttribute("rol", "admin");
+            sesion.setAttribute("rol", "ADMIN");
 
             // 🔁 Redirigir al servlet del dashboard (protege mejor la sesión)
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");

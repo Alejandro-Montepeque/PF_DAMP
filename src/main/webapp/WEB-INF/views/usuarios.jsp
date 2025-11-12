@@ -6,7 +6,7 @@
 
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%
-    // ---> Protege la vista: si no hay sesión, redirige al login
+    // Protege la vista: si no hay sesión, redirige al login
     if (session.getAttribute("usuario") == null) {
         response.sendRedirect(request.getContextPath() + "/LoginServlet");
         return;
@@ -29,8 +29,7 @@
         <h2 class="fw-bold text-primary mb-0"><i class="bi bi-people me-2"></i> Gestión de Usuarios</h2>
         <div>
             <!-- Botón visible solo para admins -->
-            <%
-                if ("ADMIN".equals(rol)) {
+            <% if ("ADMIN".equals(rol)) {
             %>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
                 <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
@@ -246,19 +245,19 @@
             </div>
             <div class="modal-body">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-12 col-lg-6">
                         <label class="form-label">Nombre completo</label>
                         <input type="text" id="nombre" class="form-control" required>
                         <div class="invalid-feedback">Ingrese el nombre completo.</div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                         <label class="form-label">Fecha de nacimiento</label>
                         <input type="date" id="fechaNacimiento" class="form-control" required>
                         <div class="invalid-feedback">Seleccione la fecha de nacimiento.</div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                         <label class="form-label">Sexo</label>
                         <select id="sexo" class="form-select" required>
                             <option value="">Elegir...</option>
@@ -275,21 +274,16 @@
                         <div class="invalid-feedback">Ingrese la dirección.</div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">DUI</label>
                         <input type="text" id="dui" class="form-control" placeholder="00000000-0" required>
                         <div class="invalid-feedback">Ingrese el DUI.</div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
                         <input type="text" id="telefono" class="form-control" required>
                         <div class="invalid-feedback">Ingrese el teléfono.</div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Teléfono alterno</label>
-                        <input type="text" id="telefono2" class="form-control">
                     </div>
 
                     <div class="col-md-6">
@@ -309,20 +303,7 @@
                         <div class="invalid-feedback">Seleccione el tipo de usuario.</div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Rol</label>
-                        <select id="rolUsuario" class="form-select" required>
-                            <option value="">Elegir...</option>
-                            <option>USER</option>
-                            <option>ADMIN</option>
-                        </select>
-                        <div class="invalid-feedback">Seleccione rol.</div>
-                    </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Observaciones</label>
-                        <input type="text" id="observaciones" class="form-control">
-                    </div>
 
                 </div>
             </div>
@@ -380,8 +361,8 @@
             const email = row.dataset.email ? row.dataset.email.toLowerCase() : '';
 
             const matches = (tipo === '' || tipoRow === tipo)
-                && (sexo === '' || sexoRow === sexo)
-                && (texto === '' || nombre.includes(texto) || dui.includes(texto) || email.includes(texto));
+                    && (sexo === '' || sexoRow === sexo)
+                    && (texto === '' || nombre.includes(texto) || dui.includes(texto) || email.includes(texto));
 
             row.style.display = matches ? '' : 'none';
         });
@@ -395,7 +376,8 @@
     function exportarCSV() {
         let csv = 'Nombre,Tipo,Sexo,DUI,Teléfono,Email,Estado\\n';
         Array.from(tabla.rows).forEach(row => {
-            if (row.style.display === 'none') return;
+            if (row.style.display === 'none')
+                return;
             const cols = row.cells;
             const nombre = cols[1].innerText.trim();
             const tipo = cols[2].innerText.trim();
@@ -406,7 +388,7 @@
             const estado = cols[8].innerText.trim();
             csv += `"${nombre}","${tipo}","${sexo}","${dui}","${tel}","${email}","${estado}"\\n`;
         });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -427,11 +409,8 @@
             document.getElementById('direccion').value = row.dataset.direccion || '';
             document.getElementById('dui').value = row.dataset.dui || '';
             document.getElementById('telefono').value = row.dataset.telefono || '';
-            document.getElementById('telefono2').value = '';
             document.getElementById('email').value = row.dataset.email || '';
             document.getElementById('tipoUsuario').value = row.dataset.tipo || '';
-            document.getElementById('rolUsuario').value = row.dataset.rol || '';
-            document.getElementById('observaciones').value = row.dataset.observaciones || '';
             // abrir modal (ya lo hace el data-bs-toggle cuando se cliquea el botón)
         });
     });
@@ -461,8 +440,7 @@
         const dui = document.getElementById('dui').value;
         const telefono = document.getElementById('telefono').value;
         const email = document.getElementById('email').value;
-        const rolUsuario = document.getElementById('rolUsuario').value;
-        const observaciones = document.getElementById('observaciones').value;
+
 
         const tbody = document.getElementById('tablaUsuarios').getElementsByTagName('tbody')[0];
         const nextIndex = tbody.rows.length + 1;
@@ -476,8 +454,6 @@
         tr.setAttribute('data-email', email);
         tr.setAttribute('data-fecha', fecha);
         tr.setAttribute('data-direccion', direccion);
-        tr.setAttribute('data-rol', rolUsuario);
-        tr.setAttribute('data-observaciones', observaciones);
 
         tr.innerHTML = `
             <td>${nextIndex}</td>
@@ -491,7 +467,7 @@
             <td><span class="badge bg-success">Activo</span></td>
             <td class="text-end">
                 <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                ${ "ADMIN".equals(rol) ? '<button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>' : '' }
+    ${ "ADMIN".equals(rol) ? '<button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button><button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>' : '' }
             </td>
         `;
         tbody.appendChild(tr);
@@ -499,7 +475,8 @@
         // Cerrar modal
         const modalEl = document.getElementById('usuarioModal');
         const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
+        if (modal)
+            modal.hide();
 
         return false;
     }
@@ -507,7 +484,8 @@
     // ---- Botones eliminar (visual)
     document.querySelectorAll('.btn-eliminar').forEach(btn => {
         btn.addEventListener('click', function () {
-            if (!confirm('¿Eliminar este usuario? (solo visual)')) return;
+            if (!confirm('¿Eliminar este usuario? (solo visual)'))
+                return;
             const row = this.closest('tr');
             row.remove();
         });
@@ -518,11 +496,11 @@
         btn.addEventListener('click', function () {
             const row = this.closest('tr');
             alert(
-                'Usuario: ' + row.dataset.nombre + '\\n' +
-                'Tipo: ' + row.dataset.tipo + '\\n' +
-                'DUI: ' + row.dataset.dui + '\\n' +
-                'Email: ' + row.dataset.email
-            );
+                    'Usuario: ' + row.dataset.nombre + '\\n' +
+                    'Tipo: ' + row.dataset.tipo + '\\n' +
+                    'DUI: ' + row.dataset.dui + '\\n' +
+                    'Email: ' + row.dataset.email
+                    );
         });
     });
 </script>
