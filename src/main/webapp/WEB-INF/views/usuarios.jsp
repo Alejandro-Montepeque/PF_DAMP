@@ -104,10 +104,10 @@
                                 data-email="${usuario.email}"
                                 data-fecha="${usuario.fechaNacimiento}"
                                 data-direccion="${usuario.direccion}"
-                                data-estado="${usuario.activo ? 'Activo' : 'Inactivo'}">
+                                data-estado="${usuario.activo ? 'Activo' : 'Inactivo'}"
                                 data-id="${usuario.idUsuario}"
                                 data-rol-id="${usuario.idRol.idRol}">
-                                
+
                                 <td>${loop.count}</td>
                                 <td>${usuario.nombre}</td>
                                 <td>${usuario.tipoUsuario}</td>
@@ -124,12 +124,10 @@
                                     </c:if>
                                 </td>
                                 <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-secondary me-1 btn-ver" title="Ver">Ver</button>
                                     <%
                                         if ("ADMIN".equals(rol)) {
                                     %>
                                     <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger btn-eliminar" title="Eliminar">Eliminar</button>
                                     <%
                                         }
                                     %>
@@ -166,6 +164,7 @@
             </div>
 
             <div class="modal-body">
+                <input type="hidden" id="usuarioId" name="usuarioId">
                 <div class="row g-3">
 
                     <div class="col-md-6">
@@ -277,7 +276,7 @@
                 const data = row.dataset;
 
                 // --- Rellena el formulario ---
-                modalTitle.innerText = 'Editar Usuario'; // Cambia el título
+                modalTitle.innerText = 'Editar Usuario.'; // Cambia el título
 
                 // Rellena el ID oculto
                 modalForm.querySelector('#usuarioId').value = data.id;

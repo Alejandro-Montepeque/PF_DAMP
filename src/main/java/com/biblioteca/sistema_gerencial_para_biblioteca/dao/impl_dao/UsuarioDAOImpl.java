@@ -61,7 +61,21 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         }
 
     }
+    
+    @Override
+    public List<Usuario> obtenerPorRol(int idRol) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // JPQL para seleccionar todos los objetos de la clase "Usuario"
+            String jpql = "SELECT u FROM Usuario u JOIN FETCH u.idRol r WHERE r.idRol = :idDelRol";
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+            query.setParameter("idDelRol", idRol);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
 
+    }
     @Override
     public void actualizar(Usuario usuario) {
         EntityManager em = JPAUtil.getEntityManager();

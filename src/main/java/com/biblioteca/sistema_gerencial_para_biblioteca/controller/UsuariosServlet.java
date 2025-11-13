@@ -163,7 +163,7 @@ public class UsuariosServlet extends HttpServlet {
 
         try {
             IUsuarioDAO dao = new UsuarioDAOImpl();
-            List<Usuario> listaUsuarios = dao.obtenerTodos();
+            List<Usuario> listaUsuarios = dao.obtenerPorRol(1);
 
             // Ponemos la lista en el request para que el JSP la pueda usar
             request.setAttribute("listaUsuarios", listaUsuarios);

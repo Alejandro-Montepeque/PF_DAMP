@@ -83,13 +83,9 @@ public class Usuario implements Serializable {
     @Column(name = "tipo_usuario")
     private String tipoUsuario;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "idUsuario")
-    private Lector lector;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idUsuario")
     private Bibliotecario bibliotecario;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "idUsuario")
-    private AdminBiblioteca adminBiblioteca;
-    @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "id_rol")
     private Role idRol;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario")
     private List<Prestamo> prestamoList;
@@ -198,14 +194,6 @@ public class Usuario implements Serializable {
         this.tipoUsuario = tipoUsuario;
     }
 
-    public Lector getLector() {
-        return lector;
-    }
-
-    public void setLector(Lector lector) {
-        this.lector = lector;
-    }
-
     public Bibliotecario getBibliotecario() {
         return bibliotecario;
     }
@@ -214,13 +202,6 @@ public class Usuario implements Serializable {
         this.bibliotecario = bibliotecario;
     }
 
-    public AdminBiblioteca getAdminBiblioteca() {
-        return adminBiblioteca;
-    }
-
-    public void setAdminBiblioteca(AdminBiblioteca adminBiblioteca) {
-        this.adminBiblioteca = adminBiblioteca;
-    }
 
     public Role getIdRol() {
         return idRol;
