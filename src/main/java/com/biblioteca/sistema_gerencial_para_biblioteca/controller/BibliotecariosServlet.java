@@ -45,7 +45,6 @@ public class BibliotecariosServlet extends HttpServlet {
 
             boolean activo = request.getParameter("activo") != null;
 
-            //Validación (simple)
             //Hashear la contraseña
             //Traer el objeto Rol
             EntityManager em = JPAUtil.getEntityManager();
@@ -56,18 +55,17 @@ public class BibliotecariosServlet extends HttpServlet {
                 String password = request.getParameter("password");
                 String passwordConfirm = request.getParameter("passwordConfirm");
 
-                // --- Validaciones para CREAR ---
                 if (password == null || password.isEmpty() || !password.equals(passwordConfirm)) {
                     throw new ServletException("Las contraseñas no coinciden o están vacías");
                 }
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
-                // (Aquí deberías validar también el DUI si es único)
+                // Validar DUI
 
                 String hash = PasswordUtil.hashPassword(password);
 
-                // Creamos el objeto NUEVO
+                // Creamos el objeto
                 Usuario nuevoUsuario = new Usuario();
                 nuevoUsuario.setNombre(nombre);
                 nuevoUsuario.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
@@ -144,14 +142,11 @@ public class BibliotecariosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-
-        // 1. Tu código de seguridad (está perfecto)
+        
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
-
-        // 2. ¡ESTA ES LA LÓGICA "FLASH"!
         // Mueve el mensaje de la Sesión al Request
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
@@ -168,7 +163,6 @@ public class BibliotecariosServlet extends HttpServlet {
             List<Usuario> listaUsuarios = dao.obtenerPorRol(2);
             listaUsuarios.addAll(dao.obtenerPorRol(1));
 
-            // Ponemos la lista en el request para que el JSP la pueda usar
             request.setAttribute("listaUsuarios", listaUsuarios);
 
         } catch (Exception e) {
@@ -176,7 +170,6 @@ public class BibliotecariosServlet extends HttpServlet {
             // Si hay un error al cargar, envía un mensaje de error
             request.setAttribute("mensajeError", "Error al cargar la lista de usuarios: " + e.getMessage());
         }
-        // 3. Envía al JSP (ahora el 'request' lleva el mensaje)
         request.getRequestDispatcher("WEB-INF/views/bibliotecarios.jsp").forward(request, response);
     }
 }

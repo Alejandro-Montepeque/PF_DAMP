@@ -43,7 +43,6 @@ public class UsuariosServlet extends HttpServlet {
 
             boolean activo = request.getParameter("activo") != null;
 
-            //Validación (simple)
             //Hashear la contraseña
             //Traer el objeto Rol
             EntityManager em = JPAUtil.getEntityManager();
@@ -53,12 +52,12 @@ public class UsuariosServlet extends HttpServlet {
             if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
 
 
-                if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
+                if (dao.obtenerPorEmail(email) != null) { 
                     throw new ServletException("El correo ya fue registrado");
                 }
-                // (Aquí deberías validar también el DUI si es único)
+                // Logica para validar DUI
 
-                // Creamos el objeto NUEVO
+                // Creamos el objeto 
                 Usuario nuevoUsuario = new Usuario();
                 nuevoUsuario.setNombre(nombre);
                 nuevoUsuario.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
@@ -68,9 +67,9 @@ public class UsuariosServlet extends HttpServlet {
                 nuevoUsuario.setTelefono(telefono);
                 nuevoUsuario.setEmail(email);
                 nuevoUsuario.setTipoUsuario(tipoUsuario);
-                nuevoUsuario.setIdRol(rol); // Tu método
+                nuevoUsuario.setIdRol(rol); //o
                 nuevoUsuario.setActivo(activo);
-                nuevoUsuario.setPasswordHash(null); // Contraseña nueva
+                nuevoUsuario.setPasswordHash(null);
 
                 dao.crear(nuevoUsuario);
                 session.setAttribute("mensajeExito", "¡Usuario creado exitosamente!");
@@ -122,14 +121,12 @@ public class UsuariosServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
 
-        // 1. Tu código de seguridad (está perfecto)
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 
-        // 2. ¡ESTA ES LA LÓGICA "FLASH"!
-        // Mueve el mensaje de la Sesión al Request
+        // Mueve el mensaje de la Sesion al Request
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
             session.removeAttribute("mensajeExito"); // Se borra para que no se repita
@@ -144,15 +141,13 @@ public class UsuariosServlet extends HttpServlet {
             IUsuarioDAO dao = new UsuarioDAOImpl();
             List<Usuario> listaUsuarios = dao.obtenerPorRol(3);
 
-            // Ponemos la lista en el request para que el JSP la pueda usar
             request.setAttribute("listaUsuarios", listaUsuarios);
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Si hay un error al cargar, envía un mensaje de error
             request.setAttribute("mensajeError", "Error al cargar la lista de usuarios: " + e.getMessage());
         }
-        // 3. Envía al JSP (ahora el 'request' lleva el mensaje)
+
         request.getRequestDispatcher("WEB-INF/views/usuarios.jsp").forward(request, response);
     }
 }
