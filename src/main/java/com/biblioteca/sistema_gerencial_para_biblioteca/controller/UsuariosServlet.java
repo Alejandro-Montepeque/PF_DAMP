@@ -39,7 +39,7 @@ public class UsuariosServlet extends HttpServlet {
             String telefono = request.getParameter("telefono");
             String email = request.getParameter("email");
             String tipoUsuario = request.getParameter("tipoUsuario");
-            int idRol = Integer.parseInt(request.getParameter("rolUsuario"));
+            int idRol = 3;
 
             boolean activo = request.getParameter("activo") != null;
 
@@ -51,19 +51,12 @@ public class UsuariosServlet extends HttpServlet {
             em.close();
 
             if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
-                String password = request.getParameter("password");
-                String passwordConfirm = request.getParameter("passwordConfirm");
 
-                // --- Validaciones para CREAR ---
-                if (password == null || password.isEmpty() || !password.equals(passwordConfirm)) {
-                    throw new ServletException("Las contraseñas no coinciden o están vacías");
-                }
+
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
                 // (Aquí deberías validar también el DUI si es único)
-
-                String hash = PasswordUtil.hashPassword(password);
 
                 // Creamos el objeto NUEVO
                 Usuario nuevoUsuario = new Usuario();
@@ -77,7 +70,7 @@ public class UsuariosServlet extends HttpServlet {
                 nuevoUsuario.setTipoUsuario(tipoUsuario);
                 nuevoUsuario.setIdRol(rol); // Tu método
                 nuevoUsuario.setActivo(activo);
-                nuevoUsuario.setPasswordHash(hash); // Contraseña nueva
+                nuevoUsuario.setPasswordHash(null); // Contraseña nueva
 
                 dao.crear(nuevoUsuario);
                 session.setAttribute("mensajeExito", "¡Usuario creado exitosamente!");
@@ -107,21 +100,7 @@ public class UsuariosServlet extends HttpServlet {
                 usuarioAEditar.setTipoUsuario(tipoUsuario);
                 usuarioAEditar.setIdRol(rol);
                 usuarioAEditar.setActivo(activo);
-
-  
-                String password = request.getParameter("password");
-                String passwordConfirm = request.getParameter("passwordConfirm");
-
-
-                if (password != null && !password.isEmpty()) {
-                    if (!password.equals(passwordConfirm)) {
-                        throw new ServletException("Las contraseñas no coinciden");
-                    }
-                    
-                    String hash = PasswordUtil.hashPassword(password);
-                    usuarioAEditar.setPasswordHash(hash);
-                }
-
+                usuarioAEditar.setPasswordHash(null);
 
                 dao.actualizar(usuarioAEditar);
                 session.setAttribute("mensajeExito", "¡Usuario actualizado exitosamente!");
@@ -163,7 +142,7 @@ public class UsuariosServlet extends HttpServlet {
 
         try {
             IUsuarioDAO dao = new UsuarioDAOImpl();
-            List<Usuario> listaUsuarios = dao.obtenerPorRol(1);
+            List<Usuario> listaUsuarios = dao.obtenerPorRol(3);
 
             // Ponemos la lista en el request para que el JSP la pueda usar
             request.setAttribute("listaUsuarios", listaUsuarios);

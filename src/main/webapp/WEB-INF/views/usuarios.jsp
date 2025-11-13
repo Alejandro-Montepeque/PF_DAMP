@@ -39,40 +39,50 @@
     </div>
 
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <form class="row g-2 align-items-end" id="filtrosForm" onsubmit="return false;">
-                <div class="col-sm-4">
-                    <label class="form-label small">Tipo de usuario</label>
-                    <select id="filtroTipo" class="form-select">
-                        <option value="">Todos</option>
-                        <option value="Estudiante">Estudiante</option>
-                        <option value="Docente">Docente</option>
-                        <option value="Externo">Externo</option>
-                    </select>
-                </div>
+<div class="card mb-4">
+    <div class="card-body">
+        
+        <!-- 
+          El formulario apunta al 'doGet' del UsuariosServlet.
+          Quitamos el 'onsubmit="return false;"'.
+        -->
+        <form class="row g-2 align-items-end" 
+              id="filtrosForm" 
+              method="GET" 
+              action="${pageContext.request.contextPath}/UsuariosServlet">
 
-                <div class="col-sm-3">
-                    <label class="form-label small">Sexo</label>
-                    <select id="filtroSexo" class="form-select">
-                        <option value="">Todos</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
+            <!-- Filtro 1: Elige la columna por la que buscar -->
+            <div class="col-sm-4">
+                <label class="form-label small">Filtrar por</label>
+                <select id="filtroCampo" name="filtroCampo" class="form-select">
+                    <!-- 
+                      'value' debe ser el nombre del ATRIBUTO en tu 
+                      clase modelo 'Usuario.java'
+                    -->
+                    <option value="nombre">Nombre</option>
+                    <option value="dui">DUI</option>
+                    <option value="email">Email</option>
+                </select>
+            </div>
 
-                <div class="col-sm-3">
-                    <label class="form-label small">Buscar (nombre, DUI, email)</label>
-                    <input id="filtroTexto" type="text" class="form-control" placeholder="Buscar...">
-                </div>
+            <!-- Filtro 2: El texto a buscar -->
+            <div class="col-sm-4">
+                <label class="form-label small">Valor</label>
+                <input id="filtroValor" name="filtroValor" type="text" class="form-control" placeholder="Escribe tu búsqueda...">
+            </div>
 
-                <div class="col-sm-2 d-grid">
-                    <button class="btn btn-outline-secondary" onclick="resetFiltros()">Limpiar</button>
-                </div>
-            </form>
-        </div>
+            <!-- Botón de Buscar -->
+            <div class="col-sm-2 d-grid">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+
+            <!-- Botón de Refrescar (es un link al servlet sin parámetros) -->
+            <div class="col-sm-2 d-grid">
+                <a href="${pageContext.request.contextPath}/UsuariosServlet" class="btn btn-outline-secondary">Refrescar</a>
+            </div>
+        </form>
     </div>
+</div>
 
 
     <div class="card">
@@ -105,8 +115,7 @@
                                 data-fecha="${usuario.fechaNacimiento}"
                                 data-direccion="${usuario.direccion}"
                                 data-estado="${usuario.activo ? 'Activo' : 'Inactivo'}"
-                                data-id="${usuario.idUsuario}"
-                                data-rol-id="${usuario.idRol.idRol}">
+                                data-id="${usuario.idUsuario}">
 
                                 <td>${loop.count}</td>
                                 <td>${usuario.nombre}</td>
@@ -212,25 +221,6 @@
                             <option>Externo</option>
                         </select>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" id="password" name="password" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Confirmar Contraseña</label>
-                        <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Rol</label>
-                        <select id="rolUsuario" name="rolUsuario" class="form-select" required>
-                            <option value="">Elegir...</option>
-                            <option value="1">ADMIN</option>
-                            <option value="2">BIBLIOTECARIO</option>
-                            <option value="3">LECTOR</option>
-                        </select>
-                    </div>
                     <div class="col-md-6 d-flex align-items-center">
                         <div class="form-check form-switch mt-3">
                             <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
@@ -292,17 +282,11 @@
                 // Rellena los <select>
                 modalForm.querySelector('#sexo').value = data.sexo;
                 modalForm.querySelector('#tipoUsuario').value = data.tipo;
-                modalForm.querySelector('#rolUsuario').value = data.rolId; // Usamos el data-rol-id
+                // Usamos el data-rol-id
 
                 // Rellena el switch "Activo"
                 modalForm.querySelector('#activo').checked = (data.estado === 'Activo');
 
-                // --- Lógica de Contraseña para Editar ---
-                // Hacemos que la contraseña sea opcional al editar
-                modalForm.querySelector('#password').required = false;
-                modalForm.querySelector('#passwordConfirm').required = false;
-                modalForm.querySelector('#password').placeholder = "Dejar en blanco para no cambiar";
-                modalForm.querySelector('#passwordConfirm').placeholder = "Dejar en blanco para no cambiar";
             });
         });
 
@@ -315,12 +299,7 @@
             modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
             modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
 
-            // --- Lógica de Contraseña para Nuevo ---
-            // Hacemos que la contraseña sea obligatoria
-            modalForm.querySelector('#password').required = true;
-            modalForm.querySelector('#passwordConfirm').required = true;
-            modalForm.querySelector('#password').placeholder = "";
-            modalForm.querySelector('#passwordConfirm').placeholder = "";
+
         });
 
     });
