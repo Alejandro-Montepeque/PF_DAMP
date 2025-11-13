@@ -28,9 +28,9 @@
         <h2 class="fw-bold text-primary mb-0"><i class="bi bi-person-workspace me-2"></i> Gestión de Bibliotecarios</h2>
         <div>
             <% if ("ADMIN".equals(rol)) { %>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal" id="btnNuevo">
-                    <i class="bi bi-person-plus me-1"></i> Nuevo Bibliotecario
-                </button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal" id="btnNuevo">
+                <i class="bi bi-person-plus me-1"></i> Nuevo Bibliotecario
+            </button>
             <% } %>
         </div>
     </div>
@@ -100,8 +100,8 @@
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
                                 <% if ("ADMIN".equals(rol)) { %>
-                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
+                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
                                 <% } %>
                             </td>
                         </tr>
@@ -117,8 +117,8 @@
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
                                 <% if ("ADMIN".equals(rol)) { %>
-                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
+                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
                                 <% } %>
                             </td>
                         </tr>
@@ -134,9 +134,9 @@
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
                                 <% if ("ADMIN".equals(rol)) { %>
-                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                                <% } %>
+                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
+                                <% }%>
                             </td>
                         </tr>
                     </tbody>
@@ -159,60 +159,80 @@
 
 </main>
 
-<!-- Modal: Agregar / Editar Bibliotecario -->
-<div class="modal fade" id="bibliotecarioModal" tabindex="-1" aria-labelledby="bibliotecarioModalLabel" aria-hidden="true">
+<!-- Modal: Agregar / Editar Usuario -->
+<div class="modal fade" id="bibliotecarioModal" tabindex="-1" aria-labelledby="usuarioModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="bibliotecarioForm" class="modal-content needs-validation" novalidate onsubmit="return guardarBibliotecario(event);">
+        <form id="usuarioForm" class="modal-content needs-validation" novalidate onsubmit="return guardarUsuario(event);">
             <div class="modal-header">
-                <h5 class="modal-title" id="bibliotecarioModalLabel">Nuevo Bibliotecario</h5>
+                <h5 class="modal-title" id="usuarioModalLabel">Nuevo Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-12 col-lg-6">
                         <label class="form-label">Nombre completo</label>
                         <input type="text" id="nombre" class="form-control" required>
                         <div class="invalid-feedback">Ingrese el nombre completo.</div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Correo institucional</label>
-                        <input type="email" id="email" class="form-control" required>
-                        <div class="invalid-feedback">Ingrese un correo válido.</div>
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <label class="form-label">Fecha de nacimiento</label>
+                        <input type="date" id="fechaNacimiento" class="form-control" required>
+                        <div class="invalid-feedback">Seleccione la fecha de nacimiento.</div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                        <label class="form-label">Sexo</label>
+                        <select id="sexo" class="form-select" required>
+                            <option value="">Elegir...</option>
+                            <option>Masculino</option>
+                            <option>Femenino</option>
+                            <option>Otro</option>
+                        </select>
+                        <div class="invalid-feedback">Seleccione el sexo.</div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Dirección completa</label>
+                        <input type="text" id="direccion" class="form-control" required>
+                        <div class="invalid-feedback">Ingrese la dirección.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">DUI</label>
+                        <input type="text" id="dui" class="form-control" placeholder="00000000-0" required>
+                        <div class="invalid-feedback">Ingrese el DUI.</div>
+                    </div>
+
+                    <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
                         <input type="text" id="telefono" class="form-control" required>
                         <div class="invalid-feedback">Ingrese el teléfono.</div>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Cargo</label>
-                        <select id="cargo" class="form-select" required>
-                            <option value="">Elegir...</option>
-                            <option>Auxiliar</option>
-                            <option>Encargado</option>
-                            <option>Administrador</option>
-                        </select>
-                        <div class="invalid-feedback">Seleccione el cargo.</div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" required>
+                        <div class="invalid-feedback">Ingrese un email válido.</div>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Turno</label>
-                        <select id="turno" class="form-select" required>
+                    <div class="col-md-6">
+                        <label class="form-label">Rol</label>
+                        <select id="rolUsuario" class="form-select" required>
                             <option value="">Elegir...</option>
-                            <option>Mañana</option>
-                            <option>Tarde</option>
-                            <option>Noche</option>
+                            <option>Bibliotecario</option>
+                            <option>ADMIN</option>
                         </select>
-                        <div class="invalid-feedback">Seleccione el turno.</div>
+                        <div class="invalid-feedback">Seleccione rol.</div>
                     </div>
 
-                    <div class="col-12">
-                        <label class="form-label">Observaciones</label>
-                        <input type="text" id="observaciones" class="form-control">
+                    <div class="col-md-6">
+                        <label for="inputPassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="inputPassword" required="">
+                        <div class="invalid-feedback">Ingrese una contraseña.</div>
                     </div>
+
                 </div>
             </div>
 
@@ -223,7 +243,6 @@
         </form>
     </div>
 </div>
-
 <%@ include file="components/footer.jsp" %>
 
 <!-- Script de manejo visual -->
@@ -269,9 +288,9 @@
             const email = row.dataset.email.toLowerCase();
 
             const matches =
-                (turno === '' || turnoRow === turno) &&
-                (cargo === '' || cargoRow === cargo) &&
-                (texto === '' || nombre.includes(texto) || email.includes(texto));
+                    (turno === '' || turnoRow === turno) &&
+                    (cargo === '' || cargoRow === cargo) &&
+                    (texto === '' || nombre.includes(texto) || email.includes(texto));
 
             row.style.display = matches ? '' : 'none';
         });
@@ -285,11 +304,12 @@
     function exportarCSV() {
         let csv = 'Nombre,Cargo,Turno,Teléfono,Email,Estado\n';
         Array.from(tabla.rows).forEach(row => {
-            if (row.style.display === 'none') return;
+            if (row.style.display === 'none')
+                return;
             const cols = row.cells;
             csv += `"${cols[1].innerText}","${cols[2].innerText}","${cols[3].innerText}","${cols[4].innerText}","${cols[5].innerText}","${cols[6].innerText}"\n`;
         });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -306,104 +326,7 @@
         filaEditando = null; // modo nuevo
     });
 
-    // === Guardar (visual) ===
-    function guardarBibliotecario(e) {
-        e.preventDefault();
-        const form = document.getElementById('bibliotecarioForm');
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            return false;
-        }
 
-        const nombre = document.getElementById('nombre').value;
-        const email = document.getElementById('email').value;
-        const telefono = document.getElementById('telefono').value;
-        const cargo = document.getElementById('cargo').value;
-        const turno = document.getElementById('turno').value;
-        const obs = document.getElementById('observaciones').value;
 
-        if (filaEditando) {
-            // === Modo edición ===
-            filaEditando.dataset.nombre = nombre;
-            filaEditando.dataset.email = email;
-            filaEditando.dataset.telefono = telefono;
-            filaEditando.dataset.cargo = cargo;
-            filaEditando.dataset.turno = turno;
-            filaEditando.dataset.observaciones = obs;
-
-            const cols = filaEditando.cells;
-            cols[1].innerText = nombre;
-            cols[2].innerText = cargo;
-            cols[3].innerText = turno;
-            cols[4].innerText = telefono;
-            cols[5].innerText = email;
-        } else {
-            // === Nuevo ===
-            const next = tabla.rows.length + 1;
-            const tr = document.createElement('tr');
-            tr.dataset.nombre = nombre;
-            tr.dataset.email = email;
-            tr.dataset.telefono = telefono;
-            tr.dataset.cargo = cargo;
-            tr.dataset.turno = turno;
-            tr.dataset.estado = "Activo";
-
-            tr.innerHTML = `
-                <td>${next}</td>
-                <td>${nombre}</td>
-                <td>${cargo}</td>
-                <td>${turno}</td>
-                <td>${telefono}</td>
-                <td>${email}</td>
-                <td><span class="badge bg-success">Activo</span></td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-1 btn-ver">Ver</button>
-                    <% if ("ADMIN".equals(rol)) { %>
-                        <button class="btn btn-sm btn-outline-primary me-1 btn-editar" data-bs-toggle="modal" data-bs-target="#bibliotecarioModal">Editar</button>
-                        <button class="btn btn-sm btn-outline-danger btn-eliminar">Eliminar</button>
-                    <% } %>
-                </td>
-            `;
-            tabla.appendChild(tr);
-            inicializarBotonesFila(tr);
-        }
-
-        bootstrap.Modal.getInstance(document.getElementById('bibliotecarioModal')).hide();
-        return false;
-    }
-
-    // === Inicializa eventos para las filas nuevas ===
-    function inicializarBotonesFila(tr) {
-        tr.querySelector('.btn-ver').addEventListener('click', () => verBibliotecario(tr));
-        tr.querySelector('.btn-eliminar').addEventListener('click', () => eliminarBibliotecario(tr));
-        tr.querySelector('.btn-editar').addEventListener('click', () => editarBibliotecario(tr));
-    }
-
-    // === Eliminar (visual) ===
-    function eliminarBibliotecario(tr) {
-        if (confirm('¿Eliminar este bibliotecario? (solo visual)')) tr.remove();
-    }
-
-    // === Ver (alerta simple) ===
-    function verBibliotecario(tr) {
-        alert(`Bibliotecario: ${tr.dataset.nombre}\nCargo: ${tr.dataset.cargo}\nTurno: ${tr.dataset.turno}\nEmail: ${tr.dataset.email}`);
-    }
-
-    // === Editar (cargar datos en modal) ===
-    function editarBibliotecario(tr) {
-        filaEditando = tr;
-        document.getElementById('bibliotecarioModalLabel').innerText = 'Editar Bibliotecario';
-        document.getElementById('nombre').value = tr.dataset.nombre || '';
-        document.getElementById('email').value = tr.dataset.email || '';
-        document.getElementById('telefono').value = tr.dataset.telefono || '';
-        document.getElementById('cargo').value = tr.dataset.cargo || '';
-        document.getElementById('turno').value = tr.dataset.turno || '';
-        document.getElementById('observaciones').value = tr.dataset.observaciones || '';
-    }
-
-    // === Inicializar botones al cargar ===
-    document.querySelectorAll('#tablaBibliotecarios tbody tr').forEach(tr => {
-        inicializarBotonesFila(tr);
-    });
 </script>
 

@@ -103,5 +103,5 @@ public class Genero implements Serializable {
     public String toString() {
         return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero[ idGenero=" + idGenero + " ]";
     }
-    
+
 }
