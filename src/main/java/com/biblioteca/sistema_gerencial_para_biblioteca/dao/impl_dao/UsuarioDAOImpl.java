@@ -131,21 +131,15 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             String jpql = "SELECT u FROM Usuario u WHERE u.dui = :dui";
-
             TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
-
             query.setParameter("dui", dui);
 
-            Usuario usuarioDui = query.getSingleResult();
-            if (usuarioDui == null) {
-                return true;
-            } else {
-                return false;
-            }
+            query.getSingleResult();
+            return false;
 
         } catch (jakarta.persistence.NoResultException e) {
-            //  lanza una excepcion bebemos capturarla y devolver null
-            return false;
+            return true;
+
         } finally {
             em.close();
         }

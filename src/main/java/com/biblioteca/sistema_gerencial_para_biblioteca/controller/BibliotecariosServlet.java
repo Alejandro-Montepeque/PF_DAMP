@@ -61,9 +61,10 @@ public class BibliotecariosServlet extends HttpServlet {
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
-                if (!dao.isValidDUI(dui))
+                if (dao.isValidDUI(dui))
                 {
-                throw new ServletException("El DUI ya fue registrado");
+                } else {
+                    throw new ServletException("El DUI ya fue registrado add");
                 }
 
                 String hash = PasswordUtil.hashPassword(password);
