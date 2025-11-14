@@ -12,6 +12,7 @@
         return;
     }
     request.setAttribute("activePage", "devoluciones");
+    String rol = (String) session.getAttribute("rol");
 %>
 
 <jsp:include page="components/header.jsp" />
@@ -20,9 +21,14 @@
 <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary"><i class="bi bi-arrow-repeat me-2"></i> Gestión de Devoluciones</h2>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDevolucion">
+        <% if ("ADMIN".equals(rol)) {
+        %>
+        <button class="btn btn-success" id="btnNuevo" data-bs-toggle="modal" data-bs-target="#modalDevolucion">
             <i class="bi bi-plus-lg"></i> Registrar devolución
         </button>
+        <%
+            }
+        %>
     </div>
 
     <!-- Filtros -->
@@ -59,8 +65,9 @@
     <!-- Tabla de devoluciones -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table id="tablaDevoluciones" class="table table-striped align-middle">
-                <thead>
+            <div class="table-responsive">
+            <table id="tablaDevoluciones" class="table table-hover align-middle">
+                <thead class="table-light">
                     <tr>
                         <th>#</th>
                         <th>Usuario</th>
@@ -69,7 +76,12 @@
                         <th>Fecha devolución</th>
                         <th>Estado</th>
                         <th>Observaciones</th>
+                            <% if ("ADMIN".equals(rol)) {
+                            %>
                         <th>Acciones</th>
+                            <%
+                                }
+                            %>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,26 +93,19 @@
                         <td>2025-11-05</td>
                         <td><span class="badge bg-success">Entregado</span></td>
                         <td>Sin observaciones</td>
+                        <% if ("ADMIN".equals(rol)) {
+                        %>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary btn-editar" title="Editar"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger btn-eliminar" title="Eliminar"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalDevolucion"><i class="bi bi-pencil"></i> Editar</button>                       
                         </td>
+                        <%
+                            }
+                        %>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Carlos Pérez</td>
-                        <td>Base de Datos Avanzadas</td>
-                        <td>2025-10-20</td>
-                        <td>2025-11-04</td>
-                        <td><span class="badge bg-warning text-dark">Retrasado</span></td>
-                        <td>Devolución tardía</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary btn-editar"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger btn-eliminar"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>
@@ -155,119 +160,48 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Confirmar Eliminación -->
-<div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="bi bi-trash"></i> Confirmar eliminación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Seguro que desea eliminar esta devolución?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-// --- Buscar / Filtrar ---
-    document.getElementById("filtroForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const texto = document.getElementById("busquedaTexto").value.toLowerCase();
-        const estado = document.getElementById("filtroEstado").value;
-        const filas = document.querySelectorAll("#tablaDevoluciones tbody tr");
+    // Espera a que la página esté completamente cargada
+    document.addEventListener('DOMContentLoaded', function () {
 
-        filas.forEach(fila => {
-            const usuario = fila.cells[1].innerText.toLowerCase();
-            const libro = fila.cells[2].innerText.toLowerCase();
-            const estadoFila = fila.cells[5].innerText.trim();
+        //const modalForm = document.getElementById('usuarioForm');
+        const modalTitle = document.getElementById('modalDevolucionLabel');
+        const modalHeader = document.querySelector(".modal-header");
 
-            const coincideTexto = usuario.includes(texto) || libro.includes(texto);
-            const coincideEstado = estado === "Todos" || estado === estadoFila;
+        // 1. Escucha los clics en CUALQUIER botón de "Editar"
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function () {
 
-            fila.style.display = coincideTexto && coincideEstado ? "" : "none";
+                // Encuentra la fila (<tr>) más cercana al botón
+                //const row = this.closest('tr');
+                // Lee todos los "data-*" attributes de esa fila
+                //const data = row.dataset;
+
+                // --- Rellena el formulario ---
+                modalHeader.classList.remove("bg-success", "text-white");
+                modalHeader.classList.add("bg-warning", "text-dark");
+                modalTitle.innerHTML = "<i class='bi bi-pencil-square'></i> Editar Devolucion"; // Cambia el título
+
+
+            });
         });
-    });
 
-// --- Editar ---
-    document.querySelectorAll(".btn-editar").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const fila = this.closest("tr");
-            document.getElementById("filaEditando").value = fila.rowIndex;
-            document.getElementById("usuarioInput").value = fila.cells[1].innerText;
-            document.getElementById("libroInput").value = fila.cells[2].innerText;
-            document.getElementById("prestamoInput").value = fila.cells[3].innerText;
-            document.getElementById("devolucionInput").value = fila.cells[4].innerText;
-            document.getElementById("estadoInput").value = fila.cells[5].innerText.trim();
-            document.getElementById("observacionesInput").value = fila.cells[6].innerText;
+        // 2. Escucha el clic en el botón "Nuevo Usuario"
+        document.getElementById('btnNuevo').addEventListener('click', function () {
+            modalHeader.classList.remove("bg-warning", "text-dark");
+            modalHeader.classList.add("bg-success", "text-white");
 
-            document.getElementById("modalDevolucionLabel").innerText = "Editar Devolución";
-            new bootstrap.Modal(document.getElementById("modalDevolucion")).show();
+            // --- Limpia el formulario ---
+            modalTitle.innerHTML = "<i class='bi bi-plus-lg'></i> Registrar Devolucion"; // Restaura el título
+            //modalForm.reset(); // Limpia todos los inputs
+            //modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
+            //modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
+
+
         });
-    });
 
-// --- Guardar cambios o nueva devolución ---
-    document.getElementById("formDevolucion").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const filaIndex = document.getElementById("filaEditando").value;
-        const tabla = document.querySelector("#tablaDevoluciones tbody");
-
-        const data = {
-            usuario: document.getElementById("usuarioInput").value,
-            libro: document.getElementById("libroInput").value,
-            prestamo: document.getElementById("prestamoInput").value,
-            devolucion: document.getElementById("devolucionInput").value,
-            estado: document.getElementById("estadoInput").value,
-            observaciones: document.getElementById("observacionesInput").value
-        };
-
-        if (filaIndex) {
-            const fila = tabla.rows[filaIndex - 1];
-            fila.cells[1].innerText = data.usuario;
-            fila.cells[2].innerText = data.libro;
-            fila.cells[3].innerText = data.prestamo;
-            fila.cells[4].innerText = data.devolucion;
-            fila.cells[5].innerHTML = `<span class="badge bg-\${data.estado === 'Entregado' ? 'success' : data.estado === 'Retrasado' ? 'warning text-dark' : 'danger'}">\${data.estado}</span>`;
-            fila.cells[6].innerText = data.observaciones;
-        }
-
-        bootstrap.Modal.getInstance(document.getElementById("modalDevolucion")).hide();
-    });
-
-// --- Eliminar ---
-    let filaAEliminar = null;
-    document.querySelectorAll(".btn-eliminar").forEach(btn => {
-        btn.addEventListener("click", function () {
-            filaAEliminar = this.closest("tr");
-            new bootstrap.Modal(document.getElementById("modalEliminar")).show();
-        });
-    });
-
-    // --- Limpiar filtros ---
-    document.getElementById("btnLimpiar").addEventListener("click", function () {
-        document.getElementById("filtroEstado").value = "Todos";
-        document.getElementById("busquedaTexto").value = "";
-
-        // Mostrar todas las filas de la tabla
-        document.querySelectorAll("#tablaDevoluciones tbody tr").forEach(fila => {
-            fila.style.display = "";
-        });
-    });
-
-
-    document.getElementById("confirmarEliminar").addEventListener("click", function () {
-        if (filaAEliminar)
-            filaAEliminar.remove();
-        bootstrap.Modal.getInstance(document.getElementById("modalEliminar")).hide();
     });
 </script>
-
 <jsp:include page="components/footer.jsp" />
 
 

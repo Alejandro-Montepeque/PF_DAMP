@@ -88,7 +88,7 @@ public class UsuariosServlet extends HttpServlet {
                 if (emailExistente != null && emailExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("Ese email ya está en uso por otro usuario.");
                 }
-               Usuario duiExistente = dao.obtenerPorDui(dui);
+                Usuario duiExistente = dao.obtenerPorDui(dui);
                 if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("El DUI ya fue registrado");
                 }
@@ -141,8 +141,17 @@ public class UsuariosServlet extends HttpServlet {
         }
 
         try {
+            String campo = request.getParameter("filtroCampo");
+            String valor = request.getParameter("filtroValor");
+
             IUsuarioDAO dao = new UsuarioDAOImpl();
-            List<Usuario> listaUsuarios = dao.obtenerPorRol(3);
+            List<Usuario> listaUsuarios;
+
+            if (campo != null && valor != null && !valor.trim().isEmpty()) {
+                listaUsuarios = dao.filtrarUsuarios(campo, valor, 3);
+            } else {
+                listaUsuarios = dao.obtenerPorRol(3);
+            }
 
             request.setAttribute("listaUsuarios", listaUsuarios);
 

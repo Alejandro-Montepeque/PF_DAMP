@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,8 +62,7 @@ public class BibliotecariosServlet extends HttpServlet {
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
-                if (dao.isValidDUI(dui))
-                {
+                if (dao.isValidDUI(dui)) {
                 } else {
                     throw new ServletException("El DUI ya fue registrado add");
                 }
@@ -87,7 +87,7 @@ public class BibliotecariosServlet extends HttpServlet {
                 session.setAttribute("mensajeExito", "¡Usuario creado exitosamente!");
 
             } else {
-  
+
                 int idUsuario = Integer.parseInt(idUsuarioStr);
                 Usuario usuarioAEditar = dao.obtenerPorId(idUsuario);
 
@@ -95,12 +95,11 @@ public class BibliotecariosServlet extends HttpServlet {
                     throw new ServletException("El usuario a editar no existe.");
                 }
 
-                 
                 Usuario emailExistente = dao.obtenerPorEmail(email);
                 if (emailExistente != null && emailExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("Ese email ya está en uso por otro usuario.");
                 }
-               Usuario duiExistente = dao.obtenerPorDui(dui);
+                Usuario duiExistente = dao.obtenerPorDui(dui);
                 if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("El DUI ya fue registrado");
                 }
@@ -115,20 +114,17 @@ public class BibliotecariosServlet extends HttpServlet {
                 usuarioAEditar.setIdRol(rol);
                 usuarioAEditar.setActivo(activo);
 
-  
                 String password = request.getParameter("password");
                 String passwordConfirm = request.getParameter("passwordConfirm");
-
 
                 if (password != null && !password.isEmpty()) {
                     if (!password.equals(passwordConfirm)) {
                         throw new ServletException("Las contraseñas no coinciden");
                     }
-                    
+
                     String hash = PasswordUtil.hashPassword(password);
                     usuarioAEditar.setPasswordHash(hash);
                 }
-
 
                 dao.actualizar(usuarioAEditar);
                 session.setAttribute("mensajeExito", "¡Usuario actualizado exitosamente!");
@@ -149,7 +145,7 @@ public class BibliotecariosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        
+
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
@@ -166,9 +162,24 @@ public class BibliotecariosServlet extends HttpServlet {
         }
 
         try {
+            String campo = request.getParameter("filtroCampo");
+            String valor = request.getParameter("filtroValor");
+
             IUsuarioDAO dao = new UsuarioDAOImpl();
-            List<Usuario> listaUsuarios = dao.obtenerPorRol(2);
-            listaUsuarios.addAll(dao.obtenerPorRol(1));
+            int[] roles = {1, 2}; // los roles permitidos
+
+            List<Usuario> listaUsuarios = new ArrayList<>();
+            boolean hayFiltro = campo != null && valor != null && !valor.trim().isEmpty();
+            
+            if (hayFiltro) {
+                for (int rol : roles) {
+                    listaUsuarios.addAll(dao.filtrarUsuarios(campo, valor, rol));
+                }
+            } else {
+                for (int rol : roles) {
+                    listaUsuarios.addAll(dao.obtenerPorRol(rol));
+                }
+            }
 
             request.setAttribute("listaUsuarios", listaUsuarios);
 

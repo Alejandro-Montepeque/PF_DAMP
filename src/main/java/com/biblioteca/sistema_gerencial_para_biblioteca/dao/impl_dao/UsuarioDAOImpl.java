@@ -214,4 +214,48 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
     }
 
+    @Override
+    public List<Usuario> filtrarUsuarios(String campo, String valor, int idRol) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            // Mapeo seguro de campos permitidos (evita SQL Injection)
+            String campoJPQL;
+
+            switch (campo) {
+                case "nombre":
+                    campoJPQL = "u.nombre";
+                    break;
+                case "dui":
+                    campoJPQL = "u.dui";
+                    break;
+                case "email":
+                    campoJPQL = "u.email";
+                    break;
+                default:
+                    campoJPQL = "u.nombre"; // default
+            }
+
+            String jpql
+                    = "SELECT u FROM Usuario u "
+                    + "JOIN FETCH u.idRol r "
+                    + "WHERE r.idRol = :idRol "
+                    + "AND LOWER(" + campoJPQL + ") LIKE LOWER(:valor)";
+
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+            query.setParameter("idRol", idRol);
+            query.setParameter("valor", "%" + valor + "%");
+
+            return query.getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Usuario> filtrarUsuarios() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

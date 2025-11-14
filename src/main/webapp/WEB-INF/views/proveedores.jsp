@@ -15,6 +15,7 @@
 
     //  Activar link en sidebar
     request.setAttribute("activePage", "proveedores");
+    String rol = (String) session.getAttribute("rol");
 %>
 
 <jsp:include page="components/header.jsp" />
@@ -25,9 +26,14 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary"><i class="bi bi-building me-2"></i> Gestión de Proveedores / Editoriales / Imprentas</h2>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoProveedor">
+        <% if ("ADMIN".equals(rol)) {
+        %>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoProveedor" id="btnNuevo">
             <i class="bi bi-plus-lg"></i> Nuevo proveedor
         </button>
+        <%
+            }
+        %>
     </div>
 
     <!-- 🔍 Filtro de búsqueda -->
@@ -49,49 +55,47 @@
 
     <!-- Tabla de proveedores -->
     <div class="card shadow-sm">
-        <div class="card-body">
-            <table class="table table-striped align-middle text-center" id="tablaProveedores">
-                <thead class="table-primary">
-                    <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Contacto</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Editorial Santillana</td>
-                        <td>Editorial</td>
-                        <td>Carlos Pérez</td>
-                        <td>2222-3333</td>
-                        <td>contacto@santillana.com</td>
-                        <td>San Salvador, El Salvador</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarProveedor"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminarProveedor"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Impresos Modernos</td>
-                        <td>Imprenta</td>
-                        <td>María López</td>
-                        <td>7890-1122</td>
-                        <td>ventas@impresosmodernos.com</td>
-                        <td>Santa Ana, El Salvador</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarProveedor"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminarProveedor"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card-body ">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="tablaProveedores">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Contacto</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Dirección</th>
+                                <% if ("ADMIN".equals(rol)) {
+                                %>
+                            <th>Acciones</th>
+                                <%
+                                    }
+                                %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Editorial Santillana</td>
+                            <td>Editorial</td>
+                            <td>Carlos Pérez</td>
+                            <td>2222-3333</td>
+                            <td>contacto@santillana.com</td>
+                            <td>San Salvador, El Salvador</td>
+                            <% if ("ADMIN".equals(rol)) {
+                            %>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalNuevoProveedor"><i class="bi bi-pencil"></i> Editar</button>                           
+                            </td>
+                            <%
+                                }
+                            %>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -146,74 +150,46 @@
     </div>
 </div>
 
-<!--  Modal Editar Proveedor -->
-<div class="modal fade" id="modalEditarProveedor" tabindex="-1" aria-labelledby="modalEditarProveedorLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalEditarProveedorLabel"><i class="bi bi-pencil me-2"></i> Editar Proveedor</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" >
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tipo</label>
-                            <select class="form-select">
-                                <option selected>Editorial</option>
-                                <option>Imprenta</option>
-                                <option>Distribuidor</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Nombre de contacto</label>
-                            <input type="text" class="form-control" >
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" >
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Correo electrónico</label>
-                            <input type="email" class="form-control" >
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" >
-                        </div>
-                    </div>
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    // Espera a que la página esté completamente cargada
+    document.addEventListener('DOMContentLoaded', function () {
 
-<!--  Modal Eliminar -->
-<div class="modal fade" id="modalEliminarProveedor" tabindex="-1" aria-labelledby="modalEliminarProveedorLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalEliminarProveedorLabel"><i class="bi bi-trash me-2"></i> Eliminar Proveedor</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>¿Está seguro de que desea eliminar este proveedor?</p>
-                <strong>Editorial Santillana</strong>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger">Eliminar</button>
-            </div>
-        </div>
-    </div>
-</div>
+        //const modalForm = document.getElementById('usuarioForm');
+        const modalTitle = document.getElementById('modalNuevoProveedorLabel');
+        const modalHeader = document.querySelector(".modal-header");
 
+        // 1. Escucha los clics en CUALQUIER botón de "Editar"
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                // Encuentra la fila (<tr>) más cercana al botón
+                //const row = this.closest('tr');
+                // Lee todos los "data-*" attributes de esa fila
+                //const data = row.dataset;
+
+                // --- Rellena el formulario ---
+                modalHeader.classList.remove("bg-success", "text-white");
+                modalHeader.classList.add("bg-warning", "text-dark");
+                modalTitle.innerHTML = "<i class='bi bi-pencil-square'></i> Editar Proveedor"; // Cambia el título
+
+
+            });
+        });
+
+        // 2. Escucha el clic en el botón "Nuevo Usuario"
+        document.getElementById('btnNuevo').addEventListener('click', function () {
+            modalHeader.classList.remove("bg-warning", "text-dark");
+            modalHeader.classList.add("bg-success", "text-white");
+
+            // --- Limpia el formulario ---
+            modalTitle.innerHTML = "<i class='bi bi-plus-lg me-2'></i> Registrar Proveedor"; // Restaura el título
+            //modalForm.reset(); // Limpia todos los inputs
+            //modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
+            //modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
+
+
+        });
+
+    });
+</script>
 <jsp:include page="components/footer.jsp" />

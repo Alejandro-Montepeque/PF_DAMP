@@ -15,6 +15,7 @@
 
     // ✅ Activar link en sidebar
     request.setAttribute("activePage", "prestamos");
+    String rol = (String) session.getAttribute("rol");
 %>
 
 <jsp:include page="components/header.jsp" />
@@ -25,9 +26,14 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary"><i class="bi bi-box-arrow-in-down me-2"></i> Gestión de Préstamos</h2>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo">
+        <% if ("ADMIN".equals(rol)) {
+        %>
+        <button class="btn btn-success" id="btnNuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo">
             <i class="bi bi-plus-lg"></i> Nuevo préstamo
         </button>
+        <%
+            }
+        %>
     </div>
 
     <!-- 🔍 Filtro de búsqueda -->
@@ -50,8 +56,9 @@
     <!-- 📋 Tabla de préstamos -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <table class="table table-striped align-middle text-center" id="tablaPrestamos">
-                <thead class="table-primary">
+            <div class="table-responsive">
+            <table class="table table-hover align-middle" id="tablaPrestamos">
+                <thead class="table-light">
                     <tr>
                         <th>#</th>
                         <th>Usuario</th>
@@ -59,7 +66,12 @@
                         <th>Fecha de préstamo</th>
                         <th>Fecha de devolución</th>
                         <th>Estado</th>
+                            <% if ("ADMIN".equals(rol)) {
+                            %>
                         <th>Acciones</th>
+                            <%
+                                }
+                            %>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,25 +82,19 @@
                         <td>2025-11-01</td>
                         <td>2025-11-08</td>
                         <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                        <% if ("ADMIN".equals(rol)) {
+                        %>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminarPrestamo"><i class="bi bi-trash"></i></button>
+                             <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo"><i class="bi bi-pencil"></i> Editar</button>                                                   
                         </td>
+                        <%
+                            }
+                        %>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Ana Gómez</td>
-                        <td>Cien años de soledad</td>
-                        <td>2025-10-25</td>
-                        <td>2025-11-05</td>
-                        <td><span class="badge bg-success">Devuelto</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalEliminarPrestamo"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>
@@ -139,77 +145,47 @@
     </div>
 </div>
 
-<!-- 📝 Modal Editar Préstamo -->
-<div class="modal fade" id="modalEditarPrestamo" tabindex="-1" aria-labelledby="modalEditarPrestamoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalEditarPrestamoLabel"><i class="bi bi-pencil me-2"></i> Editar Préstamo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Usuario</label>
-                            <select class="form-select">
-                                <option selected>Juan Pérez</option>
-                                <option>Ana Gómez</option>
-                                <option>Marcos Díaz</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Libro</label>
-                            <select class="form-select">
-                                <option selected>El Principito</option>
-                                <option>Cien años de soledad</option>
-                                <option>La Odisea</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Fecha de préstamo</label>
-                            <input type="date" class="form-control" value="2025-11-01">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Fecha de devolución</label>
-                            <input type="date" class="form-control" value="2025-11-08">
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Estado</label>
-                            <select class="form-select">
-                                <option>Pendiente</option>
-                                <option selected>Devuelto</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- ❌ Modal Eliminar -->
-<div class="modal fade" id="modalEliminarPrestamo" tabindex="-1" aria-labelledby="modalEliminarPrestamoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalEliminarPrestamoLabel"><i class="bi bi-trash me-2"></i> Eliminar Préstamo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>¿Está seguro de que desea eliminar este préstamo?</p>
-                <strong>Juan Pérez - El Principito</strong>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger">Eliminar</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    // Espera a que la página esté completamente cargada
+    document.addEventListener('DOMContentLoaded', function () {
 
+        //const modalForm = document.getElementById('usuarioForm');
+        const modalTitle = document.getElementById('modalNuevoPrestamoLabel');
+        const modalHeader = document.querySelector(".modal-header");
+
+        // 1. Escucha los clics en CUALQUIER botón de "Editar"
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                // Encuentra la fila (<tr>) más cercana al botón
+                //const row = this.closest('tr');
+                // Lee todos los "data-*" attributes de esa fila
+                //const data = row.dataset;
+
+                // --- Rellena el formulario ---
+                modalHeader.classList.remove("bg-success", "text-white");
+                modalHeader.classList.add("bg-warning", "text-dark");
+                modalTitle.innerHTML = "<i class='bi bi-pencil-square'></i> Editar préstamo"; // Cambia el título
+
+
+            });
+        });
+
+        // 2. Escucha el clic en el botón "Nuevo Usuario"
+        document.getElementById('btnNuevo').addEventListener('click', function () {
+            modalHeader.classList.remove("bg-warning", "text-dark");
+            modalHeader.classList.add("bg-success", "text-white");
+
+            // --- Limpia el formulario ---
+            modalTitle.innerHTML = "<i class='bi bi-plus-lg'></i> Nuevo préstamo"; // Restaura el título
+            //modalForm.reset(); // Limpia todos los inputs
+            //modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
+            //modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
+
+
+        });
+
+    });
+</script>
 <jsp:include page="components/footer.jsp" />

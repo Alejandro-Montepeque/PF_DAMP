@@ -29,7 +29,7 @@
         <div>
             <%                if ("ADMIN".equals(rol)) {
             %>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
                 <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
             </button>
             <%
@@ -39,39 +39,38 @@
     </div>
 
 
-<div class="card mb-4">
-    <div class="card-body">
+    <div class="card mb-4">
+        <div class="card-body">
 
-        <form class="row g-2 align-items-end" 
-              id="filtrosForm" 
-              method="GET" 
-              action="${pageContext.request.contextPath}/UsuariosServlet">
+            <form class="row g-2 align-items-end" 
+                  id="filtrosForm" 
+                  method="GET" 
+                  action="${pageContext.request.contextPath}/UsuariosServlet">
 
-            <div class="col-sm-4">
-                <label class="form-label small">Filtrar por</label>
-                <select id="filtroCampo" name="filtroCampo" class="form-select">
-                    
-                    <option value="nombre">Nombre</option>
-                    <option value="dui">DUI</option>
-                    <option value="email">Email</option>
-                </select>
-            </div>
+                <div class="col-sm-4">
+                    <label class="form-label small">Filtrar por</label>
+                    <select id="filtroCampo" name="filtroCampo" class="form-select">
+                        <option value="nombre">Nombre</option>
+                        <option value="dui">DUI</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
 
-            <div class="col-sm-4">
-                <label class="form-label small">Valor</label>
-                <input id="filtroValor" name="filtroValor" type="text" class="form-control" placeholder="Escribe tu búsqueda...">
-            </div>
+                <div class="col-sm-4">
+                    <label class="form-label small">Valor</label>
+                    <input id="filtroValor" name="filtroValor" type="text" class="form-control" placeholder="Escribe tu búsqueda...">
+                </div>
 
-            <div class="col-sm-2 d-grid">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-            </div>
+                <div class="col-sm-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
 
-            <div class="col-sm-2 d-grid">
-                <a href="${pageContext.request.contextPath}/UsuariosServlet" class="btn btn-outline-secondary">Refrescar</a>
-            </div>
-        </form>
+                <div class="col-sm-2 d-grid">
+                    <a href="${pageContext.request.contextPath}/UsuariosServlet" class="btn btn-outline-secondary">Refrescar</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
 
     <div class="card">
@@ -125,7 +124,7 @@
                                     <%
                                         if ("ADMIN".equals(rol)) {
                                     %>
-                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">Editar</button>
+                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="bi bi-pencil"></i> Editar</button>
                                     <%
                                         }
                                     %>
@@ -244,7 +243,7 @@
         const modalEl = document.getElementById('usuarioModal');
         const modalForm = document.getElementById('usuarioForm');
         const modalTitle = document.getElementById('usuarioModalLabel');
-
+        const modalHeader = document.querySelector(".modal-header");
         // 1. Escucha los clics en CUALQUIER botón de "Editar"
         document.querySelectorAll('.btn-editar').forEach(btn => {
             btn.addEventListener('click', function () {
@@ -255,7 +254,9 @@
                 const data = row.dataset;
 
                 // --- Rellena el formulario ---
-                modalTitle.innerText = 'Editar Usuario.'; // Cambia el título
+                modalHeader.classList.remove("bg-success", "text-white");
+                modalHeader.classList.add("bg-warning", "text-dark");
+                modalTitle.innerHTML = "<i class='bi bi-pencil-square'></i> Editar Usuario."; // Cambia el título
 
                 // Rellena el ID oculto
                 modalForm.querySelector('#usuarioId').value = data.id;
@@ -281,15 +282,19 @@
 
         // 2. Escucha el clic en el botón "Nuevo Usuario"
         document.getElementById('btnNuevo').addEventListener('click', function () {
+            modalHeader.classList.remove("bg-warning", "text-dark");
+            modalHeader.classList.add("bg-success", "text-white");
+
 
             // --- Limpia el formulario ---
-            modalTitle.innerText = 'Nuevo Usuario'; // Restaura el título
+            modalTitle.innerHTML = "<i class='bi bi-person-plus me-1'></i> Nuevo Usuario"; // Restaura el título
             modalForm.reset(); // Limpia todos los inputs
             modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
             modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
 
 
         });
+
 
     });
 </script>

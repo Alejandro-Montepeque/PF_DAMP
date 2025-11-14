@@ -29,31 +29,48 @@
                 font-family: "Poppins", sans-serif;
             }
 
+            /* ===== Sidebar (Escritorio y Móvil) ===== */
             .sidebar {
-                height: 100vh;
                 background-color: #212529;
                 color: #fff;
+            }
+
+            /* Sidebar en escritorio */
+            .sidebar.d-md-block {
+                height: 100vh;
                 padding-top: 1rem;
             }
 
+            /* Sidebar móvil (offcanvas) */
+            .sidebar.offcanvas {
+                width: 260px; /* tamaño adecuado */
+                padding-top: 1rem;
+            }
+
+            /* Enlaces del menú */
             .sidebar a {
                 color: #adb5bd;
                 display: block;
                 padding: 0.75rem 1rem;
                 text-decoration: none;
+                transition: background-color 0.2s ease, color 0.2s ease;
             }
 
-            .sidebar a.active, .sidebar a:hover {
+            /* Hover + Active */
+            .sidebar a.active,
+            .sidebar a:hover {
                 background-color: #0d6efd;
-                color: #fff;
+                color: #fff !important;
                 border-radius: 0.5rem;
             }
 
+            /* Navbar */
             .navbar {
                 background-color: #ffffff;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
 
+            /* Footer */
             footer {
                 background-color: #fff;
                 padding: 1rem;
@@ -67,17 +84,26 @@
     <body class="bg-light">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-white px-3 border-bottom shadow-sm">
-            <div class="container-fluid">
+            <div class="container-fluid d-flex align-items-center">
+
+                <!-- 🔵 Botón menú móvil (a la izquierda, estilo estándar) -->
+                <button class="btn btn-primary d-md-none me-2"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebarMobile">
+                    <i class="bi bi-list"></i>
+                </button>
 
                 <!-- 🏛️ Título del sistema -->
-                <a class="navbar-brand fw-bold text-primary" href="${pageContext.request.contextPath}/DashboardServlet">
+                <a class="navbar-brand fw-bold text-primary" 
+                   href="${pageContext.request.contextPath}/DashboardServlet">
                     <i class="bi bi-book-half me-2"></i> Biblioteca
                 </a>
 
                 <!-- 🔔 Parte derecha -->
-                <div class="d-flex align-items-center ms-auto">
+                <div class="ms-auto d-flex align-items-center">
 
-                    <!-- 👤 Nombre del usuario logeado -->
+                    <!-- 👤 Nombre del usuario -->
                     <%
                         String usuario = (String) session.getAttribute("usuario");
                         if (usuario != null) {
@@ -89,13 +115,15 @@
                         }
                     %>
 
-                    <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn btn-outline-danger btn-sm">
+                    <!-- 🔴 Logout -->
+                    <a href="${pageContext.request.contextPath}/LogoutServlet" 
+                       class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-box-arrow-right"></i> Salir
                     </a>
-
                 </div>
             </div>
         </nav>
+
 
         <div class="container-fluid">
             <div class="row">
