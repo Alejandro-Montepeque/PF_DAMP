@@ -57,43 +57,43 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
-            <table class="table table-hover align-middle" id="tablaPrestamos">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Usuario</th>
-                        <th>Libro</th>
-                        <th>Fecha de préstamo</th>
-                        <th>Fecha de devolución</th>
-                        <th>Estado</th>
+                <table class="table table-hover align-middle" id="tablaPrestamos">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Libro</th>
+                            <th>Fecha de préstamo</th>
+                            <th>Fecha de devolución</th>
+                            <th>Estado</th>
+                                <% if ("ADMIN".equals(rol)) {
+                                %>
+                            <th>Acciones</th>
+                                <%
+                                    }
+                                %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Juan Pérez</td>
+                            <td>El Principito</td>
+                            <td>2025-11-01</td>
+                            <td>2025-11-08</td>
+                            <td><span class="badge bg-warning text-dark">Pendiente</span></td>
                             <% if ("ADMIN".equals(rol)) {
                             %>
-                        <th>Acciones</th>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo"><i class="bi bi-pencil"></i> Editar</button>                                                   
+                            </td>
                             <%
                                 }
                             %>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Juan Pérez</td>
-                        <td>El Principito</td>
-                        <td>2025-11-01</td>
-                        <td>2025-11-08</td>
-                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                        <% if ("ADMIN".equals(rol)) {
-                        %>
-                        <td>
-                             <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo"><i class="bi bi-pencil"></i> Editar</button>                                                   
-                        </td>
-                        <%
-                            }
-                        %>
-                    </tr>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -66,45 +66,45 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
-            <table id="tablaDevoluciones" class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Usuario</th>
-                        <th>Libro</th>
-                        <th>Fecha préstamo</th>
-                        <th>Fecha devolución</th>
-                        <th>Estado</th>
-                        <th>Observaciones</th>
+                <table id="tablaDevoluciones" class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Libro</th>
+                            <th>Fecha préstamo</th>
+                            <th>Fecha devolución</th>
+                            <th>Estado</th>
+                            <th>Observaciones</th>
+                                <% if ("ADMIN".equals(rol)) {
+                                %>
+                            <th>Acciones</th>
+                                <%
+                                    }
+                                %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Ana López</td>
+                            <td>Introducción a Java</td>
+                            <td>2025-10-25</td>
+                            <td>2025-11-05</td>
+                            <td><span class="badge bg-success">Entregado</span></td>
+                            <td>Sin observaciones</td>
                             <% if ("ADMIN".equals(rol)) {
                             %>
-                        <th>Acciones</th>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalDevolucion"><i class="bi bi-pencil"></i> Editar</button>                       
+                            </td>
                             <%
                                 }
                             %>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Ana López</td>
-                        <td>Introducción a Java</td>
-                        <td>2025-10-25</td>
-                        <td>2025-11-05</td>
-                        <td><span class="badge bg-success">Entregado</span></td>
-                        <td>Sin observaciones</td>
-                        <% if ("ADMIN".equals(rol)) {
-                        %>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalDevolucion"><i class="bi bi-pencil"></i> Editar</button>                       
-                        </td>
-                        <%
-                            }
-                        %>
-                    </tr>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
