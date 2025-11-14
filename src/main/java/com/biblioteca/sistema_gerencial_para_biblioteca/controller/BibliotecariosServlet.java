@@ -61,7 +61,10 @@ public class BibliotecariosServlet extends HttpServlet {
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
-                // Validar DUI
+                if (!dao.isValidDUI(dui))
+                {
+                throw new ServletException("El DUI ya fue registrado");
+                }
 
                 String hash = PasswordUtil.hashPassword(password);
 
@@ -91,12 +94,15 @@ public class BibliotecariosServlet extends HttpServlet {
                     throw new ServletException("El usuario a editar no existe.");
                 }
 
-
+                 
                 Usuario emailExistente = dao.obtenerPorEmail(email);
                 if (emailExistente != null && emailExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("Ese email ya está en uso por otro usuario.");
                 }
-
+               Usuario duiExistente = dao.obtenerPorDui(dui);
+                if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
+                    throw new ServletException("El DUI ya fue registrado");
+                }
                 usuarioAEditar.setNombre(nombre);
                 usuarioAEditar.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
                 usuarioAEditar.setSexo(sexo);

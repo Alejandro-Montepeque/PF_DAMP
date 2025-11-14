@@ -26,4 +26,5 @@ public interface IUsuarioDAO {
     
     boolean validateUser(String email, String password);
     
+    Usuario obtenerPorDui(String DUI);
 }

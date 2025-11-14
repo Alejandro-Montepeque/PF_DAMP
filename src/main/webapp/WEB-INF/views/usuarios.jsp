@@ -41,42 +41,31 @@
 
 <div class="card mb-4">
     <div class="card-body">
-        
-        <!-- 
-          El formulario apunta al 'doGet' del UsuariosServlet.
-          Quitamos el 'onsubmit="return false;"'.
-        -->
+
         <form class="row g-2 align-items-end" 
               id="filtrosForm" 
               method="GET" 
               action="${pageContext.request.contextPath}/UsuariosServlet">
 
-            <!-- Filtro 1: Elige la columna por la que buscar -->
             <div class="col-sm-4">
                 <label class="form-label small">Filtrar por</label>
                 <select id="filtroCampo" name="filtroCampo" class="form-select">
-                    <!-- 
-                      'value' debe ser el nombre del ATRIBUTO en tu 
-                      clase modelo 'Usuario.java'
-                    -->
+                    
                     <option value="nombre">Nombre</option>
                     <option value="dui">DUI</option>
                     <option value="email">Email</option>
                 </select>
             </div>
 
-            <!-- Filtro 2: El texto a buscar -->
             <div class="col-sm-4">
                 <label class="form-label small">Valor</label>
                 <input id="filtroValor" name="filtroValor" type="text" class="form-control" placeholder="Escribe tu búsqueda...">
             </div>
 
-            <!-- Botón de Buscar -->
             <div class="col-sm-2 d-grid">
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </div>
 
-            <!-- Botón de Refrescar (es un link al servlet sin parámetros) -->
             <div class="col-sm-2 d-grid">
                 <a href="${pageContext.request.contextPath}/UsuariosServlet" class="btn btn-outline-secondary">Refrescar</a>
             </div>

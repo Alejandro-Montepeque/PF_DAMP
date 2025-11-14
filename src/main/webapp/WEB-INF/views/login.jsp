@@ -57,7 +57,7 @@
             <!-- Formulario de Login -->
             <form action="${pageContext.request.contextPath}/LoginServlet" method="post">
                 <div class="mb-3">
-                    <label for="usuario" class="form-label">Usuario</label>
+                    <label for="usuario" class="form-label">Email</label>
                     <input type="text" class="form-control" id="email" name="email" placeholder="Ingrese su email" required>
                 </div>
                 <div class="mb-3">

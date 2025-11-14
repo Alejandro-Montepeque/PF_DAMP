@@ -25,23 +25,29 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            
+
         UsuarioDAOImpl daoUsuario = new UsuarioDAOImpl();
         String email = request.getParameter("email");
         String clave = request.getParameter("clave");
         Usuario usuarioLoged = daoUsuario.obtenerPorEmail(email);
-        Role rol = usuarioLoged.getIdRol();
-        if (daoUsuario.validateUser(email, clave)) {
-            HttpSession sesion = request.getSession();
-            sesion.setAttribute("usuario", usuarioLoged.getNombre());
-            sesion.setAttribute("rol", rol.getNombre());
-            // Redirigir al servlet del dashboard 
-            response.sendRedirect(request.getContextPath() + "/DashboardServlet");
-
-        } else {
-            request.setAttribute("error", "Usuario o contraseña incorrectos");
+        if (usuarioLoged == null) {
+            request.setAttribute("error", "El email ingresado no existe.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
-            dispatcher.forward(request, response);
+              dispatcher.forward(request, response);
+        } else {
+            Role rol = usuarioLoged.getIdRol();
+            if (daoUsuario.validateUser(email, clave)) {
+                HttpSession sesion = request.getSession();
+                sesion.setAttribute("usuario", usuarioLoged.getNombre());
+                sesion.setAttribute("rol", rol.getNombre());
+                // Redirigir al servlet del dashboard 
+                response.sendRedirect(request.getContextPath() + "/DashboardServlet");
+
+            } else {
+                request.setAttribute("error", "Usuario o contraseña incorrectos");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
+                dispatcher.forward(request, response);
+            }
         }
 
     }
@@ -53,10 +59,10 @@ public class LoginServlet extends HttpServlet {
         HttpSession sesion = request.getSession(false); // false = no crear una nueva si no existe
 
         if (sesion != null && sesion.getAttribute("usuario") != null) {
-            // 🟢 Ya hay una sesión activa → redirigimos al dashboard
+
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");
         } else {
-            // 🔴 No hay sesión → mostramos el login normalmente
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
             dispatcher.forward(request, response);
         }

@@ -51,11 +51,12 @@ public class UsuariosServlet extends HttpServlet {
 
             if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
 
-
-                if (dao.obtenerPorEmail(email) != null) { 
+                if (dao.obtenerPorEmail(email) != null) {
                     throw new ServletException("El correo ya fue registrado");
                 }
-                // Logica para validar DUI
+                if (!dao.isValidDUI(dui)) {
+                    throw new ServletException("El DUI ya fue registrado");
+                }
 
                 // Creamos el objeto 
                 Usuario nuevoUsuario = new Usuario();
@@ -75,7 +76,7 @@ public class UsuariosServlet extends HttpServlet {
                 session.setAttribute("mensajeExito", "¡Usuario creado exitosamente!");
 
             } else {
-  
+
                 int idUsuario = Integer.parseInt(idUsuarioStr);
                 Usuario usuarioAEditar = dao.obtenerPorId(idUsuario);
 
@@ -83,12 +84,14 @@ public class UsuariosServlet extends HttpServlet {
                     throw new ServletException("El usuario a editar no existe.");
                 }
 
-
                 Usuario emailExistente = dao.obtenerPorEmail(email);
                 if (emailExistente != null && emailExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("Ese email ya está en uso por otro usuario.");
                 }
-
+               Usuario duiExistente = dao.obtenerPorDui(dui);
+                if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
+                    throw new ServletException("El DUI ya fue registrado");
+                }
                 usuarioAEditar.setNombre(nombre);
                 usuarioAEditar.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
                 usuarioAEditar.setSexo(sexo);

@@ -61,7 +61,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         }
 
     }
-    
+
     @Override
     public List<Usuario> obtenerPorRol(int idRol) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -76,6 +76,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         }
 
     }
+
     @Override
     public void actualizar(Usuario usuario) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -127,32 +128,39 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
     @Override
     public boolean isValidDUI(String dui) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT u FROM Usuario u WHERE u.dui = :dui";
+
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            query.setParameter("dui", dui);
+
+            Usuario usuarioDui = query.getSingleResult();
+            if (usuarioDui == null) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (jakarta.persistence.NoResultException e) {
+            //  lanza una excepcion bebemos capturarla y devolver null
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public boolean validateUser(String email, String password) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // 1. Escribes la consulta en JPQL
-            // NOTA: "Usuario" es el nombre de la *clase* Java
-            // "email" es el nombre del *atributo* en la clase
             String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
-
-            // 2. Creas la consulta
             TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
-
-            // 3. Asignas el parámetro (evita inyección SQL)
             query.setParameter("correo", email);
-
-            // 4. Ejecutas la consulta y pides un *único resultado*
-            // Esto es lo que cambia:
             Usuario usuarioEmail = query.getSingleResult();
             return PasswordUtil.verifyPassword(password, usuarioEmail.getPasswordHash());
-
         } catch (jakarta.persistence.NoResultException e) {
-            // 5. ¡Importante! Si no se encuentra el email, getSingleResult()
-            //    lanza una excepción. Debemos capturarla y devolver null.
             return false;
         } finally {
             em.close();
@@ -168,10 +176,10 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
             String jpql = "SELECT u FROM Usuario u WHERE u.email = :correo";
 
-            // 2. Creas la consulta
+            // consulta
             TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
 
-            // 3. Asignas el parámetro (evita inyección SQL)
+            // (evita inyección SQL)
             query.setParameter("correo", email);
 
             return query.getSingleResult();
@@ -185,4 +193,31 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         }
 
     }
+
+    @Override
+    public Usuario obtenerPorDui(String DUI) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            String jpql = "SELECT u FROM Usuario u WHERE u.dui = :dui";
+
+            // consulta
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            // (evita inyección SQL)
+            query.setParameter("dui", DUI);
+
+            return query.getSingleResult();
+
+        } catch (jakarta.persistence.NoResultException e) {
+
+            return null;
+
+        } finally {
+            em.close();
+        }
+
+    }
+
 }
