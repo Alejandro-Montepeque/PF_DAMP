@@ -4,6 +4,7 @@
     Author     : LuisElias
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
     String usuario = (String) session.getAttribute("usuario");
     if (usuario == null) {
@@ -53,8 +54,56 @@
         </div>
     </div>
 
-    <!-- Cards de libros -->
-    <div class="row" id="contenedorLibros"></div>
+    <!-- Cards de libros -->    
+    <div class="row" id="contenedorLibros">
+        <c:forEach var="libro" items="${listaLibros}" varStatus="loop">
+            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                   
+                    <img src="${pageContext.request.contextPath}/images/${libro.imagenPortada}"
+                        class="card-img-top"
+                        alt="${libro.titulo}"
+                        style="height: 280px; object-fit: contain;"
+                     >
+
+                    <div class="card-body">
+                        <h5 class="card-title">${libro.titulo}</h5>
+                        <p class="text-muted mb-1">
+
+                        </p>
+                        <p class="small text-secondary">
+                            ${libro.idProveedor != null ? libro.idProveedor.nombre : 'Sin proveedor'}
+                            • ${libro.anioPublicacion}
+                        </p>
+                        <span class="badge ${libro.cantDisponibles > 0 ? 'bg-success' : 'bg-warning text-dark'}">
+                            ${libro.cantDisponibles > 0 ? 'Disponible' : 'En préstamo'}
+                        </span>
+                    </div>
+                    <div class="card-footer bg-white text-end">
+                    <!-- 
+                        <button class="btn btn-sm btn-outline-primary me-1" title="Ver">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        
+                        <button class="btn btn-sm btn-outline-warning me-1" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    -->   
+                        
+                        <button class="btn btn-sm btn-outline-danger" title="Eliminar" id="btnEliminarLibro" 
+                                onclick="confirmarEliminar(${libro.idLibro})">
+                                
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+
+    <c:if test="${empty listaLibros}">
+        <p>No hay libros disponibles o no se está enviando la lista.</p>
+    </c:if>
 </div>
 
 <!-- Modal Agregar/Editar Libro -->
@@ -69,13 +118,15 @@
             </div>
 
             <div class="modal-body">
-                <form id="formLibro" class="needs-validation" novalidate>
-                    <input type="hidden" id="indiceLibro">
+                <form id="formLibro" method="post" 
+                    action="${pageContext.request.contextPath}/LibrosServlet" 
+                    class="modal-content needs-validation" enctype="multipart/form-data" novalidate>
+                    <input type="hidden" id="indiceLibro" name="libroId" >
 
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Título</label>
-                            <input type="text" class="form-control" id="tituloLibro" required>
+                            <input type="text" class="form-control" id="tituloLibro" name="titulo" required>
                             <div class="invalid-feedback">Ingrese el título del libro.</div>
                         </div>
 
@@ -87,27 +138,27 @@
 
                         <div class="col-md-3">
                             <label class="form-label">Año de publicación</label>
-                            <input type="number" class="form-control" id="anioLibro" min="1500" max="2100" required>
+                            <input type="number" class="form-control" id="anioLibro" min="1500" max="2100" name="anioPublicacion" required>
                             <div class="invalid-feedback">Ingrese un año válido.</div>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Género/Categoría</label>
-                            <select class="form-select" id="generoLibro" required>
+                            <select class="form-select" id="generoLibro" name="idGenero" required>
                                 <option value="">Seleccione...</option>
-                                <option>Infantil</option>
-                                <option>Juvenil</option>
-                                <option>Universitario</option>
-                                <option>General</option>
-                                <option>Educativo</option>
-                                <option>Ficción</option>
+                                <option value="1">Terror</option>
+                                <option value="2">Infantil</option>
+                                <option value="3">Educativo</option>
+                                <option value="4">Ciencia</option>
+                                <option value="5">Tecnología</option>
+                                <option value="6">Novela</option>
                             </select>
                             <div class="invalid-feedback">Seleccione un género o categoría.</div>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Idioma</label>
-                            <select class="form-select" id="idiomaLibro" required>
+                            <select class="form-select" id="idiomaLibro" name="idioma" required>
                                 <option value="" select>Seleccione un idioma</option>
                                 <option value="Español">Español</option>
                                 <option value="Inglés">Inglés</option>
@@ -126,7 +177,7 @@
 
                         <div class="col-md-3">
                             <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="isbnLibro" required>
+                            <input type="text" class="form-control" id="isbnLibro" name="isbn" required>
                             <div class="invalid-feedback">Ingrese el número ISBN.</div>
                         </div>
 
@@ -143,13 +194,13 @@
 
                         <div class="col-md-3">
                             <label class="form-label">Páginas</label>
-                            <input type="number" class="form-control" id="paginasLibro" required min="1">
+                            <input type="number" class="form-control" id="paginasLibro" name="numPaginas" required min="1">
                             <div class="invalid-feedback">Ingrese el número de páginas.</div>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label">Copias disponibles</label>
-                            <input type="number" class="form-control" id="copiasLibro" required min="1">
+                            <input type="number" class="form-control" id="copiasLibro" name="cantDisponibles" required min="1">
                             <div class="invalid-feedback">Ingrese el número de copias disponibles.</div>
                         </div>
 
@@ -161,12 +212,24 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Nivel educativo recomendado</label>
-                            <select id="nivelLibro" class="form-select" required>
+                            <select id="nivelLibro" class="form-select" name="idNivelEducativo" required>
                                 <option value="">Seleccione...</option>
-                                <option>Infantil</option>
-                                <option>Juvenil</option>
-                                <option>Universitario</option>
-                                <option>General</option>
+                                <option value="1">Infantil</option>
+                                <option value="2">Juvenil</option>
+                                <option value="3">Universitario</option>
+                                <option value="4">General</option>
+                            </select>
+                            <div class="invalid-feedback">Seleccione el nivel educativo.</div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Proveedores</label>
+                            <select id="nivelLibro" class="form-select" name="idProveedor" required>
+                                <option value="">Seleccione...</option>
+                                <option>Proveedor 1</option>
+                                <option>Proveedor 2</option>
+                                <option>Proveedor 3</option>
+                                <option>Proveedor 4</option>
                             </select>
                             <div class="invalid-feedback">Seleccione el nivel educativo.</div>
                         </div>
@@ -182,12 +245,12 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Fecha disponible (si está en préstamo)</label>
-                            <input type="date" class="form-control" id="fechaDisponibleLibro">
+                            <input type="date" class="form-control" id="fechaDisponibleLibro" name="fechaAdquisicion">
                         </div>
 
                         <div class="mb-3">
                             <label for="formFile" class="form-label">Imagen de portada</label>
-                            <input class="form-control" type="file" id="imgPortada" accept=".jpg, .jpeg, .png">
+                            <input class="form-control" type="file" id="imgPortada" accept=".jpg, .jpeg, .png" name="imagenPortada">
                         </div>
                     </div>
 
@@ -216,7 +279,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Modal Eliminar -->
 <div class="modal fade" id="modalEliminarLibro" tabindex="-1" aria-hidden="true">
@@ -248,41 +310,8 @@
         const contenedor = document.getElementById("contenedorLibros");
 
         let indiceAEliminar = null;
-        let libros = [
-            {
-                titulo: "El Principito",
-                autor: "Antoine de Saint-Exupéry",
-                anio: 1943,
-                genero: "Infantil",
-                idioma: "Francés",
-                editorial: "Reynal & Hitchcock",
-                isbn: "978-0156012195",
-                paginas: 96,
-                copias: 3,
-                ubicacion: "A1",
-                nivel: "Infantil",
-                disponible: true,
-                fechaDisponible: "",
-                portada: "https://m.media-amazon.com/images/I/71UwSHSZRnS.jpg"
-            },
-            {
-                titulo: "Cien años de soledad",
-                autor: "Gabriel García Márquez",
-                anio: 1967,
-                genero: "Ficción",
-                idioma: "Español",
-                editorial: "Sudamericana",
-                isbn: "978-0307474728",
-                paginas: 471,
-                copias: 5,
-                ubicacion: "B2",
-                nivel: "General",
-                disponible: false,
-                fechaDisponible: "2025-11-25",
-                portada: "https://librosusa.com/wp-content/uploads/2023/05/libro.jpg"
-            }
-        ];
-
+        let libros = [];
+        
         // --- RENDERIZAR LIBROS EN CARDS ---
         function renderLibros(lista) {
             contenedor.innerHTML = "";
@@ -309,7 +338,7 @@
             });
         }
 
-        renderLibros(libros);
+        //renderLibros(libros);
 
         // --- NUEVO LIBRO ---
         btnNuevo.addEventListener("click", () => {
@@ -324,39 +353,39 @@
 
         // --- GUARDAR LIBRO (con validación Bootstrap) ---
         form.addEventListener("submit", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
+            //event.preventDefault();
+            //event.stopPropagation();
 
             if (!form.checkValidity()) {
                 form.classList.add("was-validated");
                 return;
             }
 
-            const nuevoLibro = {
-                titulo: document.getElementById("tituloLibro").value,
-                autor: document.getElementById("autorLibro").value,
-                anio: document.getElementById("anioLibro").value,
-                genero: document.getElementById("generoLibro").value,
-                idioma: document.getElementById("idiomaLibro").value,
-                editorial: document.getElementById("editorialLibro").value,
-                isbn: document.getElementById("isbnLibro").value,
-                paginas: document.getElementById("paginasLibro").value,
-                copias: document.getElementById("copiasLibro").value,
-                ubicacion: document.getElementById("ubicacionLibro").value,
-                nivel: document.getElementById("nivelLibro").value,
-                disponible: document.getElementById("disponibleLibro").value === "true",
-                fechaDisponible: document.getElementById("fechaDisponibleLibro").value,
-                portada: "https://via.placeholder.com/150x220.png?text=Sin+Portada"
-            };
+            //const nuevoLibro = {
+            //    titulo: document.getElementById("tituloLibro").value,
+            //    autor: document.getElementById("autorLibro").value,
+            //    anio: document.getElementById("anioLibro").value,
+            //    genero: document.getElementById("generoLibro").value,
+            //    idioma: document.getElementById("idiomaLibro").value,
+            //   editorial: document.getElementById("editorialLibro").value,
+            //    isbn: document.getElementById("isbnLibro").value,
+            //    paginas: document.getElementById("paginasLibro").value,
+            //    copias: document.getElementById("copiasLibro").value,
+            //    ubicacion: document.getElementById("ubicacionLibro").value,
+            //    nivel: document.getElementById("nivelLibro").value,
+            //    disponible: document.getElementById("disponibleLibro").value === "true",
+            //    fechaDisponible: document.getElementById("fechaDisponibleLibro").value,
+            //    portada: "https://via.placeholder.com/150x220.png?text=Sin+Portada"
+            //};
 
-            const indice = document.getElementById("indiceLibro").value;
-            if (indice === "") {
-                libros.push(nuevoLibro);
-            } else {
-                libros[indice] = nuevoLibro;
-            }
+            //const indice = document.getElementById("indiceLibro").value;
+            //if (indice === "") {
+            //   libros.push(nuevoLibro);
+            //} else {
+            //    libros[indice] = nuevoLibro;
+            //}
 
-            renderLibros(libros);
+            //renderLibros(libros);
             bootstrap.Modal.getInstance(document.getElementById("modalLibro")).hide();
             form.classList.remove("was-validated");
         });
@@ -423,20 +452,30 @@
         };
 
         // --- ELIMINAR LIBRO ---
-        window.confirmarEliminar = (i) => {
-            indiceAEliminar = i;
+        let idAEliminar = null;
+
+        window.confirmarEliminar = (idLibro) => {
+            idAEliminar = idLibro;
             new bootstrap.Modal(document.getElementById("modalEliminarLibro")).show();
         };
-
+        
         document.getElementById("btnConfirmarEliminar").addEventListener("click", () => {
-            if (indiceAEliminar !== null) {
-                libros.splice(indiceAEliminar, 1);
-                renderLibros(libros);
-                bootstrap.Modal.getInstance(document.getElementById("modalEliminarLibro")).hide();
+            if (idAEliminar !== null) {
+                fetch("<%= request.getContextPath() %>/LibrosServlet?id=" + idAEliminar, {
+                    method: "DELETE"
+                })
+
+                .then(r => r.text())
+                .then(() => {
+                    //libros = libros.filter(libro => libro.idLibro !== idAEliminar);
+                    //renderLibros(libros);
+
+                    bootstrap.Modal.getInstance(document.getElementById("modalEliminarLibro")).hide();
+                    window.location.reload();
+                });
             }
         });
     });
 </script>
-
 
 <jsp:include page="components/footer.jsp" />

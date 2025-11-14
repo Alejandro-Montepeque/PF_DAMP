@@ -42,7 +42,20 @@ public class LibroDAOImpl implements ILibroDAO {
 
     @Override
     public List<Libro> obtenerTodos() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            
+            // JPQL para seleccionar todos los objetos de la clase "Libro"
+            String jpql = "SELECT l FROM Libro l";
+            TypedQuery<Libro> query = em.createQuery(jpql, Libro.class);
+            List<Libro> lista = null;
+            lista = query.getResultList();
+            //System.out.println("=== DAO: Cantidad de libros encontrados: " + lista.size());
+
+            return lista;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
