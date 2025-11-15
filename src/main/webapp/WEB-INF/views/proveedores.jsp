@@ -113,31 +113,32 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" placeholder="Nombre del proveedor">
+                            <input type="text" class="form-control" placeholder="Nombre del proveedor" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tipo</label>
-                            <select class="form-select">
-                                <option selected>Editorial</option>
+                            <select class="form-select" name="tipo" required>
+                                <option value="">Elegir</option>
+                                <option value="">Editorial</option>
                                 <option>Imprenta</option>
                                 <option>Distribuidor</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Nombre de contacto</label>
-                            <input type="text" class="form-control" placeholder="Persona responsable">
+                            <input type="text" class="form-control" placeholder="Persona responsable" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" placeholder="0000-0000">
+                            <input type="text" class="form-control" placeholder="0000-0000" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Correo electrónico</label>
-                            <input type="email" class="form-control" placeholder="ejemplo@correo.com">
+                            <input type="email" class="form-control" placeholder="ejemplo@correo.com" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" placeholder="Dirección completa">
+                            <input type="text" class="form-control" placeholder="Dirección completa" required>
                         </div>
                     </div>
                     <div class="mt-4 text-end">

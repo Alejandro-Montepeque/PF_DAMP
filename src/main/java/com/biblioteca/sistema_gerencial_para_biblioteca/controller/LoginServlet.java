@@ -18,6 +18,7 @@ import jakarta.servlet.ServletException;
 import java.io.IOException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.Cookie;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -33,13 +34,26 @@ public class LoginServlet extends HttpServlet {
         if (usuarioLoged == null) {
             request.setAttribute("error", "El email ingresado no existe.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
-              dispatcher.forward(request, response);
+            dispatcher.forward(request, response);
         } else {
             Role rol = usuarioLoged.getIdRol();
             if (daoUsuario.validateUser(email, clave)) {
                 HttpSession sesion = request.getSession();
                 sesion.setAttribute("usuario", usuarioLoged.getNombre());
                 sesion.setAttribute("rol", rol.getNombre());
+
+                // Cookie de usuario
+                Cookie userCookie = new Cookie("usuario", usuarioLoged.getNombre());
+                userCookie.setMaxAge(60 * 60 * 24 * 30); // 30 días
+                userCookie.setPath("/");
+                response.addCookie(userCookie);
+
+                // Cookie del rol
+                Cookie rolCookie = new Cookie("rol", rol.getNombre());
+                rolCookie.setMaxAge(60 * 60 * 24 * 30); // 30 días
+                rolCookie.setPath("/");
+                response.addCookie(rolCookie);
+
                 // Redirigir al servlet del dashboard 
                 response.sendRedirect(request.getContextPath() + "/DashboardServlet");
 

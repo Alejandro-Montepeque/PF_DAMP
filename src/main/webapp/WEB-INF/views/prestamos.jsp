@@ -99,7 +99,7 @@
     </div>
 </div>
 
-<!-- 🧾 Modal Nuevo Préstamo -->
+<!-- Modal Nuevo Préstamo -->
 <div class="modal fade" id="modalNuevoPrestamo" tabindex="-1" aria-labelledby="modalNuevoPrestamoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -112,7 +112,8 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Usuario</label>
-                            <select class="form-select">
+                            <select class="form-select" required>
+                                <option value="">Elegir...</option>
                                 <option>Juan Pérez</option>
                                 <option>Ana Gómez</option>
                                 <option>Marcos Díaz</option>
@@ -120,7 +121,8 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Libro</label>
-                            <select class="form-select">
+                            <select class="form-select" required>
+                                <option value="">Elegir...</option>
                                 <option>El Principito</option>
                                 <option>Cien años de soledad</option>
                                 <option>La Odisea</option>
@@ -128,11 +130,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Fecha de préstamo</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Fecha de devolución</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" required>
                         </div>
                     </div>
                     <div class="mt-4 text-end">
