@@ -27,22 +27,7 @@ public class ProveedoresServlet extends HttpServlet {
             return;
         }
 
-        String accion = request.getParameter("accion");
-        if (accion == null) {
-            accion = "listar";
-        }
-
-        switch (accion) {
-            case "listar":
-                this.listarProveedores(request, response);
-                break;
-            case "eliminar":
-                this.eliminarProveedor(request, response);
-                break;
-            default:
-                this.listarProveedores(request, response);
-                break;
-        }
+        this.listarProveedores(request, response);
     }
 
     @Override
@@ -70,7 +55,6 @@ public class ProveedoresServlet extends HttpServlet {
         
         HttpSession session = request.getSession();
 
-    
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
             session.removeAttribute("mensajeExito");
@@ -79,7 +63,6 @@ public class ProveedoresServlet extends HttpServlet {
             request.setAttribute("mensajeError", session.getAttribute("mensajeError"));
             session.removeAttribute("mensajeError");
         }
-
 
         try {
             String filtroTexto = request.getParameter("filtroTexto");
@@ -99,7 +82,6 @@ public class ProveedoresServlet extends HttpServlet {
             request.setAttribute("mensajeError", "Error al cargar la lista de proveedores: " + e.getMessage());
         }
 
-
         request.getRequestDispatcher("WEB-INF/views/proveedores.jsp").forward(request, response);
     }
 
@@ -110,14 +92,15 @@ public class ProveedoresServlet extends HttpServlet {
         String idProveedorStr = request.getParameter("proveedorId");
 
         try {
-      
+  
             String nombre = request.getParameter("nombre");
             String tipo = request.getParameter("tipo");
             String telefono = request.getParameter("telefono");
             String email = request.getParameter("email");
             String direccion = request.getParameter("direccion");
 
-      
+            boolean activo = request.getParameter("activo") != null;
+
             if (idProveedorStr == null || idProveedorStr.isEmpty()) {
                 
                 Proveedore nuevoProveedor = new Proveedore();
@@ -126,10 +109,10 @@ public class ProveedoresServlet extends HttpServlet {
                 nuevoProveedor.setTelefono(telefono);
                 nuevoProveedor.setEmail(email);
                 nuevoProveedor.setDireccion(direccion);
+                nuevoProveedor.setActivo(activo);
                 
                 dao.crear(nuevoProveedor);
                 session.setAttribute("mensajeExito", "¡Proveedor creado exitosamente!");
-
 
             } else {
                 
@@ -145,6 +128,7 @@ public class ProveedoresServlet extends HttpServlet {
                 proveedorAEditar.setTelefono(telefono);
                 proveedorAEditar.setEmail(email);
                 proveedorAEditar.setDireccion(direccion);
+                proveedorAEditar.setActivo(activo); 
 
                 dao.actualizar(proveedorAEditar);
                 session.setAttribute("mensajeExito", "¡Proveedor actualizado exitosamente!");
@@ -155,28 +139,7 @@ public class ProveedoresServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-
         response.sendRedirect(request.getContextPath() + "/ProveedoresServlet");
     }
 
-    private void eliminarProveedor(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            dao.eliminar(id); 
-            session.setAttribute("mensajeExito", "Proveedor eliminado correctamente.");
-        } catch (Exception e) {
-            e.printStackTrace();
- 
-            if (e.getMessage().contains("constraint violation")) {
-                session.setAttribute("mensajeError", "Error: No se puede eliminar. Este proveedor está asignado a uno o más libros.");
-            } else {
-                session.setAttribute("mensajeError", "Error al eliminar el proveedor.");
-            }
-        }
-        
-        response.sendRedirect(request.getContextPath() + "/ProveedoresServlet");
-    }
 }
