@@ -88,7 +88,7 @@ public class LibrosServlet extends HttpServlet {
         HttpSession session = request.getSession();
         try {
             // Datos del form
-            String idLibroStr = request.getParameter("idLibro");
+            String idLibroStr = request.getParameter("libroId");
             String titulo = request.getParameter("titulo");
             String anioStr = request.getParameter("anioPublicacion");
             String idioma = request.getParameter("idioma");
@@ -96,6 +96,11 @@ public class LibrosServlet extends HttpServlet {
             String paginasStr = request.getParameter("numPaginas");
             String disponiblesStr = request.getParameter("cantDisponibles");
             String fechaStr = request.getParameter("fechaAdquisicion");
+            
+            // Para activo
+            //String activoStr = request.getParameter("activo");
+            //Boolean activo = activoStr != null ? Boolean.parseBoolean(activoStr) : true;
+            boolean activo = request.getParameter("activo") != null;
             
             // Para imagen
             Part imagenPart = request.getPart("imagenPortada");
@@ -153,7 +158,7 @@ public class LibrosServlet extends HttpServlet {
             if (idProveedorStr != null && !idProveedorStr.isEmpty()) {
                 //proveedor = em.find(Proveedore.class, Integer.parseInt(idProveedorStr));
             }
-
+            
             // Crear o actualizar
             if (idLibroStr == null || idLibroStr.isEmpty()) {
                 // Crear nuevo libro
@@ -165,6 +170,7 @@ public class LibrosServlet extends HttpServlet {
                 nuevo.setNumPaginas(numPaginas);
                 nuevo.setCantDisponibles(cantDisponibles);
                 nuevo.setFechaAdquisicion(fechaAdquisicion);
+                nuevo.setActivo(activo);
                 if (nombreImagen != null) {
                     nuevo.setImagenPortada(nombreImagen);
                 }
@@ -191,6 +197,7 @@ public class LibrosServlet extends HttpServlet {
                 libroExistente.setNumPaginas(numPaginas);
                 libroExistente.setCantDisponibles(cantDisponibles);
                 libroExistente.setFechaAdquisicion(fechaAdquisicion);
+                libroExistente.setActivo(activo);
                 //libroExistente.setImagenPortada(imagen);
                 if (nombreImagen != null) {
                     libroExistente.setImagenPortada(nombreImagen);
