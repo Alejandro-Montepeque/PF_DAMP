@@ -62,8 +62,7 @@ public class ProveedorDAOImpl implements IProveedorDAO{
                 em.getTransaction().rollback();
             }
             e.printStackTrace();
-            // NOTA: Esto puede fallar si un libro tiene este proveedor.
-            // Deberías manejar la 'ConstraintViolationException'
+
             throw new RuntimeException("Error al eliminar el proveedor", e);
         } finally {
             em.close();
@@ -84,7 +83,7 @@ public class ProveedorDAOImpl implements IProveedorDAO{
     public List<Proveedore> obtenerTodos() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String jpql = "SELECT p FROM Proveedor p";
+            String jpql = "SELECT p FROM Proveedore p";
             TypedQuery<Proveedore> query = em.createQuery(jpql, Proveedore.class);
             return query.getResultList();
         } finally {
@@ -96,7 +95,7 @@ public class ProveedorDAOImpl implements IProveedorDAO{
     public List<Proveedore> buscarPorNombreOTipo(String texto) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String jpql = "SELECT p FROM Proveedor p WHERE p.nombre LIKE :texto OR p.tipo LIKE :texto";
+            String jpql = "SELECT p FROM Proveedore p WHERE p.nombre LIKE :texto OR p.tipo LIKE :texto";
             TypedQuery<Proveedore> query = em.createQuery(jpql, Proveedore.class);
             query.setParameter("texto", "%" + texto + "%");
             return query.getResultList();

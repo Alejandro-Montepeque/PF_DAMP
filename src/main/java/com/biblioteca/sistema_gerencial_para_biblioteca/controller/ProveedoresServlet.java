@@ -64,14 +64,13 @@ public class ProveedoresServlet extends HttpServlet {
         }
     }
 
-    // --- MÉTODOS PRIVADOS DE ACCIÓN ---
 
     private void listarProveedores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         HttpSession session = request.getSession();
 
-        // 1. Lógica "Flash Attribute" para SweetAlert
+    
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
             session.removeAttribute("mensajeExito");
@@ -81,7 +80,7 @@ public class ProveedoresServlet extends HttpServlet {
             session.removeAttribute("mensajeError");
         }
 
-        // 2. Lógica de Filtros
+
         try {
             String filtroTexto = request.getParameter("filtroTexto");
             List<Proveedore> listaProveedores;
@@ -100,7 +99,7 @@ public class ProveedoresServlet extends HttpServlet {
             request.setAttribute("mensajeError", "Error al cargar la lista de proveedores: " + e.getMessage());
         }
 
-        // 3. Muestra la vista
+
         request.getRequestDispatcher("WEB-INF/views/proveedores.jsp").forward(request, response);
     }
 
@@ -111,14 +110,14 @@ public class ProveedoresServlet extends HttpServlet {
         String idProveedorStr = request.getParameter("proveedorId");
 
         try {
-            // --- 1. Leer Datos Comunes ---
+      
             String nombre = request.getParameter("nombre");
             String tipo = request.getParameter("tipo");
             String telefono = request.getParameter("telefono");
             String email = request.getParameter("email");
             String direccion = request.getParameter("direccion");
 
-            // --- 2. Lógica de CREAR (ID está vacío) ---
+      
             if (idProveedorStr == null || idProveedorStr.isEmpty()) {
                 
                 Proveedore nuevoProveedor = new Proveedore();
@@ -131,7 +130,7 @@ public class ProveedoresServlet extends HttpServlet {
                 dao.crear(nuevoProveedor);
                 session.setAttribute("mensajeExito", "¡Proveedor creado exitosamente!");
 
-            // --- 3. Lógica de ACTUALIZAR (ID existe) ---
+
             } else {
                 
                 int idProveedor = Integer.parseInt(idProveedorStr);
@@ -156,7 +155,7 @@ public class ProveedoresServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-        // 4. Redirigir de vuelta a la lista (al doGet)
+
         response.sendRedirect(request.getContextPath() + "/ProveedoresServlet");
     }
 
@@ -170,7 +169,7 @@ public class ProveedoresServlet extends HttpServlet {
             session.setAttribute("mensajeExito", "Proveedor eliminado correctamente.");
         } catch (Exception e) {
             e.printStackTrace();
-            // Captura de error de llave foránea (muy común)
+ 
             if (e.getMessage().contains("constraint violation")) {
                 session.setAttribute("mensajeError", "Error: No se puede eliminar. Este proveedor está asignado a uno o más libros.");
             } else {
