@@ -3,8 +3,105 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IProveedorDAO;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery; // Usado para consultas con tipo
+import java.util.List;
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.Proveedore;
+import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
 
+public class ProveedorDAOImpl implements IProveedorDAO{
+        @Override
+    public void crear(Proveedore proveedor) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(proveedor);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Error al crear el proveedor", e);
+        } finally {
+            em.close();
+        }
+    }
 
-public class ProveedorDAOImpl {
-    
+    @Override
+    public void actualizar(Proveedore proveedor) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(proveedor);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar el proveedor", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void eliminar(int idProveedor) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Proveedore proveedor = em.find(Proveedore.class, idProveedor);
+            if (proveedor != null) {
+                em.remove(proveedor);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            // NOTA: Esto puede fallar si un libro tiene este proveedor.
+            // Deberías manejar la 'ConstraintViolationException'
+            throw new RuntimeException("Error al eliminar el proveedor", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Proveedore obtenerPorId(int idProveedor) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Proveedore.class, idProveedor);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Proveedore> obtenerTodos() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT p FROM Proveedor p";
+            TypedQuery<Proveedore> query = em.createQuery(jpql, Proveedore.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Proveedore> buscarPorNombreOTipo(String texto) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT p FROM Proveedor p WHERE p.nombre LIKE :texto OR p.tipo LIKE :texto";
+            TypedQuery<Proveedore> query = em.createQuery(jpql, Proveedore.class);
+            query.setParameter("texto", "%" + texto + "%");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
