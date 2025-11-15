@@ -85,6 +85,9 @@ public class Libro implements Serializable {
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
     @ManyToOne
     private Proveedore idProveedor;
+    
+    @Column(name = "activo")
+    private Boolean activo;
 
     public Libro() {
     }
@@ -217,6 +220,14 @@ public class Libro implements Serializable {
 
     public void setIdProveedor(Proveedore idProveedor) {
         this.idProveedor = idProveedor;
+    }
+    
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
     @Override

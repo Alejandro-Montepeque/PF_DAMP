@@ -4,7 +4,9 @@
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao;
 
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.NivelesEducativo;
+import java.util.List;
 
 public interface INivelEducativoDAO {
-    
+    List<NivelesEducativo> obtenerTodos();
 }
