@@ -107,6 +107,9 @@ public class LibrosServlet extends HttpServlet {
             String disponiblesStr = request.getParameter("cantDisponibles");
             String fechaStr = request.getParameter("fechaAdquisicion");
             
+            String autor = request.getParameter("autor");
+            String ubicacionFisica = request.getParameter("ubicacionFisica");
+            
             // Para activo
             //String activoStr = request.getParameter("activo");
             //Boolean activo = activoStr != null ? Boolean.parseBoolean(activoStr) : true;
@@ -143,8 +146,9 @@ public class LibrosServlet extends HttpServlet {
 
             String idGeneroStr = request.getParameter("idGenero");
             String idNivelStr = request.getParameter("idNivelEducativo");
+            String idProveedorStr = request.getParameter("idProveedor");
             //String idProveedorStr = request.getParameter("idProveedor");
-            String idProveedorStr = null;
+            //String idProveedorStr = null;
           
             EntityManager em = JPAUtil.getEntityManager();
             LibroDAOImpl dao = new LibroDAOImpl();
@@ -157,7 +161,7 @@ public class LibrosServlet extends HttpServlet {
             // Entidades relacionadas
             Genero genero = null;
             NivelesEducativo nivel = null;
-            //Proveedore proveedor = null;
+            Proveedore proveedor = null;
 
             if (idGeneroStr != null && !idGeneroStr.isEmpty()) {
                 genero = em.find(Genero.class, Integer.parseInt(idGeneroStr));
@@ -166,7 +170,7 @@ public class LibrosServlet extends HttpServlet {
                 nivel = em.find(NivelesEducativo.class, Integer.parseInt(idNivelStr));
             }
             if (idProveedorStr != null && !idProveedorStr.isEmpty()) {
-                //proveedor = em.find(Proveedore.class, Integer.parseInt(idProveedorStr));
+                proveedor = em.find(Proveedore.class, Integer.parseInt(idProveedorStr));
             }
             
             // Crear o actualizar
@@ -181,13 +185,15 @@ public class LibrosServlet extends HttpServlet {
                 nuevo.setCantDisponibles(cantDisponibles);
                 nuevo.setFechaAdquisicion(fechaAdquisicion);
                 nuevo.setActivo(activo);
+                nuevo.setAutor(autor);
+                nuevo.setUbicacionFisica(ubicacionFisica);
                 if (nombreImagen != null) {
                     nuevo.setImagenPortada(nombreImagen);
                 }
                 
                 nuevo.setIdGenero(genero);
                 nuevo.setIdNivelEducativo(nivel);
-                //nuevo.setIdProveedor(proveedor);
+                nuevo.setIdProveedor(proveedor);
 
                 dao.crear(nuevo);
                 session.setAttribute("mensajeExito", "¡Libro agregado exitosamente!");
@@ -208,6 +214,8 @@ public class LibrosServlet extends HttpServlet {
                 libroExistente.setCantDisponibles(cantDisponibles);
                 libroExistente.setFechaAdquisicion(fechaAdquisicion);
                 libroExistente.setActivo(activo);
+                libroExistente.setAutor(autor);
+                libroExistente.setUbicacionFisica(ubicacionFisica);
                 //libroExistente.setImagenPortada(imagen);
                 if (nombreImagen != null) {
                     libroExistente.setImagenPortada(nombreImagen);
@@ -215,7 +223,7 @@ public class LibrosServlet extends HttpServlet {
                 
                 libroExistente.setIdGenero(genero);
                 libroExistente.setIdNivelEducativo(nivel);
-                //libroExistente.setIdProveedor(proveedor);
+                libroExistente.setIdProveedor(proveedor);
 
                 dao.actualizar(libroExistente);
                 session.setAttribute("mensajeExito", "¡Libro actualizado exitosamente!");

@@ -85,7 +85,14 @@ public class Libro implements Serializable {
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
     @ManyToOne
     private Proveedore idProveedor;
-    
+    @Size(max = 500)
+    @Column(name = "autor")
+    private String autor;
+
+    @Size(max = 200)
+    @Column(name = "ubicacion_fisica")
+    private String ubicacionFisica;
+
     @Column(name = "activo")
     private Boolean activo;
 
@@ -228,6 +235,22 @@ public class Libro implements Serializable {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+    
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public String getUbicacionFisica() {
+        return ubicacionFisica;
+    }
+
+    public void setUbicacionFisica(String ubicacionFisica) {
+        this.ubicacionFisica = ubicacionFisica;
     }
 
     @Override

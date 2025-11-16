@@ -69,6 +69,9 @@
                     data-nivel="${libro.idNivelEducativo.idNivel}"
                     data-imagen="${libro.imagenPortada}"
                     data-activo="${libro.activo ? 'Activo' : 'Inactivo'}"
+                    data-proveedor="${libro.idProveedor != null ? libro.idProveedor.idProveedor : ''}"
+                    data-autor="${libro.autor != null ? libro.autor : ''}"
+                    data-ubicacion="${libro.ubicacionFisica != null ? libro.ubicacionFisica : ''}"
                     >
                    
                     <img src="${pageContext.request.contextPath}/images/${libro.imagenPortada}"
@@ -88,14 +91,17 @@
                     </div>
                     
                     <div class="card-footer bg-white text-end">
-                        <button class="btn btn-sm btn-outline-warning me-1 btn-editar" title="Editar" 
+                        <button class="btn btn-sm btn-outline-success me-1 btn-editar" title="Editar" 
                                 data-bs-toggle="modal" data-bs-target="#modalLibro">
                             <i class="bi bi-pencil"></i>
                         </button>
+                        <!--
                         <button class="btn btn-sm btn-outline-danger" title="Eliminar"
                                 onclick="confirmarEliminar(${libro.idLibro})">
                             <i class="bi bi-trash"></i>
                         </button>
+                        -->
+                        
                     </div>
                 </div>
             </div>
@@ -136,34 +142,18 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Autor(es)</label>
-                            <input type="text" class="form-control" id="autorLibro" required>
-                            <div class="invalid-feedback">Ingrese el autor o autores.</div>
+                            <input type="text" class="form-control" id="autorLibro" name="autor" required>
+                            <div class="invalid-feedback">Ingrese el autor.</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">Año de publicación</label>
                             <input type="number" class="form-control" id="anioLibro" 
                                    min="1500" max="2100" name="anioPublicacion" required>
                             <div class="invalid-feedback">Ingrese un año válido.</div>
                         </div>
-
-                        <!-- 
-                        <div class="col-md-3">
-                            <label class="form-label">Género/Categoría</label>
-                            <select class="form-select" id="generoLibro" name="idGenero" required>
-                                <option value="">Seleccione...</option>
-                                <option value="1">Terror</option>
-                                <option value="2">Infantil</option>
-                                <option value="3">Educativo</option>
-                                <option value="4">Ciencia</option>
-                                <option value="5">Tecnología</option>
-                                <option value="6">Novela</option>
-                            </select>
-                            <div class="invalid-feedback">Seleccione un género o categoría.</div>
-                        </div>
-                        -->
                        
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">Género/Categoría</label>
                             <select class="form-select" id="generoLibro" name="idGenero" required>
                                 <option value="">Cargando géneros...</option>
@@ -171,7 +161,7 @@
                             <div class="invalid-feedback">Seleccione un género o categoría.</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">Idioma</label>
                             <select class="form-select" id="idiomaLibro" name="idioma" required>
                                 <option value="">Seleccione un idioma</option>
@@ -189,31 +179,20 @@
                             <div class="invalid-feedback">Seleccione el idioma del libro.</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">ISBN</label>
                             <input type="text" class="form-control" id="isbnLibro" name="isbn" required>
                             <div class="invalid-feedback">Ingrese el número ISBN.</div>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Editorial</label>
-                            <select id="editorialLibro" class="form-select" required>
-                                <option value="">Seleccione una editorial</option>
-                                <option>Reynal & Hitchcock</option>
-                                <option>Penguin Random House</option>
-                                <option>Editorial Planeta</option>
-                            </select>
-                            <div class="invalid-feedback">Seleccione la editorial.</div>
-                        </div>
-
-                        <div class="col-md-3">
                             <label class="form-label">Páginas</label>
                             <input type="number" class="form-control" id="paginasLibro" 
                                    name="numPaginas" required min="1">
                             <div class="invalid-feedback">Ingrese el número de páginas.</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label class="form-label">Copias disponibles</label>
                             <input type="number" class="form-control" id="copiasLibro" 
                                    name="cantDisponibles" required min="1">
@@ -222,25 +201,11 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Ubicación física</label>
-                            <input type="text" class="form-control" id="ubicacionLibro" 
+                            <input type="text" class="form-control" id="ubicacionLibro" name="ubicacionFisica" 
                                    placeholder="Ej: Estante A3" required>
                             <div class="invalid-feedback">Ingrese la ubicación física.</div>
                         </div>
 
-                        <!-- 
-                        <div class="col-md-6">
-                            <label class="form-label">Nivel educativo recomendado</label>
-                            <select id="nivelLibro" class="form-select" name="idNivelEducativo" required>
-                                <option value="">Seleccione...</option>
-                                <option value="1">Infantil</option>
-                                <option value="2">Juvenil</option>
-                                <option value="3">Universitario</option>
-                                <option value="4">General</option>
-                            </select>
-                            <div class="invalid-feedback">Seleccione el nivel educativo.</div>
-                        </div>
-                        -->
-                        
                         <div class="col-md-6">
                             <label class="form-label">Nivel educativo</label>
                             <select class="form-select" id="nivelLibro" name="idNivelEducativo" required>
@@ -248,19 +213,15 @@
                             </select>
                             <div class="invalid-feedback">Seleccione un nivel educativo.</div>
                         </div>
-
+                        
                         <div class="col-md-6">
-                            <label class="form-label">Proveedores</label>
+                            <label class="form-label">Proveedor</label>
                             <select id="proveedor" class="form-select" name="idProveedor" required>
-                                <option value="">Seleccione...</option>
-                                <option>Proveedor 1</option>
-                                <option>Proveedor 2</option>
-                                <option>Proveedor 3</option>
-                                <option>Proveedor 4</option>
+                                <option value="">Cargando proveedores...</option>
                             </select>
                             <div class="invalid-feedback">Seleccione el proveedor.</div>
                         </div>
-
+                        <!-- 
                         <div class="col-md-6">
                             <label class="form-label">Disponibilidad</label>
                             <select id="disponibleLibro" class="form-select" required>
@@ -269,6 +230,7 @@
                             </select>
                             <div class="invalid-feedback">Seleccione la disponibilidad.</div>
                         </div>
+                        -->
 
                         <div class="col-md-6">
                             <label class="form-label">Fecha de adquisición</label>
@@ -338,6 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cargar géneros al iniciar la página
     cargarGeneros();
     cargarNiveles();
+    cargarProveedores();
 
     // Función para cargar géneros desde el API
     function cargarGeneros() {
@@ -380,6 +343,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Error cargando niveles", error);
                 document.getElementById("nivelLibro").innerHTML = 
                     '<option value="">Error al cargar niveles</option>';
+            });
+    }
+    
+    function cargarProveedores() {
+        fetch(contextPath + "/api/proveedores")
+            .then(response => response.json())
+            .then(proveedores => {
+                const selectProveedor = document.getElementById("proveedor");
+                selectProveedor.innerHTML = '<option value="">Seleccione...</option>';
+
+                proveedores.forEach(proveedor => {
+                    const option = document.createElement("option");
+                    option.value = proveedor.id_proveedor;
+                    option.textContent = proveedor.nombre;
+                    selectProveedor.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error cargando proveedores:", error);
+                document.getElementById("proveedor").innerHTML = 
+                    '<option value="">Error al cargar proveedores</option>';
             });
     }
 
@@ -426,6 +410,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("nivelLibro").value = data.nivel;
             document.getElementById("generoLibro").value = data.genero;
             document.getElementById("activo").checked = (data.activo == 'Activo');
+            document.getElementById("proveedor").value = data.proveedor;
+            document.getElementById("autorLibro").value = data.autor || '';
+            document.getElementById("ubicacionLibro").value = data.ubicacion || '';
             
             // Mostrar imagen actual si existe
             if (data.imagen && data.imagen !== "null" && data.imagen !== "") {
