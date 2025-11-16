@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao;
+
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IProveedorDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery; // Usado para consultas con tipo
@@ -10,8 +11,9 @@ import java.util.List;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Proveedore;
 import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
 
-public class ProveedorDAOImpl implements IProveedorDAO{
-        @Override
+public class ProveedorDAOImpl implements IProveedorDAO {
+
+    @Override
     public void crear(Proveedore proveedor) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -102,5 +104,28 @@ public class ProveedorDAOImpl implements IProveedorDAO{
         } finally {
             em.close();
         }
+    }
+
+    @Override
+    public List<Proveedore> findActivos() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Proveedore p ORDER BY p.idProveedor", Proveedore.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Proveedore> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Proveedore p WHERE p.activo = true ORDER BY p.nombre", Proveedore.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+
     }
 }
