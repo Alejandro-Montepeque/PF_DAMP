@@ -46,6 +46,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession sesion = request.getSession();
                 sesion.setAttribute("usuario", usuarioLoged.getNombre());
                 sesion.setAttribute("rol", rol.getNombre());
+                sesion.setAttribute("id", usuarioLoged.getIdUsuario());
 
                 // Cookie de usuario
                 String nombreCodificado = URLEncoder.encode(usuarioLoged.getNombre(), "UTF-8");
@@ -60,6 +61,11 @@ public class LoginServlet extends HttpServlet {
                 rolCookie.setMaxAge(60 * 60 * 24 * 30); // 30 días
                 rolCookie.setPath("/");
                 response.addCookie(rolCookie);
+                
+                Cookie idCookie = new Cookie("id",  usuarioLoged.getIdUsuario().toString());
+                idCookie.setMaxAge(60 * 60 * 24 * 30); // 30 días
+                idCookie.setPath("/");
+                response.addCookie(idCookie);
 
                 // Redirigir al servlet del dashboard 
                 response.sendRedirect(request.getContextPath() + "/DashboardServlet");

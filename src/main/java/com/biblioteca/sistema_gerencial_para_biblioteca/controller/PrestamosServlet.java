@@ -22,7 +22,9 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.*;
 import java.util.List;
 import com.google.gson.Gson;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,20 +35,83 @@ import java.util.Map;
 @WebServlet(name = "PrestamosServlet", urlPatterns = {"/PrestamosServlet"})
 public class PrestamosServlet extends HttpServlet {
 
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
         try {
-            String idUser = request.getParameter("idUsuario");
-            String idLibro = request.getParameter("idLibro");
-            boolean activo = request.getParameter("activo") != null;
-            response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
-        } catch (Exception e) {
-            session.setAttribute("mensajeError", "Error al guardar el usuario: " + e.getMessage());
-            e.printStackTrace();
+            String idPrestamoStr = request.getParameter("idPrestamo");
+            String idUsuarioStr = request.getParameter("idUsuario");
+            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
+                throw new ServletException("Ingrese un id de usuario");
+            }
+            int idUsuario = Integer.parseInt(idUsuarioStr);
+            int idBibliotecario = Integer.parseInt(session.getAttribute("id").toString());
+            
+            String[] idLibrosArray = request.getParameterValues("idLibro");
 
-            response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
+            Date fechaPrestamo = java.sql.Date.valueOf(request.getParameter("fechaPrestamo"));
+            Date fechaEstimada = java.sql.Date.valueOf(request.getParameter("fechaEstimada"));
+            String fechaRealStr = request.getParameter("fechaReal");
+            Date fechaReal = (fechaRealStr != null && !fechaRealStr.isEmpty())
+                    ? java.sql.Date.valueOf(fechaRealStr)
+                    : null;
+
+            String estado = request.getParameter("estado");
+            String observaciones = request.getParameter("observaciones");
+
+            EntityManager em = JPAUtil.getEntityManager();
+            Usuario usuario = em.find(Usuario.class, idUsuario);
+            if (usuario == null) {
+                throw new ServletException("No se encontró usuario con ese id");
+            }
+            Bibliotecario biblio = em.find(Bibliotecario.class, idBibliotecario);
+            System.out.println("----------------------------"+biblio);
+            if (biblio == null) {
+                throw new ServletException("No se encontró bibliotecario con ese id");
+            }
+            List<Libro> librosSeleccionados = new ArrayList<>();
+            if (idLibrosArray != null) {
+                for (String idLibroStr : idLibrosArray) {
+                    Libro libro = em.find(Libro.class, Integer.parseInt(idLibroStr));
+                    librosSeleccionados.add(libro);
+                }
+            }
+            em.close();
+
+            PrestamoDAOImpl dao = new PrestamoDAOImpl();
+            Prestamo p;
+            if (idPrestamoStr == null || idPrestamoStr.isEmpty()) {
+                p = new Prestamo();
+            } else {
+                p = dao.obtenerPorId(Integer.parseInt(idPrestamoStr));
+            }
+
+            p.setIdUsuario(usuario);
+            p.setIdBibliotecario(biblio);
+            p.setFechaPrestamo(fechaPrestamo);
+            p.setFechaEntregaEstimada(fechaEstimada);
+            p.setFechaEntregaReal(fechaReal);
+            p.setObservaciones(observaciones);
+            p.setEstado(estado);
+            p.setLibroList(librosSeleccionados);
+
+            // Persistir
+            if (p.getIdPrestamo() == null) {
+                dao.crear(p);
+            } else {
+                dao.actualizar(p);
+            }
+
+            session.setAttribute("mensajeExito", "¡Préstamo guardado correctamente!");
+            response.sendRedirect(request.getContextPath() + "/PrestamosServlet"); // URL 
+
+        } catch (Exception e) {
+            session.setAttribute("mensajeError", "Error al guardar el préstamo: " + e.getMessage());
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/PrestamosServlet"); // URL 
         }
     }
 
@@ -60,7 +125,7 @@ public class PrestamosServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
-        // Mueve el mensaje de la Sesión al Request
+        // Mueve el mensaje de la Sesion al Request
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
             session.removeAttribute("mensajeExito"); // Se borra para que no se repita
@@ -108,6 +173,11 @@ public class PrestamosServlet extends HttpServlet {
             String librosJson = new Gson().toJson(librosSimple);
             request.setAttribute("librosJson", librosJson);
 
+            // PRÉSTAMOS
+            PrestamoDAOImpl daoPrestamo = new PrestamoDAOImpl();
+            List<Prestamo> listaPrestamosEntities = daoPrestamo.listar();
+
+            request.setAttribute("listaPrestamos", listaPrestamosEntities);
         } catch (Exception e) {
             e.printStackTrace();
             // Si hay un error al cargar, envía un mensaje de error

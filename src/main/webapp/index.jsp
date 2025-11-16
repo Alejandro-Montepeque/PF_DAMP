@@ -4,11 +4,13 @@
 <%
     String usuario = (String) session.getAttribute("usuario");
     String rol = (String) session.getAttribute("rol");
+    String id = (String) session.getAttribute("id");
 
-    if (usuario == null || rol == null) {
+    if (usuario == null || rol == null || id == null) {
 
         String cookieUsuario = null;
         String cookieRol = null;
+        String cookieId = null;
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -19,15 +21,18 @@
                 if ("rol".equals(c.getName())) {
                     cookieRol = URLDecoder.decode(c.getValue(), "UTF-8");     // ← También, por si acaso
                 }
+                if ("id".equals(c.getName())) {
+                    cookieId = URLDecoder.decode(c.getValue(), "UTF-8");     // ← También, por si acaso
+                }
             }
         }
 
-        //Si ambas cookies existen, reconstruimos sesión
-        if (cookieUsuario != null && cookieRol != null) {
-            HttpSession nuevaSesion = request.getSession(true);
-            nuevaSesion.setAttribute("usuario", cookieUsuario);
-            nuevaSesion.setAttribute("rol", cookieRol);
-
+        //Si las tres cookies existen, reconstruimos sesión
+        if (cookieUsuario != null && cookieRol != null && cookieId != null) {
+            session = request.getSession(true);
+            session.setAttribute("usuario", cookieUsuario);
+            session.setAttribute("rol", cookieRol);
+            session.setAttribute("id", cookieId);
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");
             return;
         }
