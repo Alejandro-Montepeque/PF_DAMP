@@ -8,5 +8,5 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.model.Genero;
 import java.util.List;
 
 public interface IGeneroDAO {
-     List<Genero> obtenerTodos();
+    List<Genero> obtenerTodos();
 }

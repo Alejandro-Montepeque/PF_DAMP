@@ -53,6 +53,9 @@ public class Proveedore implements Serializable {
     @Size(max = 100)
     @Column(name = "tipo")
     private String tipo;
+    @Basic(optional = false) // Significa que no es nulo
+    @Column(name = "activo")
+    private boolean activo;
     @OneToMany(mappedBy = "idProveedor")
     private List<Libro> libroList;
 
@@ -66,6 +69,13 @@ public class Proveedore implements Serializable {
     public Proveedore(Integer idProveedor, String nombre) {
         this.idProveedor = idProveedor;
         this.nombre = nombre;
+    }
+        public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public Integer getIdProveedor() {

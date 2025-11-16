@@ -34,8 +34,14 @@ public class LoginServlet extends HttpServlet {
         if (usuarioLoged == null) {
             request.setAttribute("error", "El email ingresado no existe.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
-            dispatcher.forward(request, response);
-        } else {
+              dispatcher.forward(request, response);
+        } else if (usuarioLoged.getActivo() == false)
+        {
+           request.setAttribute("error", "El usuario no esta habilitado");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
+              dispatcher.forward(request, response);
+        }                     
+        else {
             Role rol = usuarioLoged.getIdRol();
             if (daoUsuario.validateUser(email, clave)) {
                 HttpSession sesion = request.getSession();
