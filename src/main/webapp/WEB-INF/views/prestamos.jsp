@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
     // ✅ Verificar sesión activa
     String usuario = (String) session.getAttribute("usuario");
@@ -111,22 +112,16 @@
                 <form>
                     <div class="row g-3">
                         <div class="col-md-6">
+                            <input type="hidden" id="idUsuario" name="idUsuario">
                             <label class="form-label">Usuario</label>
-                            <select class="form-select" required>
-                                <option value="">Elegir...</option>
-                                <option>Juan Pérez</option>
-                                <option>Ana Gómez</option>
-                                <option>Marcos Díaz</option>
-                            </select>
+                            <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario por DUI, nombre, email...">
+                            <div id="resultadosUsuario" class="list-group mt-1"></div>
                         </div>
                         <div class="col-md-6">
+                            <input type="hidden" id="idLibro" name="idLibro">
                             <label class="form-label">Libro</label>
-                            <select class="form-select" required>
-                                <option value="">Elegir...</option>
-                                <option>El Principito</option>
-                                <option>Cien años de soledad</option>
-                                <option>La Odisea</option>
-                            </select>
+                            <input type="text" id="buscarLibro" class="form-control" placeholder="Buscar libro por nombre o código...">
+                            <div id="resultadosLibro" class="list-group mt-1"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Fecha de préstamo</label>
@@ -147,7 +142,6 @@
     </div>
 </div>
 
-
 <script>
     // Espera a que la página esté completamente cargada
     document.addEventListener('DOMContentLoaded', function () {
@@ -155,6 +149,55 @@
         //const modalForm = document.getElementById('usuarioForm');
         const modalTitle = document.getElementById('modalNuevoPrestamoLabel');
         const modalHeader = document.querySelector(".modal-header");
+
+
+        //  BUSCADOR DE USUARIOS
+        const usuarios = JSON.parse('${usuariosJson}');
+        console.log("Usuarios cargados:", usuarios);
+
+        const inputUsuario = document.getElementById("buscarUsuario");
+        const contenedorUsuario = document.getElementById("resultadosUsuario");
+
+        inputUsuario.addEventListener("input", () => {
+            const texto = inputUsuario.value.toLowerCase();
+
+
+            // 👉 Si el usuario borró el texto, limpiar y salir
+            if (texto.trim() === "") {
+                contenedorUsuario.innerHTML = "";
+                return;
+            }
+            const filtrados = usuarios.filter(u =>
+                u.nombre.toLowerCase().includes(texto) ||
+                        u.dui.includes(texto) ||
+                        u.email.toLowerCase().includes(texto)
+            );
+
+            contenedorUsuario.innerHTML = "";
+
+            filtrados.slice(0, 5).forEach(u => {
+                const item = document.createElement("button");
+                item.classList = "list-group-item list-group-item-action";
+                item.textContent = `\${u.nombre} (\${u.dui})`;
+
+                item.onclick = () => {
+                    inputUsuario.value = u.nombre;
+                    contenedorUsuario.innerHTML = "";
+                    document.getElementById("idUsuario").value = u.idUsuario;
+                };
+
+                contenedorUsuario.appendChild(item);
+            });
+        });
+
+
+        // =====================
+        //   BUSCADOR DE LIBROS
+        // =====================
+
+
+
+
 
         // 1. Escucha los clics en CUALQUIER botón de "Editar"
         document.querySelectorAll('.btn-editar').forEach(btn => {

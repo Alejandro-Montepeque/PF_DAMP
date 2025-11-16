@@ -258,4 +258,23 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    @Override
+    public List<Usuario> obtenerUsuariosBasicos() {
+        EntityManager em = JPAUtil.getEntityManager();
+        List<Usuario> usuarios = null;
+
+        try {
+            usuarios = em.createQuery(
+                    "SELECT NEW com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario( "
+                    + "u.idUsuario, u.nombre, u.dui, u.email) "
+                    + "FROM Usuario u WHERE u.idRol.idRol = 3",
+                    Usuario.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+
+        return usuarios;
+    }
+
 }

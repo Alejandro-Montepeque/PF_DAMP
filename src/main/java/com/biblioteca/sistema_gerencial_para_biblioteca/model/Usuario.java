@@ -104,6 +104,13 @@ public class Usuario implements Serializable {
         this.activo = activo;
     }
 
+    public Usuario(Integer idUsuario, String nombre, String dui, String email) {
+        this.idUsuario = idUsuario;
+        this.nombre = nombre;
+        this.dui = dui;
+        this.email = email;
+    }
+
     public Integer getIdUsuario() {
         return idUsuario;
     }
@@ -200,7 +207,6 @@ public class Usuario implements Serializable {
         this.bibliotecario = bibliotecario;
     }
 
-
     public Role getIdRol() {
         return idRol;
     }
@@ -241,5 +247,5 @@ public class Usuario implements Serializable {
     public String toString() {
         return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario[ idUsuario=" + idUsuario + " ]";
     }
-    
+
 }

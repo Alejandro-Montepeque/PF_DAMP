@@ -4,6 +4,7 @@
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
 
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.LibroDAOImpl;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IPrestamoDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.PrestamoDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.ILibroDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.*;
+import java.util.List;
+import com.google.gson.Gson;
 
 /**
  *
@@ -29,7 +40,35 @@ public class PrestamosServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
+        // Mueve el mensaje de la Sesión al Request
+        if (session.getAttribute("mensajeExito") != null) {
+            request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
+            session.removeAttribute("mensajeExito"); // Se borra para que no se repita
+        }
 
+        if (session.getAttribute("mensajeError") != null) {
+            request.setAttribute("mensajeError", session.getAttribute("mensajeError"));
+            session.removeAttribute("mensajeError"); // Se borra
+        }
+
+        try {
+            ILibroDAO daoLibro = new LibroDAOImpl();
+            List<Libro> listaLibros = daoLibro.obtenerTodos();
+
+            IUsuarioDAO daoUsuario = new UsuarioDAOImpl();
+
+            List<Usuario> listaUsuarios = daoUsuario.obtenerUsuariosBasicos();
+
+            Gson gson = new Gson();
+            String usuariosJson = gson.toJson(listaUsuarios);
+            request.setAttribute("usuariosJson", usuariosJson);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Si hay un error al cargar, envía un mensaje de error
+            request.setAttribute("mensajeError", "Error al cargar la lista de prestamos: " + e.getMessage());
+        }
         // Mostrar la vista protegida
         request.getRequestDispatcher("WEB-INF/views/prestamos.jsp").forward(request, response);
     }
