@@ -5,6 +5,8 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.controller;
 
 import java.io.IOException;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.LibroDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.PrestamoDAOImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,6 +30,19 @@ public class GraficosServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
+        
+        LibroDAOImpl libroDAO = new LibroDAOImpl();
+        PrestamoDAOImpl prestamoDAO = new PrestamoDAOImpl();
+        
+        int librosDisponibles = libroDAO.contarLibrosDisponibles();
+        int librosPrestados = libroDAO.contarLibrosPrestados();
+        int devolucionesATiempo = prestamoDAO.contarDevolucionesATiempo();
+        int devolucionesAtrasadas = prestamoDAO.contarDevolucionesAtrasadas();
+        
+        request.setAttribute("librosDisponibles", librosDisponibles);
+        request.setAttribute("librosPrestados", librosPrestados);
+        request.setAttribute("devolucionesATiempo", devolucionesATiempo);
+        request.setAttribute("devolucionesAtrasadas", devolucionesAtrasadas);
 
         // Mostrar la vista protegida
         request.getRequestDispatcher("WEB-INF/views/graficos.jsp").forward(request, response);

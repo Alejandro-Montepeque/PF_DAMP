@@ -18,4 +18,7 @@ public interface ILibroDAO {
     
     void eliminar(int idLibro);
     int obtenerTotal();
+    
+    int contarLibrosDisponibles();
+    int contarLibrosPrestados();
 }

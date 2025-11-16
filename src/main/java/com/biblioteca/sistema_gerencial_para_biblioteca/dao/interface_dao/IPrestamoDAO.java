@@ -6,5 +6,7 @@ package com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao;
 
 
 public interface IPrestamoDAO {
+    int contarDevolucionesATiempo();
+    int contarDevolucionesAtrasadas();
     
 }

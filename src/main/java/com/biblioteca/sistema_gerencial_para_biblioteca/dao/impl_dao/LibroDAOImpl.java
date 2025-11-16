@@ -124,4 +124,27 @@ public class LibroDAOImpl implements ILibroDAO {
         }
     }
     
+    @Override
+    public int contarLibrosDisponibles(){
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(1) FROM Libro l WHERE l.activo = true";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Override
+    public int contarLibrosPrestados() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(1) FROM Libro l WHERE l.activo = false";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
 }
