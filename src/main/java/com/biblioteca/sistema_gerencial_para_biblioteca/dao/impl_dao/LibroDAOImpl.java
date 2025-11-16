@@ -147,4 +147,20 @@ public class LibroDAOImpl implements ILibroDAO {
             em.close();
         }
     }
+    
+    @Override
+    public List<Object[]> obtenerConteoLibrosPorGenero() {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            String jpql =
+                "SELECT g.nombre, COUNT(l.idLibro) FROM Libro l JOIN l.idGenero g GROUP BY g.nombre ORDER BY COUNT(l.idLibro) DESC";
+
+            return em.createQuery(jpql, Object[].class).getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
 }

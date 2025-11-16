@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 /**
  *
  * @author LuisElias
@@ -39,10 +40,14 @@ public class GraficosServlet extends HttpServlet {
         int devolucionesATiempo = prestamoDAO.contarDevolucionesATiempo();
         int devolucionesAtrasadas = prestamoDAO.contarDevolucionesAtrasadas();
         
+        List<Object[]> conteoPorGenero = libroDAO.obtenerConteoLibrosPorGenero();
+        
         request.setAttribute("librosDisponibles", librosDisponibles);
         request.setAttribute("librosPrestados", librosPrestados);
         request.setAttribute("devolucionesATiempo", devolucionesATiempo);
         request.setAttribute("devolucionesAtrasadas", devolucionesAtrasadas);
+
+        request.setAttribute("conteoPorGenero", conteoPorGenero);
 
         // Mostrar la vista protegida
         request.getRequestDispatcher("WEB-INF/views/graficos.jsp").forward(request, response);

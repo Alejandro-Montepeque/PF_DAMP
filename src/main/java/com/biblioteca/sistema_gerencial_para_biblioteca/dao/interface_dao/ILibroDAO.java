@@ -21,4 +21,5 @@ public interface ILibroDAO {
     
     int contarLibrosDisponibles();
     int contarLibrosPrestados();
+    List<Object[]> obtenerConteoLibrosPorGenero();
 }
