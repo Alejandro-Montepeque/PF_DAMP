@@ -35,6 +35,16 @@ import java.nio.file.Paths;
 )
 public class LibrosServlet extends HttpServlet {
 
+        private String getUploadPath() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+   
+            return "C:\\storage\\img\\";
+        } else {
+       
+            return "/srv/biblioteca/storage/img/"; 
+        }
+    }
       @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -107,7 +117,7 @@ public class LibrosServlet extends HttpServlet {
             String nombreImagen = null;
            
             if (imagenPart != null && imagenPart.getSize() > 0) {
-                String rutaUpload = "C:\\storage\\img\\";
+               String rutaUpload = getUploadPath();
 
                 // Crear carpeta si no existe
                 File uploadDir = new File(rutaUpload);
