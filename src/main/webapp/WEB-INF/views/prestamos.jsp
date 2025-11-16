@@ -194,6 +194,41 @@
         // =====================
         //   BUSCADOR DE LIBROS
         // =====================
+        const libros = JSON.parse('${librosJson}');
+
+        const inputLibro = document.getElementById("buscarLibro");
+        const contenedorLibro = document.getElementById("resultadosLibro");
+
+        inputLibro.addEventListener("input", () => {
+            const texto = inputLibro.value.toLowerCase();
+
+            // 👉 Si el campo está vacío, limpiar y salir
+            if (texto.trim() === "") {
+                contenedorLibro.innerHTML = "";
+                return;
+            }
+
+            const filtrados = libros.filter(l =>
+                l.titulo.toLowerCase().includes(texto) ||
+                        (l.isbn && l.isbn.includes(texto))
+            );
+
+            contenedorLibro.innerHTML = "";
+
+            filtrados.slice(0, 5).forEach(l => {
+                const item = document.createElement("button");
+                item.classList = "list-group-item list-group-item-action";
+                item.textContent = `\${l.titulo} (ISBN: \${l.isbn ?? '---'})`;
+
+                item.onclick = () => {
+                    inputLibro.value = l.titulo;
+                    contenedorLibro.innerHTML = "";
+                    document.getElementById("idLibro").value = l.idLibro;
+                };
+
+                contenedorLibro.appendChild(item);
+            });
+        });
 
 
 

@@ -22,6 +22,9 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.*;
 import java.util.List;
 import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -52,17 +55,42 @@ public class PrestamosServlet extends HttpServlet {
         }
 
         try {
+
+            IUsuarioDAO daoUsuario = new UsuarioDAOImpl();
+            List<Usuario> listaUsuarios = daoUsuario.obtenerTodos();
+
+            List<Map<String, Object>> usuariosSimple = new ArrayList<>();
+
+            for (Usuario u : listaUsuarios) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("idUsuario", u.getIdUsuario());
+                map.put("nombre", u.getNombre());
+                map.put("dui", u.getDui());
+                map.put("email", u.getEmail());
+                usuariosSimple.add(map);
+            }
+
+            String usuariosJson = new Gson().toJson(usuariosSimple);
+            request.setAttribute("usuariosJson", usuariosJson);
+
+// ------------------------------------------------------------------
+// LIBROS
             ILibroDAO daoLibro = new LibroDAOImpl();
             List<Libro> listaLibros = daoLibro.obtenerTodos();
 
-            IUsuarioDAO daoUsuario = new UsuarioDAOImpl();
+            List<Map<String, Object>> librosSimple = new ArrayList<>();
 
-            List<Usuario> listaUsuarios = daoUsuario.obtenerUsuariosBasicos();
+            for (Libro l : listaLibros) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("idLibro", l.getIdLibro());
+                map.put("titulo", l.getTitulo());
+                map.put("isbn", l.getIsbn());
+                map.put("cantDisponibles", l.getCantDisponibles());
+                librosSimple.add(map);
+            }
 
-            Gson gson = new Gson();
-            String usuariosJson = gson.toJson(listaUsuarios);
-            request.setAttribute("usuariosJson", usuariosJson);
-
+            String librosJson = new Gson().toJson(librosSimple);
+            request.setAttribute("librosJson", librosJson);
 
         } catch (Exception e) {
             e.printStackTrace();

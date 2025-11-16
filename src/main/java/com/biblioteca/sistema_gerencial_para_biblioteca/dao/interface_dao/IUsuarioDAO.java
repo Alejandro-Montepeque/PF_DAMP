@@ -15,8 +15,6 @@ public interface IUsuarioDAO {
 
     Usuario obtenerPorEmail(String email);
     
-    List<Usuario> obtenerUsuariosBasicos();
-
     List<Usuario> obtenerTodos();
 
     List<Usuario> obtenerPorRol(int idRol);
