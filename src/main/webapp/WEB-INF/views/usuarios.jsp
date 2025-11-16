@@ -189,11 +189,11 @@
 
                     <div class="col-md-6">
                         <label class="form-label">DUI</label>
-                        <input type="text" id="dui" name="dui" class="form-control" placeholder="00000000-0" required>
+                        <input type="number" id="dui" name="dui" class="form-control" placeholder="000000000" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" id="telefono" name="telefono" class="form-control" required>
+                        <input type="number" id="telefono" name="telefono" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">

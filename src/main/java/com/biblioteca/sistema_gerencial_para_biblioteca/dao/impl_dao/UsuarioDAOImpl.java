@@ -258,4 +258,27 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    @Override
+    public int obtenerActivos() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            String jpql = "Select count(u) from Usuario u where u.activo = true";
+
+            // consulta
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+
+            Long count = query.getSingleResult();
+            return count.intValue();
+
+        } catch (jakarta.persistence.NoResultException e) {
+            e.printStackTrace();
+            return -1;
+
+        } finally {
+            em.close();
+        }
+
+    }
+
 }

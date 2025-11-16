@@ -5,7 +5,15 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%request.setAttribute("activePage", "dashboard");%>
+
+<%
+    if (session.getAttribute("usuario") == null) {
+        response.sendRedirect(request.getContextPath() + "/LoginServlet");
+        return;
+    }
+    request.setAttribute("activePage", "dashboard");
+
+%>
 <!-- ✅ Encabezado + Navbar -->
 <%@ include file="components/header.jsp" %>
 <!-- ✅ Sidebar -->
@@ -31,7 +39,7 @@
                 <div class="card-body text-center">
                     <i class="bi bi-book display-5 text-primary mb-2"></i>
                     <h5 class="card-title fw-semibold">Libros registrados</h5>
-                    <p class="card-text fs-3 fw-bold text-dark mb-0">125</p>
+                    <p class="card-text fs-3 fw-bold text-dark mb-0">${cantidadLibros}</p>
                 </div>
             </div>
         </div>
@@ -41,7 +49,7 @@
                 <div class="card-body text-center">
                     <i class="bi bi-people display-5 text-success mb-2"></i>
                     <h5 class="card-title fw-semibold">Usuarios activos</h5>
-                    <p class="card-text fs-3 fw-bold text-dark mb-0">45</p>
+                    <p class="card-text fs-3 fw-bold text-dark mb-0">${usuariosActivos}</p>
                 </div>
             </div>
         </div>
