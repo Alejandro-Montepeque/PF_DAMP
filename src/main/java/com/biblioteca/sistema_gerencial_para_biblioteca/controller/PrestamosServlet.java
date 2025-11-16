@@ -34,6 +34,23 @@ import java.util.Map;
 public class PrestamosServlet extends HttpServlet {
 
     @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        try {
+            String idUser = request.getParameter("idUsuario");
+            String idLibro = request.getParameter("idLibro");
+            boolean activo = request.getParameter("activo") != null;
+            response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
+        } catch (Exception e) {
+            session.setAttribute("mensajeError", "Error al guardar el usuario: " + e.getMessage());
+            e.printStackTrace();
+
+            response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
+        }
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -73,8 +90,7 @@ public class PrestamosServlet extends HttpServlet {
             String usuariosJson = new Gson().toJson(usuariosSimple);
             request.setAttribute("usuariosJson", usuariosJson);
 
-// ------------------------------------------------------------------
-// LIBROS
+            // LIBROS
             ILibroDAO daoLibro = new LibroDAOImpl();
             List<Libro> listaLibros = daoLibro.obtenerTodos();
 

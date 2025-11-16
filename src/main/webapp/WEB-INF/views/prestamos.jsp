@@ -131,15 +131,22 @@
                             <label class="form-label">Fecha de devolución</label>
                             <input type="date" class="form-control" required>
                         </div>
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check form-switch mt-3">
+                                <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
+                                <label class="form-check-label" for="activo">Usuario Activo</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Guardar préstamo</button>
-                    </div>
-                </form>
             </div>
+            <div class="mt-4 text-end">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Guardar préstamo</button>
+            </div>
+            </form>
         </div>
     </div>
+</div>
 </div>
 
 <script>

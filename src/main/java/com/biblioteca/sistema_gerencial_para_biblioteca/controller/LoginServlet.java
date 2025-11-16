@@ -19,6 +19,7 @@ import java.io.IOException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.Cookie;
+import java.net.URLEncoder;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -34,14 +35,12 @@ public class LoginServlet extends HttpServlet {
         if (usuarioLoged == null) {
             request.setAttribute("error", "El email ingresado no existe.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
-              dispatcher.forward(request, response);
-        } else if (usuarioLoged.getActivo() == false)
-        {
-           request.setAttribute("error", "El usuario no esta habilitado");
+            dispatcher.forward(request, response);
+        } else if (usuarioLoged.getActivo() == false) {
+            request.setAttribute("error", "El usuario no esta habilitado");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
-              dispatcher.forward(request, response);
-        }                     
-        else {
+            dispatcher.forward(request, response);
+        } else {
             Role rol = usuarioLoged.getIdRol();
             if (daoUsuario.validateUser(email, clave)) {
                 HttpSession sesion = request.getSession();
@@ -49,7 +48,9 @@ public class LoginServlet extends HttpServlet {
                 sesion.setAttribute("rol", rol.getNombre());
 
                 // Cookie de usuario
-                Cookie userCookie = new Cookie("usuario", usuarioLoged.getNombre());
+                String nombreCodificado = URLEncoder.encode(usuarioLoged.getNombre(), "UTF-8");
+
+                Cookie userCookie = new Cookie("usuario", nombreCodificado);
                 userCookie.setMaxAge(60 * 60 * 24 * 30); // 30 días
                 userCookie.setPath("/");
                 response.addCookie(userCookie);

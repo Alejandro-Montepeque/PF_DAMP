@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
@@ -13,10 +14,10 @@
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if ("usuario".equals(c.getName())) {
-                    cookieUsuario = c.getValue();
+                    cookieUsuario = URLDecoder.decode(c.getValue(), "UTF-8");  // ← DECODIFICAR
                 }
                 if ("rol".equals(c.getName())) {
-                    cookieRol = c.getValue();
+                    cookieRol = URLDecoder.decode(c.getValue(), "UTF-8");     // ← También, por si acaso
                 }
             }
         }
@@ -27,7 +28,6 @@
             nuevaSesion.setAttribute("usuario", cookieUsuario);
             nuevaSesion.setAttribute("rol", cookieRol);
 
-            // Y enviamos al dashboard
             response.sendRedirect(request.getContextPath() + "/DashboardServlet");
             return;
         }
@@ -40,4 +40,5 @@
         response.sendRedirect(request.getContextPath() + "/DashboardServlet");
     }
 %>
+
 
