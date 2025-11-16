@@ -22,8 +22,17 @@ import java.nio.file.Files;
 //@WebServlet(urlPatterns = {"/ImagenesServlet"})
 @WebServlet("/images/*")
 public class ImagenesServlet extends HttpServlet {
-
-    private final String RUTA_BASE = "C:\\storage\\img\\";
+      private String getUploadPath() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+   
+            return "C:\\storage\\img\\";
+        } else {
+       
+            return "/srv/biblioteca/storage/img/"; 
+        }
+      }
+    private final String RUTA_BASE = getUploadPath();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

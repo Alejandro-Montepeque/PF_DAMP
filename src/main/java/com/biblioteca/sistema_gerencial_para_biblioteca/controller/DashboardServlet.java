@@ -13,6 +13,11 @@ import jakarta.servlet.ServletException;
 import java.io.IOException; 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.RequestDispatcher;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuarioDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.ILibroDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.LibroDAOImpl;
+
 
 
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/DashboardServlet"})
@@ -28,8 +33,18 @@ public class DashboardServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
-
+        ILibroDAO daoLibro = new LibroDAOImpl();
+        int libroCount = daoLibro.obtenerTotal();
+        IUsuarioDAO dao = new UsuarioDAOImpl();
+        int usuarioCount = dao.obtenerActivos();
+        request.setAttribute("usuariosActivos", usuarioCount);
+        request.setAttribute("cantidadLibros", libroCount);
         // Mostrar la vista protegida
         request.getRequestDispatcher("WEB-INF/views/dashboard.jsp").forward(request, response);
+    }
+        @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response){
+    
+    
     }
 }

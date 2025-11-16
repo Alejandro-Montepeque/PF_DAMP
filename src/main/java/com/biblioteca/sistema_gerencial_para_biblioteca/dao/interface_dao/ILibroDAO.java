@@ -17,5 +17,5 @@ public interface ILibroDAO {
     void actualizar(Libro libro);
     
     void eliminar(int idLibro);
- 
+    int obtenerTotal();
 }
