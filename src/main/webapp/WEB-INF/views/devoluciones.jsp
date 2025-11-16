@@ -124,23 +124,24 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Usuario</label>
-                            <input id="usuarioInput" type="text" class="form-control" placeholder="Nombre del usuario">
+                            <input id="usuarioInput" type="text" class="form-control" placeholder="Nombre del usuario" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Título del libro</label>
-                            <input id="libroInput" type="text" class="form-control" placeholder="Título del libro">
+                            <input id="libroInput" type="text" class="form-control" placeholder="Título del libro" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Fecha préstamo</label>
-                            <input id="prestamoInput" type="date" class="form-control">
+                            <input id="prestamoInput" type="date" class="form-control" required> 
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Fecha devolución real</label>
-                            <input id="devolucionInput" type="date" class="form-control">
+                            <input id="devolucionInput" type="date" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Estado del libro</label>
-                            <select id="estadoInput" class="form-select">
+                            <select id="estadoInput" class="form-select" required>
+                                <option value="">Elegir...</option>
                                 <option>Entregado</option>
                                 <option>Retrasado</option>
                                 <option>Dañado</option>
@@ -148,7 +149,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Observaciones</label>
-                            <textarea id="observacionesInput" class="form-control" rows="1" placeholder="Escriba observaciones..."></textarea>
+                            <textarea required id="observacionesInput" class="form-control" rows="1" placeholder="Escriba observaciones..."></textarea>
                         </div>
                     </div>
                     <div class="mt-4 text-end">

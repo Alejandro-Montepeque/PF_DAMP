@@ -164,7 +164,7 @@
         <form id="usuarioForm" 
               method="post" 
               action="${pageContext.request.contextPath}/BibliotecariosServlet" 
-              class="modal-content needs-validation" novalidate>
+              class="modal-content needs-validation">
 
             <div class="modal-header">
                 <h5 class="modal-title" id="usuarioModalLabel">Nuevo Usuario</h5>

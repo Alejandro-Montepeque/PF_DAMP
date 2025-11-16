@@ -200,7 +200,6 @@ public class Usuario implements Serializable {
         this.bibliotecario = bibliotecario;
     }
 
-
     public Role getIdRol() {
         return idRol;
     }
@@ -241,5 +240,5 @@ public class Usuario implements Serializable {
     public String toString() {
         return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Usuario[ idUsuario=" + idUsuario + " ]";
     }
-    
+
 }

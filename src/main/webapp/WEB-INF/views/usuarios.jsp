@@ -153,7 +153,7 @@
         <form id="usuarioForm" 
               method="post" 
               action="${pageContext.request.contextPath}/UsuariosServlet" 
-              class="modal-content needs-validation" novalidate>
+              class="modal-content needs-validation" >
 
             <div class="modal-header">
                 <h5 class="modal-title" id="usuarioModalLabel">Nuevo Usuario</h5>
@@ -163,7 +163,6 @@
             <div class="modal-body">
                 <input type="hidden" id="usuarioId" name="usuarioId">
                 <div class="row g-3">
-
                     <div class="col-md-6">
                         <label class="form-label">Nombre completo</label>
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
