@@ -23,4 +23,5 @@ public interface ILibroDAO {
     int contarLibrosPrestados();
     List<Object[]> obtenerConteoLibrosPorGenero();
     Libro obtenerPorTitulo(String titulo);
+    List<Libro> filtrarLibros(Integer idGenero, String textoBusqueda);
 }

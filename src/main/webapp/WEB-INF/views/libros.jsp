@@ -28,27 +28,27 @@
     <!-- Filtros -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Género</label>
-                    <select id="filtroGenero" class="form-select">
-                        <option value="todos" selected>Todos</option>
-                        <option>Infantil</option>
-                        <option>Juvenil</option>
-                        <option>Universitario</option>
-                        <option>General</option>
-                        <option>Ficción</option>
-                        <option>Educativo</option>
-                    </select>
+            <form method="get" action="${pageContext.request.contextPath}/LibrosServlet">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Género</label>
+                        <select id="filtroGenero" name="filtroGenero" class="form-select">
+                            <!-- opciones dinámicas -->
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Buscar por título o autor</label>
+                        <input id="busqueda" name="busqueda" type="text" class="form-control" 
+                               placeholder="Ej: García Márquez..." 
+                               value="${busqueda != null ? busqueda : ''}">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Buscar por título o autor</label>
-                    <input id="busqueda" type="text" class="form-control" placeholder="Ej: García Márquez...">
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary w-100" id="btnBuscar"><i class="bi bi-search"></i> Buscar</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -297,12 +297,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const contextPath = "<%= request.getContextPath() %>";
     let idAEliminar = null;
 
-    // Cargar géneros al iniciar la página
+    const filtroGeneroSeleccionado = "${filtroGenero}";
+
+    // Cargar catálogos
+    cargarGenerosEnFiltro();
     cargarGeneros();
     cargarNiveles();
     cargarProveedores();
 
-    // Función para cargar géneros desde el API
+    // Función para cargar géneros
     function cargarGeneros() {
         fetch(contextPath + "/api/generos")
             .then(response => response.json())
@@ -324,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
     
-    // Función para cargar niveles desde el API
+    // Función para cargar niveles
     function cargarNiveles() {
         fetch(contextPath + "/api/niveles")
             .then(response => response.json())
@@ -346,6 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
     
+    // Función para cargar proveedores
     function cargarProveedores() {
         fetch(contextPath + "/api/proveedores")
             .then(response => response.json())
@@ -364,6 +368,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Error cargando proveedores:", error);
                 document.getElementById("proveedor").innerHTML = 
                     '<option value="">Error al cargar proveedores</option>';
+            });
+    }
+    
+    // Función para cargar generos en filtro inicial
+    function cargarGenerosEnFiltro() {
+        fetch(contextPath + "/api/generos")
+            .then(response => response.json())
+            .then(generos => {
+                const selectGenero = document.getElementById("filtroGenero");
+                
+                // Mantener "Todos" como primera opción
+                const option = document.createElement("option");
+                option.value = "todos";
+                option.textContent = "Todos";
+                selectGenero.appendChild(option);
+               
+                generos.forEach(genero => {
+                    const option = document.createElement("option");
+                    option.value = genero.id_genero;
+                    option.textContent = genero.nombre;
+                    selectGenero.appendChild(option);
+                });
+                
+                // Restaurar valor seleccionado
+                selectGenero.value = filtroGeneroSeleccionado || "todos";
+            })
+            .catch(error => {
+                console.error("Error cargando géneros para filtro:", error);
             });
     }
 

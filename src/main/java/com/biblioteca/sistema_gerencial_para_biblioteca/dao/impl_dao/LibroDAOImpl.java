@@ -175,5 +175,54 @@ public class LibroDAOImpl implements ILibroDAO {
             em.close();
         }
     }
+    
+    @Override
+    public List<Libro> filtrarLibros(Integer idGenero, String textoBusqueda) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            // Construir la consulta base
+            StringBuilder jpql = new StringBuilder(
+                "SELECT l FROM Libro l " +
+                "LEFT JOIN FETCH l.idGenero " +
+                "LEFT JOIN FETCH l.idNivelEducativo " +
+                "LEFT JOIN FETCH l.idProveedor " +
+                "WHERE 1=1"
+            );
+
+            // Agregar filtro de género si se proporciona
+            if (idGenero != null && idGenero > 0) {
+                jpql.append(" AND l.idGenero.idGenero = :idGenero");
+            }
+
+            // Agregar filtro de búsqueda si se proporciona
+            if (textoBusqueda != null && !textoBusqueda.trim().isEmpty()) {
+                jpql.append(" AND (LOWER(l.titulo) LIKE LOWER(:texto) OR LOWER(l.autor) LIKE LOWER(:texto))");
+            }
+
+            // Ordenar por título
+            jpql.append(" ORDER BY l.titulo ASC");
+
+            // Crear la consulta
+            TypedQuery<Libro> query = em.createQuery(jpql.toString(), Libro.class);
+
+            // Establecer parámetros si fueron agregados
+            if (idGenero != null && idGenero > 0) {
+                query.setParameter("idGenero", idGenero);
+            }
+
+            if (textoBusqueda != null && !textoBusqueda.trim().isEmpty()) {
+                query.setParameter("texto", "%" + textoBusqueda.trim() + "%");
+            }
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al filtrar libros: " + e.getMessage(), e);
+        } finally {
+            em.close();
+        }
+    }
 
 }
