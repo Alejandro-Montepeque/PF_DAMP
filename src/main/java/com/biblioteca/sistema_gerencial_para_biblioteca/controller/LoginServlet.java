@@ -32,6 +32,13 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String clave = request.getParameter("clave");
         Usuario usuarioLoged = daoUsuario.obtenerPorEmail(email);
+        Role rolUsuarioLoged = usuarioLoged.getIdRol();
+        if (rolUsuarioLoged.getNombre().equals("LECTOR"))
+        {
+            request.setAttribute("error", "Los usuarios lectores no pueden ingresar al sistema.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");
+            dispatcher.forward(request, response);
+        }
         if (usuarioLoged == null) {
             request.setAttribute("error", "El email ingresado no existe.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/login.jsp");

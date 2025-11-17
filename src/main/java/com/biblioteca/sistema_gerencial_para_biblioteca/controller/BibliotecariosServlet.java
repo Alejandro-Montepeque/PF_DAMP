@@ -59,6 +59,9 @@ public class BibliotecariosServlet extends HttpServlet {
                 if (password == null || password.isEmpty() || !password.equals(passwordConfirm)) {
                     throw new ServletException("Las contraseñas no coinciden o están vacías");
                 }
+                if (password.length() < 8) {
+                    throw new ServletException("La clave debe tener como minimo 8 caracteres");
+                }
                 if (dao.obtenerPorEmail(email) != null) { // Asumiendo que isValidEmail hacía esto
                     throw new ServletException("El correo ya fue registrado");
                 }
@@ -66,7 +69,9 @@ public class BibliotecariosServlet extends HttpServlet {
                 } else {
                     throw new ServletException("El DUI ya fue registrado add");
                 }
-
+                if (dui.length() > 9 || dui.length() < 9) {
+                    throw new ServletException("El DUI No es valido, debe ser de 9 digitos sin guion");
+                }
                 String hash = PasswordUtil.hashPassword(password);
 
                 // Creamos el objeto
@@ -103,6 +108,9 @@ public class BibliotecariosServlet extends HttpServlet {
                 if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("El DUI ya fue registrado");
                 }
+                if (dui.length() > 9 || dui.length() < 9) {
+                    throw new ServletException("El DUI No es valido, debe ser de 9 digitos sin guion");
+                }
                 usuarioAEditar.setNombre(nombre);
                 usuarioAEditar.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));
                 usuarioAEditar.setSexo(sexo);
@@ -121,7 +129,9 @@ public class BibliotecariosServlet extends HttpServlet {
                     if (!password.equals(passwordConfirm)) {
                         throw new ServletException("Las contraseñas no coinciden");
                     }
-
+                    if (password.length() < 8) {
+                        throw new ServletException("La clave debe tener como minimo 8 caracteres");
+                    }
                     String hash = PasswordUtil.hashPassword(password);
                     usuarioAEditar.setPasswordHash(hash);
                 }
@@ -170,7 +180,7 @@ public class BibliotecariosServlet extends HttpServlet {
 
             List<Usuario> listaUsuarios = new ArrayList<>();
             boolean hayFiltro = campo != null && valor != null && !valor.trim().isEmpty();
-            
+
             if (hayFiltro) {
                 for (int rol : roles) {
                     listaUsuarios.addAll(dao.filtrarUsuarios(campo, valor, rol));

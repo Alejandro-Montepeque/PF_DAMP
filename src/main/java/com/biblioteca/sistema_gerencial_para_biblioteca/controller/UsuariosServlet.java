@@ -57,6 +57,9 @@ public class UsuariosServlet extends HttpServlet {
                 if (!dao.isValidDUI(dui)) {
                     throw new ServletException("El DUI ya fue registrado");
                 }
+                if (dui.length() > 9 || dui.length() < 9) {
+                    throw new ServletException("El DUI No es valido, debe ser de 9 digitos sin guion");
+                }
 
                 // Creamos el objeto 
                 Usuario nuevoUsuario = new Usuario();
@@ -91,6 +94,9 @@ public class UsuariosServlet extends HttpServlet {
                 Usuario duiExistente = dao.obtenerPorDui(dui);
                 if (duiExistente != null && duiExistente.getIdUsuario() != usuarioAEditar.getIdUsuario()) {
                     throw new ServletException("El DUI ya fue registrado");
+                }
+                if (dui.length() > 9 || dui.length() < 9) {
+                    throw new ServletException("El DUI No es valido, debe ser de 9 digitos sin guion");
                 }
                 usuarioAEditar.setNombre(nombre);
                 usuarioAEditar.setFechaNacimiento(java.sql.Date.valueOf(fechaStr));

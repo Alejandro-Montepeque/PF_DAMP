@@ -187,7 +187,6 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-primary">Guardar</button>
                 </div>
             </form>

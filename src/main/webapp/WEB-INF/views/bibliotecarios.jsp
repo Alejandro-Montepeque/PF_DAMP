@@ -135,7 +135,16 @@
                                     <%
                                         if ("ADMIN".equals(rol)) {
                                     %>
-                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="bi bi-pencil"></i>  Editar</button>
+                                    <button class="btn btn-sm btn-outline-primary me-1 btn-editar" 
+                                            title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                    <%
+                                    } else if ("BIBLIOTECARIO".equals(rol)) {
+                                    %>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" disabled title="Sin autorización">
+                                        <i class="bi bi-x-circle text-danger"></i> Sin permisos
+                                    </button>
                                     <%
                                         }
                                     %>

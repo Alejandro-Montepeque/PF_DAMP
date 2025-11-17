@@ -27,7 +27,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary mb-0"><i class="bi bi-people me-2"></i> Gestión de Usuarios Lectores</h2>
         <div>
-            <%                if ("ADMIN".equals(rol)) {
+            <%                if ("ADMIN".equals(rol) || "BIBLIOTECARIO".equals(rol)) {
             %>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#usuarioModal" id="btnNuevo">
                 <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
@@ -122,7 +122,7 @@
                                 </td>
                                 <td class="text-end">
                                     <%
-                                        if ("ADMIN".equals(rol)) {
+                                        if ("ADMIN".equals(rol) || "BIBLIOTECARIO".equals(rol)) {
                                     %>
                                     <button class="btn btn-sm btn-outline-primary me-1 btn-editar" title="Editar" data-bs-toggle="modal" data-bs-target="#usuarioModal"><i class="bi bi-pencil"></i> Editar</button>
                                     <%
