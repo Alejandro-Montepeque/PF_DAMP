@@ -48,8 +48,7 @@ public class Bibliotecario implements Serializable {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @OneToOne(optional = false)
     private Usuario idUsuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idBibliotecario")
-    private List<Prestamo> prestamoList;
+
 
     public Bibliotecario() {
     }
@@ -87,13 +86,6 @@ public class Bibliotecario implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public List<Prestamo> getPrestamoList() {
-        return prestamoList;
-    }
-
-    public void setPrestamoList(List<Prestamo> prestamoList) {
-        this.prestamoList = prestamoList;
-    }
 
     @Override
     public int hashCode() {

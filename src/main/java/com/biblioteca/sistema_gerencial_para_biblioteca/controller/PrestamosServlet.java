@@ -35,85 +35,93 @@ import java.util.Map;
 @WebServlet(name = "PrestamosServlet", urlPatterns = {"/PrestamosServlet"})
 public class PrestamosServlet extends HttpServlet {
 
-    
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        try {
-            String idPrestamoStr = request.getParameter("idPrestamo");
-            String idUsuarioStr = request.getParameter("idUsuario");
-            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
-                throw new ServletException("Ingrese un id de usuario");
-            }
-            int idUsuario = Integer.parseInt(idUsuarioStr);
-            int idBibliotecario = Integer.parseInt(session.getAttribute("id").toString());
-            
-            String[] idLibrosArray = request.getParameterValues("idLibro");
+    HttpSession session = request.getSession();
 
-            Date fechaPrestamo = java.sql.Date.valueOf(request.getParameter("fechaPrestamo"));
-            Date fechaEstimada = java.sql.Date.valueOf(request.getParameter("fechaEstimada"));
-            String fechaRealStr = request.getParameter("fechaReal");
-            Date fechaReal = (fechaRealStr != null && !fechaRealStr.isEmpty())
-                    ? java.sql.Date.valueOf(fechaRealStr)
-                    : null;
+    try {
+        // ----------- 1. VALIDACIONES BÁSICAS --------------
+        String idPrestamoStr = request.getParameter("idPrestamo");
+        String idUsuarioStr = request.getParameter("idUsuario");
 
-            String estado = request.getParameter("estado");
-            String observaciones = request.getParameter("observaciones");
-
-            EntityManager em = JPAUtil.getEntityManager();
-            Usuario usuario = em.find(Usuario.class, idUsuario);
-            if (usuario == null) {
-                throw new ServletException("No se encontró usuario con ese id");
-            }
-            Bibliotecario biblio = em.find(Bibliotecario.class, idBibliotecario);
-            System.out.println("----------------------------"+biblio);
-            if (biblio == null) {
-                throw new ServletException("No se encontró bibliotecario con ese id");
-            }
-            List<Libro> librosSeleccionados = new ArrayList<>();
-            if (idLibrosArray != null) {
-                for (String idLibroStr : idLibrosArray) {
-                    Libro libro = em.find(Libro.class, Integer.parseInt(idLibroStr));
-                    librosSeleccionados.add(libro);
-                }
-            }
-            em.close();
-
-            PrestamoDAOImpl dao = new PrestamoDAOImpl();
-            Prestamo p;
-            if (idPrestamoStr == null || idPrestamoStr.isEmpty()) {
-                p = new Prestamo();
-            } else {
-                p = dao.obtenerPorId(Integer.parseInt(idPrestamoStr));
-            }
-
-            p.setIdUsuario(usuario);
-            p.setIdBibliotecario(biblio);
-            p.setFechaPrestamo(fechaPrestamo);
-            p.setFechaEntregaEstimada(fechaEstimada);
-            p.setFechaEntregaReal(fechaReal);
-            p.setObservaciones(observaciones);
-            p.setEstado(estado);
-            p.setLibroList(librosSeleccionados);
-
-            // Persistir
-            if (p.getIdPrestamo() == null) {
-                dao.crear(p);
-            } else {
-                dao.actualizar(p);
-            }
-
-            session.setAttribute("mensajeExito", "¡Préstamo guardado correctamente!");
-            response.sendRedirect(request.getContextPath() + "/PrestamosServlet"); // URL 
-
-        } catch (Exception e) {
-            session.setAttribute("mensajeError", "Error al guardar el préstamo: " + e.getMessage());
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/PrestamosServlet"); // URL 
+        if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
+            throw new ServletException("Debe seleccionar un usuario.");
         }
+        int idUsuario = Integer.parseInt(idUsuarioStr);
+        int idBibliotecario = Integer.parseInt(session.getAttribute("id").toString());
+
+        String[] idLibrosArray = request.getParameterValues("idLibro");
+        if (idLibrosArray == null || idLibrosArray.length == 0) {
+            throw new ServletException("Debe seleccionar al menos un libro.");
+        }
+
+        Date fechaPrestamo = java.sql.Date.valueOf(request.getParameter("fechaPrestamo"));
+        Date fechaEstimada = java.sql.Date.valueOf(request.getParameter("fechaEstimada"));
+
+        String fechaRealStr = request.getParameter("fechaReal");
+        Date fechaReal = (fechaRealStr != null && !fechaRealStr.isEmpty())
+                ? java.sql.Date.valueOf(fechaRealStr)
+                : null;
+
+        String estado = request.getParameter("estado");
+        String observaciones = request.getParameter("observaciones");
+
+        // ----------- 2. CARGAR ENTIDADES ------------------
+        EntityManager em = JPAUtil.getEntityManager();
+
+        Usuario usuario = em.find(Usuario.class, idUsuario);
+        Usuario bibliotecario = em.find(Usuario.class, idBibliotecario);
+
+        if (usuario == null) throw new ServletException("Usuario inválido.");
+        if (bibliotecario == null) throw new ServletException("Bibliotecario inválido.");
+
+        // ----------- 3. CREAR O CARGAR PRESTAMO -----------
+        PrestamoDAOImpl dao = new PrestamoDAOImpl();
+        Prestamo prestamo;
+
+        if (idPrestamoStr == null || idPrestamoStr.isEmpty()) {
+            prestamo = new Prestamo();
+        } else {
+            prestamo = dao.obtenerPorId(Integer.parseInt(idPrestamoStr));
+        }
+
+        prestamo.setIdUsuario(usuario);
+        prestamo.setIdBibliotecario(bibliotecario);
+        prestamo.setFechaPrestamo(fechaPrestamo);
+        prestamo.setFechaEntregaEstimada(fechaEstimada);
+        prestamo.setFechaEntregaReal(fechaReal);
+        prestamo.setObservaciones(observaciones);
+        prestamo.setEstado(estado);
+
+        // ----------- 4. CREAR DETALLES --------------------
+        List<DetallePrestamo> detalles = new ArrayList<>();
+
+        for (String idLibroStr : idLibrosArray) {
+            Libro libro = em.find(Libro.class, Integer.parseInt(idLibroStr));
+
+            DetallePrestamo dp = new DetallePrestamo();
+            dp.setPrestamo(prestamo);
+            dp.setLibro(libro);
+
+            detalles.add(dp);
+        }
+
+        prestamo.setDetallePrestamoList(detalles);
+
+        // ----------- 5. GUARDAR EN LA BD ------------------
+        dao.crear(prestamo);
+
+        session.setAttribute("mensajeExito", "¡Préstamo creado exitosamente!");
+        response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        session.setAttribute("mensajeError", "Error al guardar: " + e.getMessage());
+        response.sendRedirect(request.getContextPath() + "/PrestamosServlet");
     }
+}
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
