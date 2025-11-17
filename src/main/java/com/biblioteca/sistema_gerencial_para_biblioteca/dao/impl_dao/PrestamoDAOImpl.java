@@ -30,12 +30,14 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
     // PrestamoDAOImpl.java
     @Override
     public void crear(Prestamo prestamo) throws Exception {
+
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
-            em.getTransaction().begin();
 
-            em.getTransaction().begin();
+            if (!em.getTransaction().isActive()) {
+                em.getTransaction().begin();
+            }
 
             Libro libro = em.find(Libro.class, prestamo.getIdLibro().getIdLibro());
             if (libro == null) {
@@ -51,17 +53,24 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
             }
 
             libro.setCantDisponibles(libro.getCantDisponibles() - 1);
+            em.merge(libro);
+
             em.persist(prestamo);
 
             em.getTransaction().commit();
+
         } catch (Exception e) {
+
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            e.printStackTrace();
-            throw new RuntimeException("Error al registrar el prestamo " + e.getMessage(), e);
+
+            throw new Exception("Error al registrar el prestamo: " + e.getMessage(), e);
+
         } finally {
-            em.close();
+            if (em.isOpen()) {
+                em.close();
+            }
         }
     }
 

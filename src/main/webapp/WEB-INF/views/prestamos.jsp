@@ -196,14 +196,6 @@
     </div>
 </div>
 
-<script>
-    <c:if test="${not empty mensajeExito}">
-    mostrarAlertaExito('<c:out value="${mensajeExito}"/>');
-    </c:if>
-    <c:if test="${not empty mensajeError}">
-    mostrarAlertaError('<c:out value="${mensajeError}"/>');
-    </c:if>
-</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -349,3 +341,16 @@
 </script>
 
 <jsp:include page="components/footer.jsp" />
+<script>
+    <%-- Mensaje éxito --%>
+    <c:if test="${not empty mensajeExito}">
+    const msgExito = `<c:out value='${mensajeExito}' />`;
+    mostrarAlertaExito(msgExito);
+    </c:if>
+
+    <%-- Mensaje error --%>
+    <c:if test="${not empty mensajeError}">
+    const msgError = `<c:out value='${mensajeError}' />`;
+    mostrarAlertaError(msgError);
+    </c:if>
+</script>
