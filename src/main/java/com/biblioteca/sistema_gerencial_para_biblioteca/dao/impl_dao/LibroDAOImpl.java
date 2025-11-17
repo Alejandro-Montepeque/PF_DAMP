@@ -36,6 +36,19 @@ public class LibroDAOImpl implements ILibroDAO {
         }
     }
 
+    @Override
+    public List<Libro> obtenerDisponibles() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT l FROM Libro l WHERE l.activo = true AND l.cantDisponibles > 0",
+                    Libro.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     //@Override
     //public Libro obtenerPorId(int idLibro) {
     //    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

@@ -3,24 +3,31 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao;
+
 import java.util.List;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro;
 
 public interface ILibroDAO {
 
     void crear(Libro libro);
-    
+
     Libro obtenerPorId(int idLibro);
-    
+
     List<Libro> obtenerTodos();
-    
+
+    List<Libro> obtenerDisponibles();
+
     void actualizar(Libro libro);
-    
+
     void eliminar(int idLibro);
+
     int obtenerTotal();
-    
+
     int contarLibrosDisponibles();
+
     int contarLibrosPrestados();
+
     List<Object[]> obtenerConteoLibrosPorGenero();
+
     Libro obtenerPorTitulo(String titulo);
 }

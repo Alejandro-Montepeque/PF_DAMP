@@ -136,7 +136,7 @@ public class PrestamosServlet extends HttpServlet {
             }
             request.setAttribute("emails", emails);
 
-            List<Libro> libros = libroDAO.obtenerTodos();
+            List<Libro> libros = libroDAO.obtenerDisponibles();
             List<String> titulos = new ArrayList<>();
 
             for (Libro l : libros) {

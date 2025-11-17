@@ -14,7 +14,7 @@ public interface IPrestamoDAO {
     int contarDevolucionesAtrasadas();
 
     void crear(Prestamo prestamo) throws Exception;
-
+    int obtenerPendientes();
     void actualizar(Prestamo prestamo) throws Exception;
 
     Prestamo obtenerPorId(int idPrestamo);
