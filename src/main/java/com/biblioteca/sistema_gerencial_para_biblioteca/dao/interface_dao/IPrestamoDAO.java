@@ -9,6 +9,9 @@ import java.util.List;
 
 
 public interface IPrestamoDAO {
+    int contarDevolucionesATiempo();
+    int contarDevolucionesAtrasadas();
+    
     void crear(Prestamo p);
     void actualizar(Prestamo p);
     Prestamo obtenerPorId(int idPrestamo);
