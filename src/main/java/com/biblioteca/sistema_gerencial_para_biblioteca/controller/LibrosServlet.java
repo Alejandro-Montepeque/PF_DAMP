@@ -56,13 +56,11 @@ public class LibrosServlet extends HttpServlet {
             return;
         }
         
-        // 1. Tu código de seguridad (está perfecto)
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
             return;
         }
 
-        // 2. ¡ESTA ES LA LÓGICA "FLASH"!
         // Mueve el mensaje de la Sesión al Request
         if (session.getAttribute("mensajeExito") != null) {
             request.setAttribute("mensajeExito", session.getAttribute("mensajeExito"));
@@ -76,7 +74,42 @@ public class LibrosServlet extends HttpServlet {
 
         try {
             ILibroDAO dao = new LibroDAOImpl();
-            List<Libro> listaLibros = dao.obtenerTodos();
+            //List<Libro> listaLibros = dao.obtenerTodos();
+            List<Libro> listaLibros;
+            
+            String filtroGeneroStr = request.getParameter("filtroGenero");
+            String textoBusqueda = request.getParameter("busqueda");
+            
+            boolean hayFiltros = false;
+            Integer idGenero = null;
+
+            // Filtro Genero
+            if (filtroGeneroStr != null && !filtroGeneroStr.isEmpty() && !"todos".equals(filtroGeneroStr)) {
+                try {
+                    idGenero = Integer.parseInt(filtroGeneroStr);
+                    hayFiltros = true;
+                } catch (NumberFormatException e) {
+                    // Si no es un número válido, ignorar el filtro
+                    idGenero = null;
+                }
+            }
+            
+            // Para texto (autor o nombre de libro)
+            if (textoBusqueda != null && !textoBusqueda.trim().isEmpty()) {
+                hayFiltros = true;
+            }
+            
+            if (hayFiltros) {
+                listaLibros = dao.filtrarLibros(idGenero, textoBusqueda);
+
+                // Guardar valores de filtro para mantenerlos en la vista
+                request.setAttribute("filtroGenero", filtroGeneroStr != null ? filtroGeneroStr : "todos");
+                request.setAttribute("busqueda", textoBusqueda != null ? textoBusqueda : "");
+            } else {
+                listaLibros = dao.obtenerTodos();
+                request.setAttribute("filtroGenero", "todos");
+                request.setAttribute("busqueda", "");
+            }
 
             // Ponemos la lista en el request para que el JSP la pueda usar
             request.setAttribute("listaLibros", listaLibros);

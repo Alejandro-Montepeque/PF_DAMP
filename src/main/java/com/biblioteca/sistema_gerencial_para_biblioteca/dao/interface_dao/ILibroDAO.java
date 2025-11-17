@@ -30,4 +30,7 @@ public interface ILibroDAO {
     List<Object[]> obtenerConteoLibrosPorGenero();
 
     Libro obtenerPorTitulo(String titulo);
+  
+    List<Libro> filtrarLibros(Integer idGenero, String textoBusqueda);
 }
+
