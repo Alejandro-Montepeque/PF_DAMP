@@ -16,15 +16,15 @@
 
 <script>
     const emails = [
-        <c:forEach var="e" items="${emails}">
-            "${e}",
-        </c:forEach>
+    <c:forEach var="e" items="${emails}">
+        "${e}",
+    </c:forEach>
     ];
 
     const titulos = [
-        <c:forEach var="t" items="${titulos}">
-            "${t}",
-        </c:forEach>
+    <c:forEach var="t" items="${titulos}">
+        "${t}",
+    </c:forEach>
     ];
 </script>
 
@@ -198,158 +198,154 @@
 
 <script>
     <c:if test="${not empty mensajeExito}">
-        mostrarAlertaExito('<c:out value="${mensajeExito}"/>');
+    mostrarAlertaExito('<c:out value="${mensajeExito}"/>');
     </c:if>
     <c:if test="${not empty mensajeError}">
-        mostrarAlertaError('<c:out value="${mensajeError}"/>');
+    mostrarAlertaError('<c:out value="${mensajeError}"/>');
     </c:if>
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
-    const modal = new bootstrap.Modal(document.getElementById("modalPrestamo"));
+        const modal = new bootstrap.Modal(document.getElementById("modalPrestamo"));
 
-    const toDate = (d) => {
-        const y = d.getFullYear();
-        const m = String(d.getMonth()+1).padStart(2,'0');
-        const da = String(d.getDate()).padStart(2,'0');
-        return `${y}-${m}-${da}`;
-    };
+        const toDate = (d) => {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const da = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${da}`;
+                    };
 
 
-    document.getElementById("btnNuevo").onclick = () => {
-        document.getElementById("modalTitle").innerText = "Nuevo préstamo";
-        document.getElementById("formPrestamo").reset();
+                    document.getElementById("btnNuevo").onclick = () => {
+                        document.getElementById("modalTitle").innerText = "Nuevo préstamo";
+                        document.getElementById("formPrestamo").reset();
 
-        document.getElementById("idPrestamo").value = "";
+                        document.getElementById("idPrestamo").value = "";
 
-        // Fechas por defecto
-        const hoy = new Date();
-        document.getElementById("fechaPrestamo").value = toDate(hoy);
+                        // Fechas por defecto
+                        const hoy = new Date();
+                        document.getElementById("fechaPrestamo").value = toDate(hoy);
 
-        const estimada = new Date();
-        estimada.setDate(estimada.getDate() + 14);
-        document.getElementById("fechaEstimada").value = toDate(estimada);
+                        const estimada = new Date();
+                        estimada.setDate(estimada.getDate() + 14);
+                        document.getElementById("fechaEstimada").value = toDate(estimada);
 
-        document.getElementById("boxFR").classList.add("d-none");
-        document.getElementById("boxObs").classList.add("d-none");
+                        document.getElementById("boxFR").classList.add("d-none");
+                        document.getElementById("boxObs").classList.add("d-none");
 
-        modal.show();
-    };
+                        modal.show();
+                    };
 
-    const inpEmail = document.getElementById("buscarUsuario");
-    const resEmail = document.getElementById("resultadosUsuario");
+                    const inpEmail = document.getElementById("buscarUsuario");
+                    const resEmail = document.getElementById("resultadosUsuario");
 
-    inpEmail.addEventListener("input", () => {
-        const q = inpEmail.value.toLowerCase();
-        resEmail.innerHTML = "";
+                    inpEmail.addEventListener("input", () => {
+                        const q = inpEmail.value.toLowerCase();
+                        resEmail.innerHTML = "";
 
-        if (!q) return;
+                        if (!q)
+                            return;
 
-        emails.filter(e => e.toLowerCase().includes(q))
-            .slice(0, 7)
-            .forEach(e => {
-                const item = document.createElement("button");
-                item.type = "button";
-                item.className = "list-group-item list-group-item-action";
-                item.textContent = e;
-                item.onclick = () => {
-                    inpEmail.value = e;
-                    document.getElementById("emailUsuario").value = e;
-                    resEmail.innerHTML = "";
-                };
-                resEmail.appendChild(item);
-            });
-    });
+                        emails.filter(e => e.toLowerCase().includes(q))
+                                .slice(0, 7)
+                                .forEach(e => {
+                                    const item = document.createElement("button");
+                                    item.type = "button";
+                                    item.className = "list-group-item list-group-item-action";
+                                    item.textContent = e;
+                                    item.onclick = () => {
+                                        inpEmail.value = e;
+                                        document.getElementById("emailUsuario").value = e;
+                                        resEmail.innerHTML = "";
+                                    };
+                                    resEmail.appendChild(item);
+                                });
+                    });
 
-    const inpLibro = document.getElementById("buscarLibro");
-    const resLibro = document.getElementById("resultadosLibro");
+                    const inpLibro = document.getElementById("buscarLibro");
+                    const resLibro = document.getElementById("resultadosLibro");
 
-    inpLibro.addEventListener("input", () => {
-        const q = inpLibro.value.toLowerCase();
-        resLibro.innerHTML = "";
+                    inpLibro.addEventListener("input", () => {
+                        const q = inpLibro.value.toLowerCase();
+                        resLibro.innerHTML = "";
 
-        if (!q) return;
+                        if (!q)
+                            return;
 
-        titulos.filter(t => t.toLowerCase().includes(q))
-            .slice(0, 7)
-            .forEach(t => {
-                const item = document.createElement("button");
-                item.type = "button";
-                item.className = "list-group-item list-group-item-action";
-                item.textContent = t;
-                item.onclick = () => {
-                    inpLibro.value = t;
-                    document.getElementById("tituloLibro").value = t;
-                    resLibro.innerHTML = "";
-                };
-                resLibro.appendChild(item);
-            });
-    });
+                        titulos.filter(t => t.toLowerCase().includes(q))
+                                .slice(0, 7)
+                                .forEach(t => {
+                                    const item = document.createElement("button");
+                                    item.type = "button";
+                                    item.className = "list-group-item list-group-item-action";
+                                    item.textContent = t;
+                                    item.onclick = () => {
+                                        inpLibro.value = t;
+                                        document.getElementById("tituloLibro").value = t;
+                                        resLibro.innerHTML = "";
+                                    };
+                                    resLibro.appendChild(item);
+                                });
+                    });
 
-    document.querySelectorAll(".btnEditar").forEach(btn => {
-        btn.addEventListener("click", () => {
+                    document.querySelectorAll(".btnEditar").forEach(btn => {
+                        btn.addEventListener("click", () => {
 
-            document.getElementById("modalTitle").innerText = "Editar préstamo";
-            document.getElementById("idPrestamo").value = btn.dataset.id;
+                            document.getElementById("modalTitle").innerText = "Editar préstamo";
+                            document.getElementById("idPrestamo").value = btn.dataset.id;
 
-            document.getElementById("buscarUsuario").value = btn.dataset.email;
-            document.getElementById("emailUsuario").value = btn.dataset.email;
+                            document.getElementById("buscarUsuario").value = btn.dataset.email;
+                            document.getElementById("emailUsuario").value = btn.dataset.email;
 
-            document.getElementById("buscarLibro").value = btn.dataset.titulo;
-            document.getElementById("tituloLibro").value = btn.dataset.titulo;
+                            document.getElementById("buscarLibro").value = btn.dataset.titulo;
+                            document.getElementById("tituloLibro").value = btn.dataset.titulo;
 
-            document.getElementById("fechaPrestamo").value = btn.dataset.fp;
-            document.getElementById("fechaEstimada").value = btn.dataset.fe;
+                            document.getElementById("fechaPrestamo").value = btn.dataset.fp;
+                            document.getElementById("fechaEstimada").value = btn.dataset.fe;
 
-            if (btn.dataset.fr && btn.dataset.fr !== "null") {
-                document.getElementById("boxFR").classList.remove("d-none");
-                document.getElementById("fechaReal").value = btn.dataset.fr;
-            } else {
-                document.getElementById("boxFR").classList.add("d-none");
-                document.getElementById("fechaReal").value = "";
-            }
+                            document.getElementById("boxFR").classList.remove("d-none");
+                            document.getElementById("fechaReal").value = (btn.dataset.fr && btn.dataset.fr !== "null")
+                                    ? btn.dataset.fr
+                                    : "";
 
-            document.getElementById("estado").value = btn.dataset.estado;
+                            document.getElementById("estado").value = btn.dataset.estado;
 
-            if (btn.dataset.obs && btn.dataset.obs !== "null") {
-                document.getElementById("boxObs").classList.remove("d-none");
-                document.getElementById("observaciones").value = btn.dataset.obs;
-            } else {
-                document.getElementById("boxObs").classList.add("d-none");
-                document.getElementById("observaciones").value = "";
-            }
+                            document.getElementById("boxObs").classList.remove("d-none");
+                            document.getElementById("observaciones").value =
+                                    (btn.dataset.obs && btn.dataset.obs !== "null")
+                                    ? btn.dataset.obs
+                                    : "";
+                            modal.show();
+                        });
+                    });
 
-            modal.show();
-        });
-    });
+                    document.getElementById("formPrestamo").addEventListener("submit", (e) => {
 
-    document.getElementById("formPrestamo").addEventListener("submit", (e) => {
+                        if (!document.getElementById("emailUsuario").value) {
+                            mostrarAlertaError("Debe seleccionar un usuario válido.");
+                            e.preventDefault();
+                            return false;
+                        }
 
-        if (!document.getElementById("emailUsuario").value) {
-            mostrarAlertaError("Debe seleccionar un usuario válido.");
-            e.preventDefault();
-            return false;
-        }
+                        if (!document.getElementById("tituloLibro").value) {
+                            mostrarAlertaError("Debe seleccionar un libro válido.");
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
 
-        if (!document.getElementById("tituloLibro").value) {
-            mostrarAlertaError("Debe seleccionar un libro válido.");
-            e.preventDefault();
-            return false;
-        }
-    });
+                    document.getElementById("btnBuscar").onclick = () => {
+                        const q = document.getElementById("filtroGlobal").value.toLowerCase();
+                        document.querySelectorAll("#tablaPrestamos tbody tr").forEach(tr => {
+                            tr.style.display = tr.innerText.toLowerCase().includes(q) ? "" : "none";
+                        });
+                    };
 
-    document.getElementById("btnBuscar").onclick = () => {
-        const q = document.getElementById("filtroGlobal").value.toLowerCase();
-        document.querySelectorAll("#tablaPrestamos tbody tr").forEach(tr => {
-            tr.style.display = tr.innerText.toLowerCase().includes(q) ? "" : "none";
-        });
-    };
+                    document.getElementById("btnRefrescar").onclick = () => location.reload();
 
-    document.getElementById("btnRefrescar").onclick = () => location.reload();
-
-});
+                });
 </script>
 
 <jsp:include page="components/footer.jsp" />

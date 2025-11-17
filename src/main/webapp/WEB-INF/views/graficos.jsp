@@ -48,7 +48,7 @@
         <div class="row">
             <!-- Gráfico 1: Libros disponibles vs prestados -->
             <div class="col-md-6 mb-4 text-center">
-                <h5>Libros disponibles vs Prestados</h5>
+                <h5>Libros Activos vs Inactivos</h5>
                 <%
                     if (librosDisponibles + librosPrestados > 0) {
                 %>
@@ -103,7 +103,7 @@
     new Chart(ctxLibros, {
         type: 'doughnut',
         data: {
-            labels: ['Disponibles', 'Prestados'],
+            labels: ['Activos', 'Inactivos'],
             datasets: [{
                 label: 'Libros',
                 data: [<%= librosDisponibles %>, <%= librosPrestados %>],
