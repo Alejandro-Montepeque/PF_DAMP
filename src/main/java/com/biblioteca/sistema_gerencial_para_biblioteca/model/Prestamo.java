@@ -5,6 +5,7 @@
 package com.biblioteca.sistema_gerencial_para_biblioteca.model;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -61,14 +63,15 @@ public class Prestamo implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "estado")
     private String estado;
-    @ManyToMany(mappedBy = "prestamoList")
-    private List<Libro> libroList;
-    @JoinColumn(name = "id_bibliotecario", referencedColumnName = "id_bibliotecario")
+    @JoinColumn(name = "id_bibliotecario", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false)
-    private Bibliotecario idBibliotecario;
+    private Usuario idBibliotecario;
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false)
     private Usuario idUsuario;
+    @JoinColumn(name = "id_libro", referencedColumnName = "id_libro")
+    @ManyToOne(optional = false)
+    private Libro idLibro;
 
     public Prestamo() {
     }
@@ -82,6 +85,14 @@ public class Prestamo implements Serializable {
         this.fechaPrestamo = fechaPrestamo;
         this.fechaEntregaEstimada = fechaEntregaEstimada;
         this.estado = estado;
+    }
+
+    public Libro getIdLibro() {
+        return idLibro;
+    }
+
+    public void setIdLibro(Libro idLibro) {
+        this.idLibro = idLibro;
     }
 
     public Integer getIdPrestamo() {
@@ -132,19 +143,11 @@ public class Prestamo implements Serializable {
         this.estado = estado;
     }
 
-    public List<Libro> getLibroList() {
-        return libroList;
-    }
-
-    public void setLibroList(List<Libro> libroList) {
-        this.libroList = libroList;
-    }
-
-    public Bibliotecario getIdBibliotecario() {
+    public Usuario getIdBibliotecario() {
         return idBibliotecario;
     }
 
-    public void setIdBibliotecario(Bibliotecario idBibliotecario) {
+    public void setIdBibliotecario(Usuario idBibliotecario) {
         this.idBibliotecario = idBibliotecario;
     }
 
@@ -180,5 +183,5 @@ public class Prestamo implements Serializable {
     public String toString() {
         return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Prestamo[ idPrestamo=" + idPrestamo + " ]";
     }
-    
+
 }

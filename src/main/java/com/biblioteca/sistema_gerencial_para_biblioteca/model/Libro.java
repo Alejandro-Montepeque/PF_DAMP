@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -69,11 +70,6 @@ public class Libro implements Serializable {
     @Size(max = 500)
     @Column(name = "imagen_portada")
     private String imagenPortada;
-    @JoinTable(name = "detalle_prestamo", joinColumns = {
-        @JoinColumn(name = "id_libro", referencedColumnName = "id_libro")}, inverseJoinColumns = {
-        @JoinColumn(name = "id_prestamo", referencedColumnName = "id_prestamo")})
-    @ManyToMany
-    private List<Prestamo> prestamoList;
     @ManyToMany(mappedBy = "libroList")
     private List<Autore> autoreList;
     @JoinColumn(name = "id_genero", referencedColumnName = "id_genero")
@@ -96,6 +92,9 @@ public class Libro implements Serializable {
     @Column(name = "activo")
     private Boolean activo;
 
+    @OneToMany(mappedBy = "idLibro")
+    private List<Prestamo> prestamoList;
+
     public Libro() {
     }
 
@@ -107,6 +106,14 @@ public class Libro implements Serializable {
         this.idLibro = idLibro;
         this.titulo = titulo;
         this.cantDisponibles = cantDisponibles;
+    }
+
+    public List<Prestamo> getPrestamoList() {
+        return prestamoList;
+    }
+
+    public void setPrestamoList(List<Prestamo> prestamoList) {
+        this.prestamoList = prestamoList;
     }
 
     public Integer getIdLibro() {
@@ -189,14 +196,6 @@ public class Libro implements Serializable {
         this.imagenPortada = imagenPortada;
     }
 
-    public List<Prestamo> getPrestamoList() {
-        return prestamoList;
-    }
-
-    public void setPrestamoList(List<Prestamo> prestamoList) {
-        this.prestamoList = prestamoList;
-    }
-
     public List<Autore> getAutoreList() {
         return autoreList;
     }
@@ -228,7 +227,7 @@ public class Libro implements Serializable {
     public void setIdProveedor(Proveedore idProveedor) {
         this.idProveedor = idProveedor;
     }
-    
+
     public Boolean getActivo() {
         return activo;
     }
@@ -277,5 +276,5 @@ public class Libro implements Serializable {
     public String toString() {
         return "com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro[ idLibro=" + idLibro + " ]";
     }
-    
+
 }

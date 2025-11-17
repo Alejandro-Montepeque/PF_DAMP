@@ -6,45 +6,89 @@ package com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao;
 
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IPrestamoDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Prestamo;
+import com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro;
 import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PrestamoDAOImpl implements IPrestamoDAO {
 
-    // PrestamoDAOImpl.java
     @Override
-    public void crear(Prestamo p) {
+    public int contarDevolucionesATiempo() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
+            String jpql = "SELECT COUNT(p) FROM Prestamo p WHERE p.fechaEntregaReal <= p.fechaEntregaEstimada";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
+
+    // PrestamoDAOImpl.java
+    @Override
+    public void crear(Prestamo prestamo) throws Exception {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
             em.getTransaction().begin();
-            em.persist(p);
+
+            em.persist(prestamo);
+
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
             e.printStackTrace();
-            throw new RuntimeException("Error al crear el préstamo: " + e.getMessage());
+            throw new RuntimeException("Error al registrar el prestamo " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public void actualizar(Prestamo p) {
+    public int contarDevolucionesAtrasadas() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
+            String jpql = "SELECT COUNT(p) FROM Prestamo p WHERE p.fechaEntregaReal > p.fechaEntregaEstimada";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void actualizar(Prestamo p) throws Exception {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
             em.getTransaction().begin();
-            em.merge(p);
+
+            Prestamo managed = em.find(Prestamo.class, p.getIdPrestamo());
+            if (managed == null) {
+                throw new Exception("El préstamo no existe.");
+            }
+
+            managed.setIdUsuario(p.getIdUsuario());
+            managed.setIdLibro(p.getIdLibro());
+            managed.setFechaPrestamo(p.getFechaPrestamo());
+            managed.setFechaEntregaEstimada(p.getFechaEntregaEstimada());
+            managed.setFechaEntregaReal(p.getFechaEntregaReal());
+            managed.setObservaciones(p.getObservaciones());
+            managed.setEstado(p.getEstado());
+
+            em.merge(managed);
+
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            e.printStackTrace();
-            throw new RuntimeException("Error al actualizar el préstamo: " + e.getMessage());
+            throw e;
         } finally {
             em.close();
         }
@@ -53,21 +97,37 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
     @Override
     public Prestamo obtenerPorId(int id) {
         EntityManager em = JPAUtil.getEntityManager();
-        Prestamo p = em.find(Prestamo.class, id);
-        em.close();
-        return p;
+        try {
+            // Traemos el préstamo con usuario, libro y bibliotecario para evitar LazyInitializationException
+            TypedQuery<Prestamo> q = em.createQuery(
+                    "SELECT DISTINCT p FROM Prestamo p "
+                    + "LEFT JOIN FETCH p.idUsuario "
+                    + "LEFT JOIN FETCH p.idBibliotecario "
+                    + "LEFT JOIN FETCH p.idLibro "
+                    + "WHERE p.idPrestamo = :id",
+                    Prestamo.class);
+            q.setParameter("id", id);
+            return q.getResultStream().findFirst().orElse(null);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<Prestamo> listar() {
         EntityManager em = JPAUtil.getEntityManager();
-       
         try {
-            String jpql = "SELECT p FROM Prestamo p";
+            // Trae prestamos con usuario, libro y bibliotecario asociados
+            String jpql = "SELECT DISTINCT p FROM Prestamo p "
+                    + "LEFT JOIN FETCH p.idUsuario "
+                    + "LEFT JOIN FETCH p.idLibro "
+                    + "LEFT JOIN FETCH p.idBibliotecario "
+                    + "ORDER BY p.fechaPrestamo DESC";
             TypedQuery<Prestamo> query = em.createQuery(jpql, Prestamo.class);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
+
 }

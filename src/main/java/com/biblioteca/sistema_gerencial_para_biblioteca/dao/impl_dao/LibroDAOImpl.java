@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao;
+
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.ILibroDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Libro;
 import com.biblioteca.sistema_gerencial_para_biblioteca.utils.JPAUtil;
@@ -11,7 +12,7 @@ import jakarta.persistence.TypedQuery; // Usado para consultas con tipo
 import java.util.List;
 
 public class LibroDAOImpl implements ILibroDAO {
-    
+
     @Override
     public void crear(Libro libro) {
         // 1. Obtener el EntityManager (la "conexión")
@@ -39,7 +40,6 @@ public class LibroDAOImpl implements ILibroDAO {
     //public Libro obtenerPorId(int idLibro) {
     //    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     //}
-    
     @Override
     public Libro obtenerPorId(int id) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -60,12 +60,11 @@ public class LibroDAOImpl implements ILibroDAO {
         return libro;
     }
 
-
     @Override
     public List<Libro> obtenerTodos() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            
+
             // JPQL para seleccionar todos los objetos de la clase "Libro"
             String jpql = "SELECT l FROM Libro l";
             TypedQuery<Libro> query = em.createQuery(jpql, Libro.class);
@@ -98,13 +97,27 @@ public class LibroDAOImpl implements ILibroDAO {
     }
 
     @Override
+    public Libro obtenerPorTitulo(String titulo) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT l FROM Libro l WHERE l.titulo = :titulo", Libro.class)
+                    .setParameter("titulo", titulo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public void eliminar(int idLibro) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public int obtenerTotal() {
-                EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = JPAUtil.getEntityManager();
         try {
 
             String jpql = "Select count(l) from Libro l";
@@ -123,5 +136,44 @@ public class LibroDAOImpl implements ILibroDAO {
             em.close();
         }
     }
-    
+
+    @Override
+    public int contarLibrosDisponibles() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(1) FROM Libro l WHERE l.activo = true";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public int contarLibrosPrestados() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(1) FROM Libro l WHERE l.activo = false";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Object[]> obtenerConteoLibrosPorGenero() {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            String jpql
+                    = "SELECT g.nombre, COUNT(l.idLibro) FROM Libro l JOIN l.idGenero g GROUP BY g.nombre ORDER BY COUNT(l.idLibro) DESC";
+
+            return em.createQuery(jpql, Object[].class).getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
 }
