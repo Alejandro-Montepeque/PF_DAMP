@@ -7,14 +7,18 @@ package com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao;
 import com.biblioteca.sistema_gerencial_para_biblioteca.model.Prestamo;
 import java.util.List;
 
-
 public interface IPrestamoDAO {
+
     int contarDevolucionesATiempo();
+
     int contarDevolucionesAtrasadas();
-    
-    void crear(Prestamo p);
-    void actualizar(Prestamo p);
+
+    void crear(Prestamo prestamo) throws Exception;
+
+    void actualizar(Prestamo prestamo) throws Exception;
+
     Prestamo obtenerPorId(int idPrestamo);
+
     List<Prestamo> listar();
 
 }

@@ -41,12 +41,6 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <%="devoluciones".equals(request.getAttribute("activePage")) ? "active" : ""%>" href="${pageContext.request.contextPath}/DevolucionesServlet">
-                <i class="bi bi-arrow-repeat me-2"></i> Devoluciones
-            </a>
-        </li>
-
-        <li class="nav-item">
             <a class="nav-link <%="reportes".equals(request.getAttribute("activePage")) ? "active" : ""%>" href="${pageContext.request.contextPath}/ReportesServlet">
                 <i class="bi bi-file-earmark-text me-2"></i> Reportes
             </a>

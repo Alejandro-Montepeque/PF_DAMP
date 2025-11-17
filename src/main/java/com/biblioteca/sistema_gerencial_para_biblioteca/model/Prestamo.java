@@ -69,8 +69,9 @@ public class Prestamo implements Serializable {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false)
     private Usuario idUsuario;
-    @OneToMany(mappedBy = "prestamo", cascade = CascadeType.ALL)
-    private List<DetallePrestamo> detallePrestamoList;
+    @JoinColumn(name = "id_libro", referencedColumnName = "id_libro")
+    @ManyToOne(optional = false)
+    private Libro idLibro;
 
     public Prestamo() {
     }
@@ -84,6 +85,14 @@ public class Prestamo implements Serializable {
         this.fechaPrestamo = fechaPrestamo;
         this.fechaEntregaEstimada = fechaEntregaEstimada;
         this.estado = estado;
+    }
+
+    public Libro getIdLibro() {
+        return idLibro;
+    }
+
+    public void setIdLibro(Libro idLibro) {
+        this.idLibro = idLibro;
     }
 
     public Integer getIdPrestamo() {
@@ -140,14 +149,6 @@ public class Prestamo implements Serializable {
 
     public void setIdBibliotecario(Usuario idBibliotecario) {
         this.idBibliotecario = idBibliotecario;
-    }
-
-    public List<DetallePrestamo> getDetallePrestamoList() {
-        return detallePrestamoList;
-    }
-
-    public void setDetallePrestamoList(List<DetallePrestamo> detallePrestamoList) {
-        this.detallePrestamoList = detallePrestamoList;
     }
 
     public Usuario getIdUsuario() {
