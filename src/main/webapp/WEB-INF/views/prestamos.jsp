@@ -226,7 +226,9 @@
 
                         document.getElementById("boxFR").classList.add("d-none");
                         document.getElementById("boxObs").classList.add("d-none");
-
+                        // estas dos lineas
+                        document.getElementById("estado").value = "Pendiente";
+                        document.getElementById("estado").setAttribute("disabled", "disabled");
                         modal.show();
                     };
 
@@ -284,7 +286,6 @@
 
                     document.querySelectorAll(".btnEditar").forEach(btn => {
                         btn.addEventListener("click", () => {
-
                             document.getElementById("modalTitle").innerText = "Editar préstamo";
                             document.getElementById("idPrestamo").value = btn.dataset.id;
 
@@ -303,7 +304,8 @@
                                     : "";
 
                             document.getElementById("estado").value = btn.dataset.estado;
-
+                            // esta linea
+                            document.getElementById("estado").removeAttribute("disabled");
                             document.getElementById("boxObs").classList.remove("d-none");
                             document.getElementById("observaciones").value =
                                     (btn.dataset.obs && btn.dataset.obs !== "null")
