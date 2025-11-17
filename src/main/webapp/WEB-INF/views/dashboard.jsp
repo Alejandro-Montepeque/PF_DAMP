@@ -59,7 +59,7 @@
                 <div class="card-body text-center">
                     <i class="bi bi-arrow-left-right display-5 text-warning mb-2"></i>
                     <h5 class="card-title fw-semibold">Préstamos en curso</h5>
-                    <p class="card-text fs-3 fw-bold text-dark mb-0">12</p>
+                    <p class="card-text fs-3 fw-bold text-dark mb-0">${cantidadPrestamos}</p>
                 </div>
             </div>
         </div>

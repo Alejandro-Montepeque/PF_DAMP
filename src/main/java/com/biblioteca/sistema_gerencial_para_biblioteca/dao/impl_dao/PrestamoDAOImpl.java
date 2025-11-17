@@ -35,6 +35,22 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
         try {
             em.getTransaction().begin();
 
+            em.getTransaction().begin();
+
+            Libro libro = em.find(Libro.class, prestamo.getIdLibro().getIdLibro());
+            if (libro == null) {
+                throw new Exception("El libro seleccionado no existe.");
+            }
+
+            if (libro.getActivo() == null || !libro.getActivo()) {
+                throw new Exception("El libro está inactivo y no puede prestarse.");
+            }
+
+            if (libro.getCantDisponibles() <= 0) {
+                throw new Exception("No hay copias disponibles del libro: " + libro.getTitulo());
+            }
+
+            libro.setCantDisponibles(libro.getCantDisponibles() - 1);
             em.persist(prestamo);
 
             em.getTransaction().commit();
@@ -61,7 +77,7 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
         }
     }
 
-    @Override
+    /*  @Override
     public void actualizar(Prestamo p) throws Exception {
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -89,6 +105,84 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
                 em.getTransaction().rollback();
             }
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+     */
+    @Override
+    public void actualizar(Prestamo p) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            Prestamo old = em.find(Prestamo.class, p.getIdPrestamo());
+            if (old == null) {
+                throw new RuntimeException("Préstamo no encontrado.");
+            }
+
+            Libro oldLibro = em.find(Libro.class, old.getIdLibro().getIdLibro());
+            Libro newLibro = em.find(Libro.class, p.getIdLibro().getIdLibro());
+
+            // ============= 1. LIBRO CAMBIÓ =============
+            if (!oldLibro.getIdLibro().equals(newLibro.getIdLibro())) {
+
+                // devolver stock al libro antiguo si estaba prestado
+                if (old.getEstado().equals("Pendiente")) {
+                    oldLibro.setCantDisponibles(oldLibro.getCantDisponibles() + 1);
+                    em.merge(oldLibro);
+                }
+
+                // ahora validar stock del nuevo libro
+                if (newLibro.getCantDisponibles() <= 0) {
+                    throw new RuntimeException("El libro nuevo no tiene copias disponibles.");
+                }
+
+                // descontar stock del nuevo libro
+                newLibro.setCantDisponibles(newLibro.getCantDisponibles() - 1);
+                em.merge(newLibro);
+            }
+
+            // ============= 2. ESTADO CAMBIÓ =============
+            if (!old.getEstado().equals(p.getEstado())) {
+
+                // Pendiente → Entregado  (se devuelve el libro)
+                if (old.getEstado().equals("Pendiente") && p.getEstado().equals("Entregado")) {
+                    newLibro.setCantDisponibles(newLibro.getCantDisponibles() + 1);
+                    em.merge(newLibro);
+                }
+
+                // Entregado → Pendiente  (se lo lleva otra vez)
+                if (old.getEstado().equals("Entregado") && p.getEstado().equals("Pendiente")) {
+
+                    if (newLibro.getCantDisponibles() <= 0) {
+                        throw new RuntimeException("No hay unidades disponibles para marcar como pendiente.");
+                    }
+
+                    newLibro.setCantDisponibles(newLibro.getCantDisponibles() - 1);
+                    em.merge(newLibro);
+                }
+            }
+
+            // ============= 3. ACTUALIZAR REGISTRO =============
+            old.setFechaPrestamo(p.getFechaPrestamo());
+            old.setFechaEntregaEstimada(p.getFechaEntregaEstimada());
+            old.setFechaEntregaReal(p.getFechaEntregaReal());
+            old.setIdUsuario(p.getIdUsuario());
+            old.setIdBibliotecario(p.getIdBibliotecario());
+            old.setIdLibro(newLibro);
+            old.setObservaciones(p.getObservaciones());
+            old.setEstado(p.getEstado());
+
+            em.merge(old);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Error al actualizar préstamo: " + e.getMessage(), e);
         } finally {
             em.close();
         }
@@ -125,6 +219,18 @@ public class PrestamoDAOImpl implements IPrestamoDAO {
                     + "ORDER BY p.fechaPrestamo DESC";
             TypedQuery<Prestamo> query = em.createQuery(jpql, Prestamo.class);
             return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public int obtenerPendientes() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(p) FROM Prestamo p WHERE p.estado = 'Pendiente'";
+            Long count = em.createQuery(jpql, Long.class).getSingleResult();
+            return count.intValue();
         } finally {
             em.close();
         }

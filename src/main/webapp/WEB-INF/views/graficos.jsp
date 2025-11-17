@@ -96,7 +96,7 @@
     </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="${pageContext.request.contextPath}/js/charts.js"></script>
 <script>
     <% if(librosDisponibles + librosPrestados > 0) { %>
     const ctxLibros = document.getElementById('librosChart').getContext('2d');

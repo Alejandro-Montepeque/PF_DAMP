@@ -17,7 +17,8 @@ import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IUsuar
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.UsuarioDAOImpl;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.ILibroDAO;
 import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.LibroDAOImpl;
-
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.interface_dao.IPrestamoDAO;
+import com.biblioteca.sistema_gerencial_para_biblioteca.dao.impl_dao.PrestamoDAOImpl;
 
 
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/DashboardServlet"})
@@ -37,8 +38,11 @@ public class DashboardServlet extends HttpServlet {
         int libroCount = daoLibro.obtenerTotal();
         IUsuarioDAO dao = new UsuarioDAOImpl();
         int usuarioCount = dao.obtenerActivos();
+        IPrestamoDAO daoPrestamo = new PrestamoDAOImpl();
+        int cantPrestamosActivos = daoPrestamo.obtenerPendientes();
         request.setAttribute("usuariosActivos", usuarioCount);
-        request.setAttribute("cantidadLibros", libroCount);
+        request.setAttribute("cantidadLibros", libroCount);  
+        request.setAttribute("cantidadPrestamos", cantPrestamosActivos);
         // Mostrar la vista protegida
         request.getRequestDispatcher("WEB-INF/views/dashboard.jsp").forward(request, response);
     }
