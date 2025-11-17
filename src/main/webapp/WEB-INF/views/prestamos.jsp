@@ -7,14 +7,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
-    // ✅ Verificar sesión activa
+    // Verificar sesión activa
     String usuario = (String) session.getAttribute("usuario");
     if (usuario == null) {
         response.sendRedirect(request.getContextPath() + "/LoginServlet");
         return;
     }
 
-    // ✅ Activar link en sidebar
+    // Activar link en sidebar
     request.setAttribute("activePage", "prestamos");
     String rol = (String) session.getAttribute("rol");
 %>
@@ -27,14 +27,9 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary"><i class="bi bi-box-arrow-in-down me-2"></i> Gestión de Préstamos</h2>
-        <% if ("ADMIN".equals(rol)) {
-        %>
-        <button class="btn btn-success" id="btnNuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo">
+        <button class="btn btn-success" id="btnNuevo" >
             <i class="bi bi-plus-lg"></i> Nuevo préstamo
         </button>
-        <%
-            }
-        %>
     </div>
 
     <!-- 🔍 Filtro de búsqueda -->
@@ -67,106 +62,131 @@
                             <th>Fecha de préstamo</th>
                             <th>Fecha de devolución</th>
                             <th>Estado</th>
-                                <% if ("ADMIN".equals(rol)) {
-                                %>
                             <th>Acciones</th>
-                                <%
-                                    }
-                                %>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Juan Pérez</td>
-                            <td>El Principito</td>
-                            <td>2025-11-01</td>
-                            <td>2025-11-08</td>
-                            <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                            <% if ("ADMIN".equals(rol)) {
-                            %>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalNuevoPrestamo"><i class="bi bi-pencil"></i> Editar</button>                                                   
-                            </td>
-                            <%
-                                }
-                            %>
-                        </tr>
+                        
 
-                    </tbody>
+                        <c:if test="${empty listaPrestamos}">
+                            <tr>
+                                <td colspan="10" class="text-center text-muted">No hay préstamos registrados.</td>
+                            </tr>
+                        </c:if>
+                   </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Nuevo Préstamo -->
-<div class="modal fade" id="modalNuevoPrestamo" tabindex="-1" aria-labelledby="modalNuevoPrestamoLabel" aria-hidden="true">
+<!-- Modal Nuevo/Editar Préstamo -->
+<div class="modal fade" id="modalPrestamo" tabindex="-1" aria-labelledby="modalPrestamoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="modalNuevoPrestamoLabel"><i class="bi bi-plus-lg me-2"></i> Registrar Préstamo</h5>
+                <h5 class="modal-title" id="modalPrestamoLabel">Registrar Préstamo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                <form>
+                <form id="formPrestamo" method="post" action="${pageContext.request.contextPath}/PrestamosServlet">
+
+                    <input type="hidden" id="idPrestamo" name="idPrestamo">
                     <div class="row g-3">
+
+                        <!-- Usuario -->
                         <div class="col-md-6">
-                            <input type="hidden" id="idUsuario" name="idUsuario">
+                            <input type="hidden" id="idUsuario" name="idUsuario" required>
                             <label class="form-label">Usuario</label>
-                            <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario por DUI, nombre, email...">
+                            <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar usuario..." >
                             <div id="resultadosUsuario" class="list-group mt-1"></div>
                         </div>
+
+                        <!-- Libros (múltiples) -->
                         <div class="col-md-6">
-                            <input type="hidden" id="idLibro" name="idLibro">
-                            <label class="form-label">Libro</label>
-                            <input type="text" id="buscarLibro" class="form-control" placeholder="Buscar libro por nombre o código...">
+                            <label class="form-label">Libro(s)</label>
+                            <input type="text" id="buscarLibro" class="form-control" placeholder="Buscar libro..." required>
                             <div id="resultadosLibro" class="list-group mt-1"></div>
+
+                            <!-- Lista de libros seleccionados -->
+                            <div class="mt-2" id="librosSeleccionados"></div>
                         </div>
+
+                        <!-- Fecha préstamo -->
                         <div class="col-md-6">
                             <label class="form-label">Fecha de préstamo</label>
-                            <input type="date" class="form-control" required>
+                            <input type="date" id="fechaPrestamo" name="fechaPrestamo" class="form-control" required>
                         </div>
+
+                        <!-- Fecha estimada -->
                         <div class="col-md-6">
-                            <label class="form-label">Fecha de devolución</label>
-                            <input type="date" class="form-control" required>
+                            <label class="form-label">Fecha devolución estimada</label>
+                            <input type="date" id="fechaEstimada" name="fechaEstimada" class="form-control" required>
                         </div>
+
+                        <!-- Fecha real entrega (solo edición) -->
+                        <div class="col-md-6 d-none" id="grupoFechaReal">
+                            <label class="form-label">Fecha devolución real</label>
+                            <input type="date" id="fechaReal" name="fechaReal" class="form-control">
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            <select id="estado" name="estado" class="form-control" readonly>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Entregado">Entregado</option>
+                            </select>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="col-12 d-none" id="grupoObservacion">
+                            <label class="form-label">Observaciones</label>
+                            <textarea id="observaciones" name="observaciones" class="form-control"></textarea>
+                        </div>
+
                     </div>
-                    <div class="mt-4 text-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Guardar préstamo</button>
-                    </div>
-                </form>
             </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            </div>
+
+            </form>
         </div>
     </div>
 </div>
 
+
+</div>
 <script>
-    // Espera a que la página esté completamente cargada
+    <c:if test="${not empty mensajeExito}">
+    mostrarAlertaExito("${mensajeExito}");
+    </c:if>
+    <c:if test="${not empty mensajeError}">
+    mostrarAlertaError("${mensajeError}");
+    </c:if>
+</script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        //const modalForm = document.getElementById('usuarioForm');
-        const modalTitle = document.getElementById('modalNuevoPrestamoLabel');
-        const modalHeader = document.querySelector(".modal-header");
-
-
-        //  BUSCADOR DE USUARIOS
+        /* ---------------------------------------------------------
+         *  BUSCADOR DE USUARIOS
+         * ---------------------------------------------------------*/
         const usuarios = JSON.parse('${usuariosJson}');
-        console.log("Usuarios cargados:", usuarios);
-
         const inputUsuario = document.getElementById("buscarUsuario");
         const contenedorUsuario = document.getElementById("resultadosUsuario");
 
         inputUsuario.addEventListener("input", () => {
             const texto = inputUsuario.value.toLowerCase();
 
-
-            // 👉 Si el usuario borró el texto, limpiar y salir
             if (texto.trim() === "") {
                 contenedorUsuario.innerHTML = "";
                 return;
             }
+
             const filtrados = usuarios.filter(u =>
                 u.nombre.toLowerCase().includes(texto) ||
                         u.dui.includes(texto) ||
@@ -191,18 +211,55 @@
         });
 
 
-        // =====================
-        //   BUSCADOR DE LIBROS
-        // =====================
+        /* ---------------------------------------------------------
+         *  BUSCADOR DE LIBROS → MULTI-SELECCIÓN
+         * ---------------------------------------------------------*/
         const libros = JSON.parse('${librosJson}');
-
         const inputLibro = document.getElementById("buscarLibro");
         const contenedorLibro = document.getElementById("resultadosLibro");
+
+        let librosSeleccionados = []; // ← lista de IDs únicos
+
+
+        // Función para agregar libros al modal
+        function agregarLibro(id, titulo) {
+            if (librosSeleccionados.includes(id))
+                return;
+
+            librosSeleccionados.push(id);
+
+            const contenedor = document.getElementById("librosSeleccionados");
+
+            // Crear chip visual
+            const chip = document.createElement("span");
+            chip.classList = "badge bg-primary me-2 p-2";
+            chip.innerHTML = `\${titulo} <i class="bi bi-x-circle ms-1" style="cursor:pointer"></i>`;
+
+            // Borrar libro
+            chip.querySelector("i").onclick = () => {
+                chip.remove();
+                librosSeleccionados = librosSeleccionados.filter(x => x !== id);
+                document.querySelector(`#libroHidden_\${id}`).remove();
+            };
+
+            contenedor.appendChild(chip);
+
+            // Hidden input
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "idLibro";
+            hidden.value = id;
+            hidden.id = "libroHidden_" + id;
+
+            contenedor.appendChild(hidden);
+
+            inputLibro.value = ""; // limpiar campo
+        }
+
 
         inputLibro.addEventListener("input", () => {
             const texto = inputLibro.value.toLowerCase();
 
-            // 👉 Si el campo está vacío, limpiar y salir
             if (texto.trim() === "") {
                 contenedorLibro.innerHTML = "";
                 return;
@@ -220,10 +277,10 @@
                 item.classList = "list-group-item list-group-item-action";
                 item.textContent = `\${l.titulo} (ISBN: \${l.isbn ?? '---'})`;
 
+                // Al seleccionar → agregar libro
                 item.onclick = () => {
-                    inputLibro.value = l.titulo;
                     contenedorLibro.innerHTML = "";
-                    document.getElementById("idLibro").value = l.idLibro;
+                    agregarLibro(l.idLibro, l.titulo);
                 };
 
                 contenedorLibro.appendChild(item);
@@ -231,41 +288,99 @@
         });
 
 
+        /* ---------------------------------------------------------
+         *  LOGICA DE NUEVO Y EDITAR PRÉSTAMO
+         * ---------------------------------------------------------*/
+        const modalHeader = document.querySelector(".modal-header");
 
 
+        /* --- BOTÓN EDITAR --- */
+        document.addEventListener("click", function (e) {
 
-        // 1. Escucha los clics en CUALQUIER botón de "Editar"
-        document.querySelectorAll('.btn-editar').forEach(btn => {
-            btn.addEventListener('click', function () {
+            const btn = e.target.closest(".btn-editar");
+            if (!btn)
+                return;
 
-                // Encuentra la fila (<tr>) más cercana al botón
-                //const row = this.closest('tr');
-                // Lee todos los "data-*" attributes de esa fila
-                //const data = row.dataset;
+            const fila = btn.closest("tr");
 
-                // --- Rellena el formulario ---
-                modalHeader.classList.remove("bg-success", "text-white");
-                modalHeader.classList.add("bg-warning", "text-dark");
-                modalTitle.innerHTML = "<i class='bi bi-pencil-square'></i> Editar préstamo"; // Cambia el título
+            modalHeader.classList.remove("bg-success", "text-white");
+            modalHeader.classList.add("bg-warning", "text-dark");
 
+            document.getElementById("modalPrestamoLabel").innerHTML =
+                    "<i class='bi bi-pencil-square'></i> Editar préstamo";
 
-            });
+            // Datos básicos
+            document.getElementById("idPrestamo").value = fila.dataset.id;
+            document.getElementById("idUsuario").value = fila.dataset.idusuario;
+            document.getElementById("buscarUsuario").value = fila.dataset.usuario;
+
+            // --- LIBROS ---
+            librosSeleccionados = [];
+            document.getElementById("librosSeleccionados").innerHTML = "";
+
+            // Los libros vienen como string "1:El Principito,4:Clean Code"
+            if (fila.dataset.libros) {
+                fila.dataset.libros.split(",").forEach(item => {
+                    const [idLibro, titulo] = item.split(":");
+                    agregarLibro(idLibro, titulo);
+                });
+            }
+
+            // Fechas
+            document.getElementById("fechaPrestamo").value = fila.dataset.fechaprestamo;
+            document.getElementById("fechaEstimada").value = fila.dataset.fechaestimada;
+            document.getElementById("fechaReal").value = fila.dataset.fechareal || "";
+
+            document.getElementById("fechaPrestamo").readonly = true;
+            document.getElementById("fechaEstimada").readonly = true;
+
+            document.getElementById("grupoFechaReal").classList.remove("d-none");
+            document.getElementById("grupoObservacion").classList.remove("d-none");
+
+            // Estado
+            document.getElementById("estado").readonly = false;
+            document.getElementById("estado").value = fila.dataset.estado;
+
+            // Observaciones
+            document.getElementById("observaciones").value = fila.dataset.observacion || "";
+
+            new bootstrap.Modal(document.getElementById("modalPrestamo")).show();
         });
 
-        // 2. Escucha el clic en el botón "Nuevo Usuario"
+
+
+        /* --- BOTÓN NUEVO --- */
         document.getElementById('btnNuevo').addEventListener('click', function () {
+
             modalHeader.classList.remove("bg-warning", "text-dark");
             modalHeader.classList.add("bg-success", "text-white");
 
-            // --- Limpia el formulario ---
-            modalTitle.innerHTML = "<i class='bi bi-plus-lg'></i> Nuevo préstamo"; // Restaura el título
-            //modalForm.reset(); // Limpia todos los inputs
-            //modalForm.classList.remove('was-validated'); // Quita los checks verdes/rojos
-            //modalForm.querySelector('#usuarioId').value = ''; // Limpia el ID oculto
+            document.getElementById("modalPrestamoLabel").innerHTML =
+                    "<i class='bi bi-plus-lg'></i> Nuevo préstamo";
 
+            document.getElementById("formPrestamo").reset();
+            document.getElementById("idPrestamo").value = "";
 
+            // Reset multi-libros
+            librosSeleccionados = [];
+            document.getElementById("librosSeleccionados").innerHTML = "";
+
+            // Campos visibles/invisibles
+            document.getElementById("grupoFechaReal").classList.add("d-none");
+            document.getElementById("grupoObservacion").classList.add("d-none");
+
+            // Estado fijo
+            document.getElementById("estado").value = "Pendiente";
+            document.getElementById("estado").readonly = true;
+
+            // Fechas editables
+            document.getElementById("fechaPrestamo").readonly = false;
+            document.getElementById("fechaEstimada").readonly = false;
+
+            new bootstrap.Modal(document.getElementById("modalPrestamo")).show();
         });
 
     });
 </script>
+
 <jsp:include page="components/footer.jsp" />
