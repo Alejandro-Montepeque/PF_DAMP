@@ -181,7 +181,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="isbnLibro" name="isbn" required>
+                            <input type="text" class="form-control" id="isbnLibro" name="isbn" maxlength="13" required>
                             <div class="invalid-feedback">Ingrese el número ISBN.</div>
                         </div>
 
